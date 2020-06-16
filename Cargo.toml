@@ -1,0 +1,9 @@
+[package]
+name = "mpv_webrpc"
+version = "0.0.0"
+edition = "2018"
+publish = false
+
+[dependencies]
+rocket = "0.4.5"
+execute = "0.2.5"
