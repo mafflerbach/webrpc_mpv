@@ -104,7 +104,6 @@ fn request_load(target: String) -> Redirect {
 #[post("/", data = "<url>")]
 fn request_play_from_url(url: Form<UrlForm<'_>>) -> JsonValue{
 
-    let url_string = url.url.to_string();
 
     let decoded: String = parse(url_string.as_bytes())
         .map(|(key, val)| [key, val].concat())
