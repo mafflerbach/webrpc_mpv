@@ -1,9 +1,28 @@
 [package]
 name = "mpv_webrpc"
-version = "0.0.0"
+version = "0.0.1"
 edition = "2018"
-publish = false
+publish = true
+readme = "README.md"
+authors = ["Maren Afflerbach<maren@afflerbach.info>"]
+license = "WTFPL"
+description = "Smakk web api for mpv"
+keywords = ["mpv", "rpc", "web", "api"]
+repository = "https://github.com/mafflerbach/webrpc_mpv"
+homepage = "https://github.com/mafflerbach/webrpc_mpv"
+
 
 [dependencies]
 rocket = "0.4.5"
 execute = "0.2.5"
+serde_derive = "1.0"
+serde_json = "1.0"
+serde = "1.0"
+url = "2.1.1"
+config = "0.9"
+
+
+[dependencies.rocket_contrib]
+version = "0.4.5"
+default-features = false
+features = ["json", "handlebars_templates", "tera_templates"]

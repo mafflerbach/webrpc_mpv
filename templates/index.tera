@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Tera Demo</title>
+  </head>
+  <body>
+    <h3>Here are your items:</h3>
+    <ul>
+        {% for key, value in items %}
+        <li><a href="play?target={{ value  }}">{{ key }}</a></li>
+
+        {% endfor %}
+    </ul>
+
+<form action="/" method="post" accept-charset="utf-8">
+    URL:<input type="text" name="url">
+    <input type="submit" value="Start">
+</form>
+
+  </body>
+</html>

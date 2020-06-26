@@ -7,3 +7,6 @@ this is just a playground project to get familiar with Rust.
 Plan is to start a Video on a specific client via http call. 
 
 LICENSE - WTFPL
+
+
+# Request
