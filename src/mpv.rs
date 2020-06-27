@@ -6,22 +6,24 @@ pub mod mpv{
     use execute::Execute;
     use rocket::response::content;
 
+    use rocket_contrib::json::{ JsonValue};
+    use std::os::unix::net::UnixStream;
+    use std::io::prelude::*;
     /// spawn a mpv process with ipc socket server and loads a playlist
     ///
     /// # Example 
     /// ```sh
     /// mpv --playlist=/tmp/playlist --input-ipc-server=/tmp/mpvsocket
     /// ```
-    pub fn event_play_from_list(target: String) -> content::Json<String> {
-        let param = format!("--playlist={}", target);
-        let mut mpv = Command::new("mpv");
-        mpv.arg(&target).
-            arg("--input-ipc-server=/tmp/mpvsocket").
-            arg(param);
+    pub fn event_play_from_list(target: String) -> JsonValue {
 
-        let output = mpv.execute_output().unwrap();
+    let tjson = json!({ "command": ["loadlist", format!("{}",target)] }); 
+        write_to_socket(tjson.to_string()+"\n");
 
-        return content::Json(String::from_utf8(output.stdout).unwrap());
+        return   json!({
+            "status": "ok",
+            "reason": "play from url "
+        });
 
     }
 
@@ -43,12 +45,16 @@ pub mod mpv{
     /// ```sh
     /// echo "{ \"command\": [\"set_property\", \"pause\", false] }}" | socat - /tmp/mpvsocket
     /// ```
-    pub fn event_resume() -> content::Json<String> { 
-        let mut command1 = get_echo_arg( "{ \"command\": [\"set_property\", \"pause\", false] }");
-        let mut command2 = get_socket_arg();
 
-        let output = command1.execute_multiple_output(&mut [&mut command2]).unwrap();
-        return content::Json(String::from_utf8(output.stdout).unwrap());
+    pub fn event_resume() -> JsonValue { 
+        let tjson = json!({ "command": ["set_property", "pause", false] }); 
+        write_to_socket(tjson.to_string()+"\n");
+
+        return   json!({
+            "status": "ok",
+            "reason": "play from url "
+        });
+
 
     }
 
@@ -57,13 +63,14 @@ pub mod mpv{
     /// ```sh
     /// echo "{ \"command\": [\"loadfile\", \"<target>\"] }}" | socat - /tmp/mpvsocket
     /// ```
-    pub fn event_load(target: String) -> content::Json<String> {
-        let json = format!("{{ \"command\": [\"loadfile\", \"{}\"] }}", target);
-        let mut command1 = get_echo_arg(&json);
-        let mut command2 = get_socket_arg();
+    pub fn event_load(target: String) -> JsonValue {
+        let tjson = json!({ "command": ["loadfile", format!("{}",target)] }); 
+        write_to_socket(tjson.to_string()+"\n");
 
-        let output = command1.execute_multiple_output(&mut [&mut command2]).unwrap();
-        return content::Json(String::from_utf8(output.stdout).unwrap());
+        return   json!({
+            "status": "ok",
+            "reason": "play from url "
+        });
 
     }
     /// Pause a video
@@ -71,27 +78,22 @@ pub mod mpv{
     /// ```sh
     /// echo "{ \"command\": [\"set_property\", \"pause\", true] }}" | socat - /tmp/mpvsocket
     /// ```
-    pub fn event_pause() -> content::Json<String>{
-        let mut command1 = get_echo_arg( "{ \"command\": [\"set_property\", \"pause\", true] }");
-        let mut command2 = get_socket_arg();
+    pub fn event_pause() -> JsonValue {
 
-        let output = command1.execute_multiple_output(&mut [&mut command2]).unwrap();
-        return content::Json(String::from_utf8(output.stdout).unwrap());
+        let tjson = json!({ "command": ["set_property", "pause", true] }); 
+        write_to_socket(tjson.to_string()+"\n");
 
+        return   json!({
+            "status": "ok",
+            "reason": "play from url "
+        });
     }
 
 
-    fn get_echo_arg(json: &str) -> Command {
-        let mut command = Command::new("echo");
-        command.arg(json);
-
-        return command;
-    }
+    
     fn get_socket_arg() -> Command {
-
         let mut command = Command::new("socat");
         command.arg("-").arg("/tmp/mpvsocket");
-
 
         return command;
     }
@@ -102,8 +104,24 @@ pub mod mpv{
         let mut mpv = Command::new("mpv");
         mpv.arg("--idle=yes").
             arg("--input-ipc-server=/tmp/mpvsocket").
+            arg("--fs=yes").
             spawn().expect("OK");
 
 
     }
+
+
+
+
+    fn write_to_socket(content: String) -> std::io::Result<()> {
+
+        let mut stream = UnixStream::connect("/tmp/mpvsocket")?;
+        stream.write_all(&content.as_bytes());
+        let mut response = String::new();
+        stream.read_to_string(&mut response)?;
+        println!("{}", response);
+        Ok(())
+    }
+
+
 }

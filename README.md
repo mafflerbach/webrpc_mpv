@@ -8,5 +8,21 @@ Plan is to start a Video on a specific client via http call.
 
 LICENSE - WTFPL
 
+TODO
+- change output to json only
+- Error handling 
+ 
+TODO for the client
+- implement
+    - volume controle
+    - add to playlist
 
-# Request
+TODO for the server
+- implement for client control
+    - volume
+    - play/resume
+    - add to playlist
+    - play source (source from url or fs)
+- frontend
+
+

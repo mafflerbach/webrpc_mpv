@@ -15,20 +15,12 @@ use rocket::request::{Form};
 use rocket_contrib::json::{ JsonValue};
 use rocket::response::Redirect;
 use rocket::http::RawStr;
-
+use std::fs::OpenOptions;
+use std::io::prelude::*;
+use serde::Deserialize;
+use rocket_contrib::json::Json;
 mod mpv;
 mod settings;
-
-#[derive(FromForm)]
-struct UrlForm<'r> {
-    url: &'r RawStr,
-}
-
-
-#[derive(Serialize)]
-struct TemplateContext {
-    items: HashMap<String, String>
-}
 
 
 /// Resume a video after a pause 
@@ -42,6 +34,13 @@ fn request_resume() -> Redirect {
     mpv::mpv::event_resume();
     return Redirect::to(uri!(hello));
 }
+
+#[get("/volume")]
+fn request_resume() -> Redirect {
+    mpv::mpv::event_resume();
+    return Redirect::to(uri!(hello));
+}
+
 
 /// Pause a video after 
 ///
@@ -104,20 +103,70 @@ fn request_load(target: String) -> Redirect {
 #[post("/", data = "<url>")]
 fn request_play_from_url(url: Form<UrlForm<'_>>) -> JsonValue{
 
-    let url_string = url.url.to_string();
+    let action = url.action.to_string();
+    let target = url.target.to_string();
 
-    let decoded: String = parse(url_string.as_bytes())
+    let decoded: String = parse(target.as_bytes())
         .map(|(key, val)| [key, val].concat())
         .collect();
 
-    println!("{}", url.url.to_string());
-    mpv::mpv::event_load(decoded);
+    let decoded2: String = parse(target.as_bytes())
+        .map(|(key, val)| [key, val].concat())
+        .collect();
 
-    return   json!({
+
+    if action == "video" {
+        mpv::mpv::event_load(decoded);
+    }
+
+    if action == "playlist" {
+        mpv::mpv::event_play_from_list(decoded2);
+    }
+
+
+    return json!({
         "status": "ok",
         "reason": "play from url "
     })
 }
+
+
+#[post("/control", data = "<Command>")]
+fn event_control(command :Json<Command>) -> JsonValue {
+
+
+
+
+    return json!({
+        "status": "ok",
+        "reason": "play from url "
+    })
+
+}
+
+
+#[post("/add", data = "<Command>")]
+fn event_add_to_playlist()-> JsonValue {
+
+    let mut file = OpenOptions::new()
+        .write(true)
+        .append(true)
+        .open("/tmp/playlist")
+        .unwrap();
+
+    if let Err(e) = writeln!(file, "A new line!") {
+        eprintln!("Couldn't write to file: {}", e);
+    }
+
+
+    return json!({
+        "status": "ok",
+        "reason": "play from url "
+    })
+
+}
+
+
 
 #[get("/")]
 fn hello() -> Template {
@@ -158,3 +207,26 @@ fn main() {
 
         ]).launch();
 }
+
+
+
+
+#[derive(FromForm)]
+struct UrlForm<'r> {
+    target: &'r RawStr,
+    action: &'r RawStr,
+}
+
+#[derive(Deserialize)]
+struct Command {
+    target: String,
+    action: String,
+}
+
+#[derive(Serialize)]
+struct TemplateContext {
+    items: HashMap<String, String>
+}
+
+
+

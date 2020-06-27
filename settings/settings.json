@@ -1,0 +1,33 @@
+{
+    "childs": [
+    {
+           "name":"client 1",
+           "url":"localhost:8001"
+       },{
+           "name":"client 2",
+           "url":"localhost:8002"
+       }
+    ],
+   "stream_urls": [
+       {
+           "name":"ard",
+           "url":"https://mcdn.daserste.de/daserste/de/master.m3u8?arn=1"
+       },{
+           "name":"zdf",
+           "url":"https://zdf-hls-01.akamaized.net/hls/live/2002460/de/high/master.m3u8"
+       },{
+           "name":"arte",
+           "url":"https://artelive-lh.akamaihd.net/i/artelive_de@393591/index_1_av-p.m3u8"
+       },{
+           "name":"kika",
+           "url":"https://kikageohls-i.akamaihd.net/hls/live/1006268/livetvkika_de/master.m3u8"
+       },{
+           "name":"3sat",
+           "url":"https://zdfhls18-i.akamaihd.net/hls/live/744751/dach/high/master.m3u8"
+       },{
+           "name":"phoenix",
+           "url":"https://zdfhls19-i.akamaihd.net/hls/live/744752/de/high/master.m3u8"
+       }
+   ]
+
+}

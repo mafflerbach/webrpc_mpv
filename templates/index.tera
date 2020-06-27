@@ -14,9 +14,16 @@
     </ul>
 
 <form action="/" method="post" accept-charset="utf-8">
-    URL:<input type="text" name="url">
+    URL:<input type="text" name="target">
+    <input type="hidden" name="action" value="video">
     <input type="submit" value="Start">
 </form>
+<form action="/" method="post" accept-charset="utf-8">
+    Playlist:<input type="text" name="target">
+    <input type="hidden" name="action" value="playlist">
+    <input type="submit" value="Start">
+</form>
+
 
   </body>
 </html>
