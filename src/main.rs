@@ -1,28 +1,44 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
+#[cfg(test)]
+mod tests;
+
+
 #[macro_use]
 extern crate rocket;
 #[macro_use]
 extern crate serde_derive;
-#[macro_use]
 extern crate rocket_contrib;
 
-#[cfg(test)]
-mod tests;
-
-//use rocket::response::content;
+extern crate serde;
+#[macro_use]
+extern crate serde_json;
 extern crate execute;
 
 mod mpv;
 mod settings;
-use rocket::http::RawStr;
+mod api_structs;
+
+
+
+use std::vec::Vec;
+use std::env;
+
+use crate::api_structs::UrlForm;
+use crate::api_structs::PlaylistControl;
+use crate::api_structs::VolumeControl;
+use crate::settings::SettingContext;
 use rocket::request::Form;
 use rocket::response::content;
+use rocket_contrib::json::Json;
+use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::Template;
-use std::collections::HashMap;
 use std::fs::OpenOptions;
-use std::io::prelude::*;
-use url::form_urlencoded::{byte_serialize, parse};
+use std::io::Write;
+use url::form_urlencoded::{ parse};
+
+///
+///
 /// Resume a video after a pause
 ///
 /// # Example
@@ -31,28 +47,25 @@ use url::form_urlencoded::{byte_serialize, parse};
 /// ```
 #[get("/resume")]
 fn request_resume() -> content::Json<String> {
-    let resume_response = mpv::mpv::event_resume();
-    content::Json(resume_response.unwrap())
+    let resume_response = mpv::mpv::event_resume().unwrap();
+    println!("{}", resume_response);
+    content::Json(resume_response)
 }
 
-#[derive(Serialize, Deserialize)]
-struct Response {
-    data: String,
-    error: String,
-    request_id: i32,
-}
 
-#[derive(Serialize, Deserialize)]
-struct VolumResponse {
-    data: String,
-    error: String,
-    request_id: i32,
+#[post("/volume", data="<request_content>")]
+fn request_change_volume(request_content: Json<VolumeControl>) -> content::Json<String> {
+
+    let volume_response = mpv::mpv::event_volume_change(request_content).unwrap();
+    println!("{}", volume_response);
+    content::Json(volume_response)
 }
 
 #[get("/volume")]
 fn request_volume() -> content::Json<String> {
-    let fooo = mpv::mpv::event_volume();
-    content::Json(fooo.unwrap())
+    let volume_response = mpv::mpv::event_volume().unwrap();
+    println!("{}", volume_response);
+    content::Json(volume_response)
 }
 
 /// Pause a video after
@@ -63,8 +76,9 @@ fn request_volume() -> content::Json<String> {
 /// ```
 #[get("/pause")]
 fn request_pause() -> content::Json<String> {
-    let pause_response = mpv::mpv::event_pause();
-    content::Json(pause_response.unwrap())
+    let pause_response = mpv::mpv::event_pause().unwrap();
+    println!("{}",pause_response );
+    content::Json(pause_response)
 }
 
 /// Load a playlist on the host system
@@ -78,8 +92,9 @@ fn request_pause() -> content::Json<String> {
 ///
 #[get("/playlist")]
 fn request_playlist() -> content::Json<String> {
-    let playlist_response = mpv::mpv::event_play_from_list(String::from("/tmp/playlist"));
-    content::Json(playlist_response.unwrap())
+    let playlist_response = mpv::mpv::event_play_from_list(String::from("/tmp/playlist")).unwrap();
+    println!("{}", playlist_response);
+    content::Json(playlist_response)
 }
 
 /// Stopt the actual video and starting a new video based on url/path
@@ -104,28 +119,33 @@ fn request_playlist() -> content::Json<String> {
 /// ```
 #[get("/play?<target>")]
 fn request_load(target: String) -> content::Json<String> {
-    let load_response = mpv::mpv::event_load(target);
-    content::Json(load_response.unwrap())
+    let load_response = mpv::mpv::event_load(target).unwrap();
+    println!("{}", load_response);
+    content::Json(load_response)
 }
 
 ///
 /// play a video from url from form
 ///
 #[post("/", data = "<url>")]
-fn request_play_from_url(url: Form<UrlForm<'_>>) -> content::Json<String> {
+fn request_play_from_url(url: Form<UrlForm>) -> content::Json<String> {
     let target = url.target.to_string();
+    println!("{}", target);
     // decode url
     let decoded: String = parse(target.as_bytes())
         .map(|(key, val)| [key, val].concat())
         .collect();
+    println!("{}", decoded);
 
-    let play_response = mpv::mpv::event_load(decoded);
-    content::Json(play_response.unwrap())
+    let play_response = mpv::mpv::event_load(target).unwrap();
+
+    println!("{}", play_response);
+    content::Json(play_response)
 }
 
 
 #[post("/add", data = "<request_content>")]
-fn event_add_to_playlist(request_content: Form<UrlForm<'_>>)-> content::Json<String> {
+fn event_add_to_playlist(request_content: Json<PlaylistControl>)-> content::Json<String> {
 
     let mut file = OpenOptions::new()
         .write(true)
@@ -133,86 +153,65 @@ fn event_add_to_playlist(request_content: Form<UrlForm<'_>>)-> content::Json<Str
         .open("/tmp/playlist")
         .unwrap();
 
-    if let Err(e) = writeln!(file, "{}", request_content.target) {
+    let mut message : String= "Added to playlist".to_string();
+    if let Err(e) = writeln!(file, "{}", request_content.value) {
+        message = format!("Couldn't write to file: {}", e);
         eprintln!("Couldn't write to file: {}", e);
     }
 
-    content::Json(String::from("{
-        'data': 'ok',
-        'error': 'success',
-        'request_id': 0
-    }"))
+    let test = json!({
+        "data": "ok",
+        "error": message,
+        "request_id": 0
+    });
+    content::Json(test.to_string())
 
 }
+
+ #[derive(Serialize, Deserialize)]
+    struct TemplateContext {
+        settings : SettingContext
+    }
 
 #[get("/")]
 fn hello() -> Template {
-    let mut streaming_links = HashMap::new();
-
-    let ard: String =
-        byte_serialize("https://mcdn.daserste.de/daserste/de/master.m3u8?arn=1".as_bytes())
-            .collect();
-    let zdf: String = byte_serialize(
-        "https://zdf-hls-01.akamaized.net/hls/live/2002460/de/high/master.m3u8".as_bytes(),
-    )
-    .collect();
-    let arte: String = byte_serialize(
-        "https://artelive-lh.akamaihd.net/i/artelive_de@393591/index_1_av-p.m3u8".as_bytes(),
-    )
-    .collect();
-    let kika: String = byte_serialize(
-        "https://kikageohls-i.akamaihd.net/hls/live/1006268/livetvkika_de/master.m3u8".as_bytes(),
-    )
-    .collect();
-    let drei_sat: String = byte_serialize(
-        "https://zdfhls18-i.akamaihd.net/hls/live/744751/dach/high/master.m3u8".as_bytes(),
-    )
-    .collect();
-    let phoenix: String = byte_serialize(
-        "https://zdfhls19-i.akamaihd.net/hls/live/744752/de/high/master.m3u8".as_bytes(),
-    )
-    .collect();
-
-    streaming_links.insert("ARD".to_string(), ard.to_string());
-    streaming_links.insert("ZDF".to_string(), zdf.to_string());
-    streaming_links.insert("Arte".to_string(), arte.to_string());
-    streaming_links.insert("kika".to_string(), kika.to_string());
-    streaming_links.insert("3Sat".to_string(), drei_sat.to_string());
-    streaming_links.insert("phoenix".to_string(), phoenix.to_string());
-
-    let context = TemplateContext {
-        items: streaming_links,
+    let links_context = settings::init();
+    let template_context = TemplateContext {
+        settings : links_context
     };
-
-    Template::render("index", &context)
+  
+    Template::render("index", &template_context)
 }
 
-fn main() {
-    mpv::mpv::init();
+fn rocket() -> rocket::Rocket {
     rocket::ignite()
         .attach(Template::fairing())
+        .mount("/public", StaticFiles::from("templates/public"))
         .mount(
             "/",
             routes![
-                hello,
-                request_load,
-                request_pause,
-                request_resume,
-                request_volume,
-                request_play_from_url,
-                request_playlist
+            hello,
+            request_load,
+            request_change_volume,
+            request_pause,
+            request_resume,
+            event_add_to_playlist,
+            request_volume,
+            request_play_from_url,
+            request_playlist
             ],
-        )
-        .launch();
+            )
 }
 
-#[derive(FromForm)]
-struct UrlForm<'r> {
-    target: &'r RawStr,
+fn main() {
+    let args: Vec<String> = env::args().collect();
+    let setting_file = &args[1];
+
+    env::set_var("SETTINGS", setting_file);
+
+
+    mpv::mpv::init();
+    rocket().launch();
 }
 
 
-#[derive(Serialize)]
-struct TemplateContext {
-    items: HashMap<String, String>,
-}

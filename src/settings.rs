@@ -1,70 +1,81 @@
-use config::{Config, ConfigError, Environment, File};
+use std::collections::HashMap;
+use std::error::Error;
+use std::fs::File;
+use url::form_urlencoded::{ byte_serialize};
+use std::io::BufReader;
+use std::path::Path;
 use std::env;
-
-#[derive(Debug, Deserialize)]
-struct Database {
-    url: String,
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Childs {
+    pub    id: i16 ,
+    pub  name: String,
+    pub   url: String,
 }
 
-#[derive(Debug, Deserialize)]
-struct Sparkpost {
-    key: String,
-    token: String,
-    url: String,
-    version: u8,
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Streams {
+    pub name: String,
+    pub  url: String,
 }
 
-#[derive(Debug, Deserialize)]
-struct Twitter {
-    consumer_token: String,
-    consumer_secret: String,
-}
-
-#[derive(Debug, Deserialize)]
-struct Braintree {
-    merchant_id: String,
-    public_key: String,
-    private_key: String,
-}
-
-#[derive(Debug, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Settings {
-    debug: bool,
-    database: Database,
-    sparkpost: Sparkpost,
-    twitter: Twitter,
-    braintree: Braintree,
+    pub  debug: bool,
+    pub  socket : String,
+    pub  childs :Vec<Childs>,
+    pub  stream_urls: Vec<Streams>
+
+}
+#[derive(Serialize, Deserialize)]
+pub struct SettingContext {
+    pub  socket : String,
+    pub  clients : HashMap<String, String>,
+    pub  streams: HashMap<String, String>
 }
 
-impl Settings {
-    pub fn new() -> Result<Self, ConfigError> {
-        let mut s = Config::new();
 
-        // Start off by merging in the "default" configuration file
-        s.merge(File::with_name("config/default"))?;
+pub fn init() -> SettingContext {
 
-        // Add in the current environment file
-        // Default to 'development' env
-        // Note that this file is _optional_
-        let env = env::var("RUN_MODE").unwrap_or("development".into());
-        s.merge(File::with_name(&format!("config/{}", env)).required(false))?;
+    let setting_file = env::var("SETTINGS");
+    let res = read_settings_file(setting_file.unwrap());
 
-        // Add in a local configuration file
-        // This file shouldn't be checked in to git
-        s.merge(File::with_name("config/local").required(false))?;
+    let mut streaming_links = HashMap::new();
+    let mut clients = HashMap::new();
+    let mut socket = String::new();
+    if res.is_ok() {
+        let s: Settings = res.unwrap();
+        socket = s.socket;
+        for i in &s.childs {
+            clients.insert(i.id.to_string(), i.name.to_string());
+        }
 
-        // Add in settings from the environment (with a prefix of APP)
-        // Eg.. `APP_DEBUG=1 ./target/app` would set the `debug` key
-        s.merge(Environment::with_prefix("app"))?;
-
-        // You may also programmatically change settings
-        s.set("database.url", "postgres://")?;
-
-        // Now that we're done, let's access our configuration
-        println!("debug: {:?}", s.get_bool("debug"));
-        println!("database: {:?}", s.get::<String>("database.url"));
-
-        // You can deserialize (and thus freeze) the entire configuration as
-        s.try_into()
+        for i in &s.stream_urls {
+            let urlencoded: String = byte_serialize(i.url.as_bytes()).collect();
+            streaming_links.insert(i.name.to_string(), urlencoded);
+        }
+    } else {
+        println!("{:?}", res);
     }
+
+    let links_context = SettingContext {
+        socket : socket,
+        clients : clients,
+        streams: streaming_links
+    };
+
+    return links_context
 }
+
+fn read_settings_file<P: AsRef<Path>>(path: P) -> Result<Settings, Box<dyn Error>> {
+    // Open the file in read-only mode with buffer.
+    let file = File::open(path)?;
+    let reader = BufReader::new(file);
+
+    // Read the JSON contents of the file as an instance of `User`.
+    let u = serde_json::from_reader(reader)?;
+
+    // Return the `User`.
+    Ok(u)
+}
+
+

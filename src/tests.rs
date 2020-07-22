@@ -1,9 +1,46 @@
+
+use super::rocket;
 use rocket::local::Client;
+use rocket::http::*;
+use std::process::Command;
 
 #[test]
-fn hello_world() {
-    let rocket = rocket::ignite().mount("/", routes![super::hello]);
-    let client = Client::new(rocket).unwrap();
-    let mut response = client.get("/").dispatch();
-    assert_eq!(response.body_string(), Some("Hello, world!".into()));
+fn request_volume() {
+    init();
+    let client = Client::new(rocket()).expect("valid rocket instance");
+    let mut response = client.get("/volume").dispatch();
+    assert_eq!(response.status(), Status::Ok);
+    assert_eq!(response.body_string(), Some("{\"request_id\":0,\"error\":\"success\"}\n".into()));
 }
+
+
+#[test]
+fn request_resume() {
+    init();
+    let client = Client::new(rocket()).expect("valid rocket instance");
+    let mut response = client.get("/resume").dispatch();
+    assert_eq!(response.status(), Status::Ok);
+    assert_eq!(response.body_string(), Some("{\"request_id\":0,\"error\":\"success\"}\n".into()));
+}
+
+#[test]
+fn request_pause() {
+    init();
+    let client = Client::new(rocket()).expect("valid rocket instance");
+    let mut response = client.get("/pause").dispatch();
+    assert_eq!(response.status(), Status::Ok);
+    assert_eq!(response.body_string(), Some("{\"request_id\":0,\"error\":\"success\"}\n".into()));
+}
+
+fn init() {
+        let mut mpv = Command::new("mpv");
+        mpv.arg("--idle=yes")
+            .arg("--input-ipc-server=/tmp/mpvsocket")
+            .arg("--fs=yes")
+            .spawn()
+            .expect("OK");
+    }
+
+
+
+

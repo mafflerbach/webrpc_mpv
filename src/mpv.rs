@@ -1,59 +1,40 @@
-pub mod mpv {
-    extern crate execute;
 
+pub mod mpv {
+
+    extern crate execute;
+use crate::api_structs::VolumeControl;
     use std::io::prelude::*;
     use std::os::unix::net::UnixStream;
+    use rocket_contrib::json::Json;
     use std::process::Command;
-    /// spawn a mpv process with ipc socket server and loads a playlist
-    ///
-    /// # Example
-    /// ```sh
-    /// mpv --playlist=/tmp/playlist --input-ipc-server=/tmp/mpvsocket
-    /// ```
+    use crate::settings;
+
     pub fn event_play_from_list(target: String) -> std::io::Result<String> {
         let tjson = json!({ "command": ["loadlist", format!("{}",target)] });
         write_to_socket(tjson.to_string() + "\n")
     }
 
-    /// starts a player with a target to play
-    /// generates
-    /// ```sh
-    /// mpv <target> --input-ipc-server=/tmp/mpvsocket
-    /// ```
     pub fn event_play(target: String) -> &'static str {
         let mut mpv = Command::new("mpv");
+        let settings = settings::init();
+        let ipc_param = format!("--input-ipc-server={}", settings.socket);
         mpv.arg(target)
-            .arg("--input-ipc-server=/tmp/mpvsocket")
+            .arg(ipc_param)
             .spawn()
             .expect("OK");
         "Hello, world!"
     }
 
-    /// resume a running instance
-    /// generates
-    /// ```sh
-    /// echo "{ \"command\": [\"set_property\", \"pause\", false] }}" | socat - /tmp/mpvsocket
-    /// ```
 
     pub fn event_resume() -> std::io::Result<String> {
         let tjson = json!({ "command": ["set_property", "pause", false] });
         write_to_socket(tjson.to_string() + "\n")
     }
 
-    /// Stops the current video and starts with the new source
-    /// generates
-    /// ```sh
-    /// echo "{ \"command\": [\"loadfile\", \"<target>\"] }}" | socat - /tmp/mpvsocket
-    /// ```
     pub fn event_load(target: String) -> std::io::Result<String> {
         let tjson = json!({ "command": ["loadfile", format!("{}",target)] });
         write_to_socket(tjson.to_string() + "\n")
     }
-    /// Pause a video
-    /// generates
-    /// ```sh
-    /// echo "{ \"command\": [\"set_property\", \"pause\", true] }}" | socat - /tmp/mpvsocket
-    /// ```
     pub fn event_pause() -> std::io::Result<String> {
         let tjson = json!({ "command": ["set_property", "pause", true] });
         write_to_socket(tjson.to_string() + "\n")
@@ -64,25 +45,29 @@ pub mod mpv {
         write_to_socket(tjson.to_string() + "\n")
     }
 
-    /// Init mpv in idle mode
+    pub fn event_volume_change(volume_control: Json<VolumeControl>) -> std::io::Result<String> {
+        let tjson = json!({ "command": ["set_property", "volume", volume_control.value] });
+        write_to_socket(tjson.to_string() + "\n")
+    }
+
     pub fn init() {
+
+        let settings = settings::init();
+        
         let mut mpv = Command::new("mpv");
+        let ipc_param = format!("--input-ipc-server={}", settings.socket);
+
+        println!("{}", ipc_param);
         mpv.arg("--idle=yes")
-            .arg("--input-ipc-server=/tmp/mpvsocket")
+            .arg(ipc_param)
             .arg("--fs=yes")
             .spawn()
-            .expect("OK");
+        .expect("OK");
     }
 
-    #[derive(Serialize, Deserialize)]
-    struct VolumResponse {
-        data: String,
-        error: String,
-        request_id: i32,
-    }
-
-    fn write_to_socket(content: String) -> std::io::Result<String> {
-        let mut stream = match UnixStream::connect("/tmp/mpvsocket") {
+    pub fn write_to_socket(content: String) -> std::io::Result<String> {
+        let settings = settings::init();
+        let mut stream = match UnixStream::connect(settings.socket) {
             Err(_) => panic!("could not connect to socket"),
             Ok(stream) => stream,
         };
@@ -94,4 +79,5 @@ pub mod mpv {
 
         Ok(response)
     }
+
 }

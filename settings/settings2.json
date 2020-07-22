@@ -1,6 +1,6 @@
 {
     "debug": true,
-    "socket":"/tmp/mpvsocket2",
+    "socket":"/tmp/mpvsocket1",
     "childs": [
     {
            "id":1,

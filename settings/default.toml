@@ -1,14 +1,1 @@
 
-[database]
-url = "postgres://postgres@localhost"
-
-[sparkpost]
-key = "sparkpost-dev-key"
-token = "sparkpost-dev-token"
-url = "https://api.sparkpost.com"
-version = 1
-
-[twitter]
-consumer_token = "twitter-dev-consumer-key"
-consumer_secret = "twitter-dev-consumer-secret"
-
