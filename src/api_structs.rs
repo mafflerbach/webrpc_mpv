@@ -32,9 +32,9 @@ struct VolumResponse {
     request_id: i32,
 }
 
-#[derive(FromForm)]
+#[derive(Serialize, Deserialize)]
 pub struct UrlForm {
    pub  target: String,
-   pub  action: String,
+   pub  client: String
 }
 

@@ -5,13 +5,29 @@ $(function() {
     $("#startVideo").submit(function(e){
         // post to /
         e.preventDefault(e);
+        selectedClient = $( "#clientSelection" ).val();
+        valueElement = $(this).find("input[name='target']");
+        value = $(this).find("input[name='target']").val();
+        $.ajax({
+            type: "POST",
+            url: "/",
+            contenType: "application/json",
+            data: JSON.stringify({ "target":  value, "client": selectedClient}),
+            success: function (data) {
+                console.log(data);
+                if (data.success == "success") {
+                    valueElement.val("");
+                }
+            },
+            dataType: 'json'
+        });
+
     });
     $("#addPlaylist").submit(function(e){
         //  post to /add
 
+        e.preventDefault(e);
         value = $(this).find("input[name='target']").val()
-        console.log(value);
-        console.log($(this).find("input[name='target']"));
         $.ajax({
             type: "POST",
             url: "/add",
@@ -22,7 +38,6 @@ $(function() {
             },
             dataType: 'json'
         });
-        e.preventDefault(e);
     });
 
     $("#range input").change(function(){
@@ -68,8 +83,6 @@ $(function() {
     })
 
 });
-
-
 
 function get_volume() {
     $.ajax({

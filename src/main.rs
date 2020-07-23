@@ -21,6 +21,10 @@ mod api_structs;
 
 
 
+use std::time::Duration;
+use reqwest::Client;
+use reqwest::ClientBuilder;
+extern crate reqwest;
 use std::vec::Vec;
 use std::env;
 
@@ -128,50 +132,87 @@ fn request_load(target: String) -> content::Json<String> {
 /// play a video from url from form
 ///
 #[post("/", data = "<url>")]
-fn request_play_from_url(url: Form<UrlForm>) -> content::Json<String> {
+fn request_play_from_url(url: Json<UrlForm>) -> content::Json<String> {
     let target = url.target.to_string();
-    println!("{}", target);
-    // decode url
+    let client = url.client.clone();
+
     let decoded: String = parse(target.as_bytes())
         .map(|(key, val)| [key, val].concat())
         .collect();
-    println!("{}", decoded);
+    let mut play_response;
 
-    let play_response = mpv::mpv::event_load(target).unwrap();
+    if client == "null" {
+        play_response = mpv::mpv::event_load(target.clone()).unwrap();
+    } else {
+        let settings = settings::config();
+print!("1");
+        let childs =  settings.unwrap().childs;
+print!("2");
+        for client_setting in childs {
+print!("3");
+            if client_setting.id == client {
+print!("4");
+                let client_url = client_setting.url;
+            println!("CLient url {:?}", client_url);
+                send_request(client_url, target.clone()).unwrap();
+            }
 
-    println!("{}", play_response);
+        }
+        play_response = mpv::mpv::event_load(target).unwrap();
+    }
+
+    // decode url
+
     content::Json(play_response)
+}
+
+fn send_request(target : String, video_url : String) -> Result<String, Box<dyn std::error::Error>>{
+    //TODO change to post, add fields target for video url and id = 0 for local 
+
+    let params = [("target", video_url), ("id", "0".to_string())];
+    let client = reqwest::Client::new();
+    let res = client.post(&target.clone().to_string())
+        .form(&params)
+        .send()?;
+
+    println!("{:?}", res);
+    if res.status().is_success() {
+        Ok(format!("response"))
+    } else {
+        Ok(format!("response"))
+    }
+
 }
 
 
 #[post("/add", data = "<request_content>")]
-fn event_add_to_playlist(request_content: Json<PlaylistControl>)-> content::Json<String> {
+    fn event_add_to_playlist(request_content: Json<PlaylistControl>)-> content::Json<String> {
 
-    let mut file = OpenOptions::new()
-        .write(true)
-        .append(true)
-        .open("/tmp/playlist")
-        .unwrap();
+        let mut file = OpenOptions::new()
+            .write(true)
+            .append(true)
+            .open("/tmp/playlist")
+            .unwrap();
 
-    let mut message : String= "Added to playlist".to_string();
-    if let Err(e) = writeln!(file, "{}", request_content.value) {
-        message = format!("Couldn't write to file: {}", e);
-        eprintln!("Couldn't write to file: {}", e);
+        let mut message : String= "Added to playlist".to_string();
+        if let Err(e) = writeln!(file, "{}", request_content.value) {
+            message = format!("Couldn't write to file: {}", e);
+            eprintln!("Couldn't write to file: {}", e);
+        }
+
+        let test = json!({
+            "data": "ok",
+            "error": message,
+            "request_id": 0
+        });
+        content::Json(test.to_string())
+
     }
 
-    let test = json!({
-        "data": "ok",
-        "error": message,
-        "request_id": 0
-    });
-    content::Json(test.to_string())
-
+#[derive(Serialize, Deserialize)]
+struct TemplateContext {
+    settings : SettingContext
 }
-
- #[derive(Serialize, Deserialize)]
-    struct TemplateContext {
-        settings : SettingContext
-    }
 
 #[get("/")]
 fn hello() -> Template {
@@ -179,7 +220,7 @@ fn hello() -> Template {
     let template_context = TemplateContext {
         settings : links_context
     };
-  
+
     Template::render("index", &template_context)
 }
 

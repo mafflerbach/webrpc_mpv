@@ -21,6 +21,8 @@ serde = "1.0"
 url = "2.1.1"
 config = "0.9"
 tera = "1"
+reqwest = "0.9.3"
+
 
 [dependencies.rocket_contrib]
 version = "0.4.5"

@@ -7,7 +7,7 @@ use std::path::Path;
 use std::env;
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Childs {
-    pub    id: i16 ,
+    pub    id: String ,
     pub  name: String,
     pub   url: String,
 }
@@ -33,6 +33,13 @@ pub struct SettingContext {
     pub  streams: HashMap<String, String>
 }
 
+pub fn config() -> Result<Settings, Box<dyn Error>>  {
+
+    let setting_file = env::var("SETTINGS");
+    read_settings_file(setting_file.unwrap())
+
+
+}
 
 pub fn init() -> SettingContext {
 
@@ -71,8 +78,7 @@ fn read_settings_file<P: AsRef<Path>>(path: P) -> Result<Settings, Box<dyn Error
     let file = File::open(path)?;
     let reader = BufReader::new(file);
 
-    // Read the JSON contents of the file as an instance of `User`.
-    let u = serde_json::from_reader(reader)?;
+    let u :Settings  = serde_json::from_reader(reader)?;
 
     // Return the `User`.
     Ok(u)

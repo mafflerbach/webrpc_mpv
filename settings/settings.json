@@ -3,14 +3,14 @@
     "socket":"/tmp/mpvsocket2",
     "childs": [
     {
-           "id":1,
+           "id":"1",
            "name":"client 1",
-           "url":"localhost:9999"
+           "url":"http://localhost:9999"
        },{
        
-           "id":2,
+           "id":"2",
            "name":"client 2",
-           "url":"localhost:9990"
+           "url":"http://localhost:9990"
        }
     ],
    "stream_urls": [

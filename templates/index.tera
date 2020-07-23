@@ -14,8 +14,8 @@
         <script src="public/script.js"></script>
     </head>
     <body id="body">
-        <select class="form-select" aria-label="Default select example">
-            <option selected>Open this select menu</option>
+        <select class="form-select" id="clientSelection" aria-label="Default select example">
+            <option selected value="null">Open this select menu</option>
             {% for key, value in settings.clients %}
             <option value="{{key}}"><a href="play?target={{ value  }}">{{ value }}</a></option>
             {% endfor %}
