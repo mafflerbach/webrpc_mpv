@@ -12,7 +12,7 @@ $(function() {
             type: "POST",
             url: "/",
             contenType: "application/json",
-            data: JSON.stringify({ "target":  value, "client": selectedClient}),
+            data: JSON.stringify({ "target":  value, "client": selectedclient}),
             success: function (data) {
                 console.log(data);
                 if (data.success == "success") {
@@ -27,12 +27,14 @@ $(function() {
         //  post to /add
 
         e.preventDefault(e);
+        
+        selectedClient = $( "#clientSelection" ).val();
         value = $(this).find("input[name='target']").val()
         $.ajax({
             type: "POST",
             url: "/add",
             contenType: "application/json",
-            data: JSON.stringify({ "value":  value}),
+            data: JSON.stringify({ "value":  value, "client": selectedclient}),
             success: function () {
                 return '{"fooo":"baaa"}'
             },

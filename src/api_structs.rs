@@ -9,12 +9,14 @@ pub struct TemplateContext {
 
 #[derive(Serialize, Deserialize)]
 pub struct PlaylistControl {
-pub    value : String
+    pub  client: String,
+    pub    value : String
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct VolumeControl {
-pub    value : String
+    pub  client: String,
+    pub    value : String
 }
 
 #[derive(Serialize, Deserialize)]
@@ -34,7 +36,7 @@ struct VolumResponse {
 
 #[derive(Serialize, Deserialize)]
 pub struct UrlForm {
-   pub  target: String,
-   pub  client: String
+    pub  target: String,
+    pub  client: String
 }
 

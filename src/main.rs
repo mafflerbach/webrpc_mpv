@@ -140,33 +140,27 @@ fn request_play_from_url(url: Json<UrlForm>) -> content::Json<String> {
         .map(|(key, val)| [key, val].concat())
         .collect();
     let mut play_response = json!({
-            "data": "ok",
-            "error":"NULL",
-            "request_id": 0
-        }).to_string();
-;
+        "data": "ok",
+        "error":"NULL",
+        "request_id": 0
+    }).to_string();
+    ;
 
-        println!("CLIENT ID: {}", client);
+    println!("CLIENT ID: {}", client);
 
 
     if client == 0.to_string() {
         println!("PLAY ON CLIENT");
-
         play_response = mpv::mpv::event_load(target.clone()).unwrap();
     } else {
         println!("PLAY ON REMOTE");
-        let settings = settings::config();
-        let childs =  settings.unwrap().childs;
-        for client_setting in childs {
-            if client_setting.id == client {
-                let client_url = client_setting.url;
-                let res = send_request(client_url, target.clone());
-                play_response = res.unwrap();
-                break;
-            }
+        let client_url =  get_client(client);
+        let mut map = HashMap::new();
+        map.insert("target".to_string(), target.clone());
+        map.insert("client".to_string(), 0.to_string());
 
-        }
-        //play_response = mpv::mpv::event_load(target).unwrap();
+        let res = send_request(client_url, map);
+        play_response = res.unwrap();
     }
 
     // decode url
@@ -174,13 +168,21 @@ fn request_play_from_url(url: Json<UrlForm>) -> content::Json<String> {
     content::Json(play_response)
 }
 
-fn send_request(target : String, video_url : String) -> Result<String, reqwest::Error>{
+fn get_client(client : String) -> String {
+    let settings = settings::config();
+    let childs =  settings.unwrap().childs;
+    for client_setting in childs {
+        if client_setting.id == client {
+            return  client_setting.url;
+        }
+
+    }
+    return "".to_string();
+}
+
+
+fn send_request(target : String, map: HashMap<String, String>) -> Result<String, reqwest::Error>{
     //TODO change to post, add fields target for video url and id = 0 for local 
-
-
-    let mut map = HashMap::new();
-    map.insert("target", video_url);
-    map.insert("client", "0".to_string());
 
     let client = reqwest::Client::new();
     client.post(&target.clone().to_string())
@@ -190,28 +192,43 @@ fn send_request(target : String, video_url : String) -> Result<String, reqwest::
 
 
 #[post("/add", data = "<request_content>")]
-    fn event_add_to_playlist(request_content: Json<PlaylistControl>)-> content::Json<String> {
+fn event_add_to_playlist(request_content: Json<PlaylistControl>)-> content::Json<String> {
+    let client = request_content.client.clone();
+    let mut message: String = "".to_string();
 
+
+    if client == 0.to_string() {
         let mut file = OpenOptions::new()
             .write(true)
             .append(true)
             .open("/tmp/playlist")
             .unwrap();
 
-        let mut message : String= "Added to playlist".to_string();
+        message = "Added to playlist".to_string();
         if let Err(e) = writeln!(file, "{}", request_content.value) {
             message = format!("Couldn't write to file: {}", e);
             eprintln!("Couldn't write to file: {}", e);
         }
 
-        let test = json!({
-            "data": "ok",
-            "error": message,
-            "request_id": 0
-        });
-        content::Json(test.to_string())
+    } else {
+        println!("PLAY ON REMOTE");
+        let client_url =  get_client(client);
+        let mut map = HashMap::new();
+        map.insert("value".to_string(), request_content.value.clone());
+        map.insert("client".to_string(), 0.to_string());
 
+        message = format!("FORWARDING");
+        let res = send_request(client_url, map);
     }
+
+    let test = json!({
+        "data": "ok",
+        "error": message,
+        "request_id": 0
+    });
+    content::Json(test.to_string())
+
+}
 
 #[derive(Serialize, Deserialize)]
 struct TemplateContext {
