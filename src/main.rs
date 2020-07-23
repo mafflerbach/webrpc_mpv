@@ -20,10 +20,10 @@ mod settings;
 mod api_structs;
 
 
-
-use std::time::Duration;
-use reqwest::Client;
-use reqwest::ClientBuilder;
+use std::collections::HashMap;
+//use std::time::Duration;
+//use reqwest::Client;
+//use reqwest::ClientBuilder;
 extern crate reqwest;
 use std::vec::Vec;
 use std::env;
@@ -139,26 +139,34 @@ fn request_play_from_url(url: Json<UrlForm>) -> content::Json<String> {
     let decoded: String = parse(target.as_bytes())
         .map(|(key, val)| [key, val].concat())
         .collect();
-    let mut play_response;
+    let mut play_response = json!({
+            "data": "ok",
+            "error":"NULL",
+            "request_id": 0
+        }).to_string();
+;
 
-    if client == "null" {
+        println!("CLIENT ID: {}", client);
+
+
+    if client == 0.to_string() {
+        println!("PLAY ON CLIENT");
+
         play_response = mpv::mpv::event_load(target.clone()).unwrap();
     } else {
+        println!("PLAY ON REMOTE");
         let settings = settings::config();
-print!("1");
         let childs =  settings.unwrap().childs;
-print!("2");
         for client_setting in childs {
-print!("3");
             if client_setting.id == client {
-print!("4");
                 let client_url = client_setting.url;
-            println!("CLient url {:?}", client_url);
-                send_request(client_url, target.clone()).unwrap();
+                let res = send_request(client_url, target.clone());
+                play_response = res.unwrap();
+                break;
             }
 
         }
-        play_response = mpv::mpv::event_load(target).unwrap();
+        //play_response = mpv::mpv::event_load(target).unwrap();
     }
 
     // decode url
@@ -166,22 +174,18 @@ print!("4");
     content::Json(play_response)
 }
 
-fn send_request(target : String, video_url : String) -> Result<String, Box<dyn std::error::Error>>{
+fn send_request(target : String, video_url : String) -> Result<String, reqwest::Error>{
     //TODO change to post, add fields target for video url and id = 0 for local 
 
-    let params = [("target", video_url), ("id", "0".to_string())];
+
+    let mut map = HashMap::new();
+    map.insert("target", video_url);
+    map.insert("client", "0".to_string());
+
     let client = reqwest::Client::new();
-    let res = client.post(&target.clone().to_string())
-        .form(&params)
-        .send()?;
-
-    println!("{:?}", res);
-    if res.status().is_success() {
-        Ok(format!("response"))
-    } else {
-        Ok(format!("response"))
-    }
-
+    client.post(&target.clone().to_string())
+        .json(&map)
+        .send()?.text()
 }
 
 
