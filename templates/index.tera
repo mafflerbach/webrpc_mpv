@@ -4,9 +4,9 @@
         <meta charset="utf-8" />
         <title>Tera Demo</title>
 
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="./public/style.css"  />
         <link rel="stylesheet" href="./public/bootstrap.css"  />
 
@@ -30,10 +30,12 @@
             <li class="nav-item" role="presentation">
                 <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Stream</a>
             </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="locavid-tab" data-toggle="tab" href="#localvid" role="tab" aria-controls="localvid" aria-selected="false">Stream</a>
+            </li>
         </ul>
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-
                 <form action="/" method="post" accept-charset="utf-8" id="startVideo" >
                     URL:<input type="text" name="target" class="form-control"/>
                     <input type="hidden" name="action" value="video"/>
@@ -49,6 +51,14 @@
 
             </div>
             <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                <ul class="list-group">
+                    {% for key, value in settings.streams %}
+                    <li><a href="/play?target={{value}}">{{key}}</a></li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+            <div class="tab-pane fade" id="localvid" role="tabpanel" aria-labelledby="localvid-tab">
                 <ul class="list-group">
                     {% for key, value in settings.streams %}
                     <li><a href="/play?target={{value}}">{{key}}</a></li>

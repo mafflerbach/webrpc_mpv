@@ -15,19 +15,25 @@ extern crate serde;
 extern crate serde_json;
 extern crate execute;
 
+#[macro_use] 
+extern crate lazy_static;
+
+use lazy_static::lazy_static;
+use regex::Regex;
 mod mpv;
 mod settings;
 mod api_structs;
 
 
+use std::collections::HashSet;
 use std::collections::HashMap;
 //use std::time::Duration;
 //use reqwest::Client;
 //use reqwest::ClientBuilder;
+use glob::glob;
 extern crate reqwest;
 use std::vec::Vec;
 use std::env;
-
 use crate::api_structs::UrlForm;
 use crate::api_structs::PlaylistControl;
 use crate::api_structs::VolumeControl;
@@ -41,6 +47,8 @@ use std::fs::OpenOptions;
 use std::io::Write;
 use url::form_urlencoded::{ parse};
 
+use std::fs::File;
+use matroska::Matroska;
 ///
 ///
 /// Resume a video after a pause
@@ -148,10 +156,11 @@ fn request_play_from_url(url: Json<UrlForm>) -> content::Json<String> {
 
     println!("CLIENT ID: {}", client);
 
-
-    if client == 0.to_string() {
+    if client == "null".to_string() {
         println!("PLAY ON CLIENT");
-        play_response = mpv::mpv::event_load(target.clone()).unwrap();
+
+    println!("VIDEO URL: {}", decoded);
+        play_response = mpv::mpv::event_load(target).unwrap();
     } else {
         println!("PLAY ON REMOTE");
         let client_url =  get_client(client);
@@ -162,8 +171,6 @@ fn request_play_from_url(url: Json<UrlForm>) -> content::Json<String> {
         let res = send_request(client_url, map);
         play_response = res.unwrap();
     }
-
-    // decode url
 
     content::Json(play_response)
 }
@@ -212,13 +219,14 @@ fn event_add_to_playlist(request_content: Json<PlaylistControl>)-> content::Json
 
     } else {
         println!("PLAY ON REMOTE");
-        let client_url =  get_client(client);
+        let  client_url =  get_client(client);
+        println!("{}/add", client_url);
         let mut map = HashMap::new();
         map.insert("value".to_string(), request_content.value.clone());
         map.insert("client".to_string(), 0.to_string());
 
         message = format!("FORWARDING");
-        let res = send_request(client_url, map);
+        let res = send_request(format!("{}/add", client_url), map);
     }
 
     let test = json!({
@@ -241,9 +249,32 @@ fn hello() -> Template {
     let template_context = TemplateContext {
         settings : links_context
     };
+//scan_dir().is_ok();
 
-    Template::render("index", &template_context)
+ scan_dir();
+
+        Template::render("index", &template_context)
 }
+
+fn scan_dir () {
+    for entry in glob("/home/maren/Downloads/**/*.mkv").expect("Failed to read glob pattern") {
+        match entry {
+            Ok(path) => {
+
+                let f = File::open(path.clone()).unwrap();
+                let matroska = Matroska::open(f).unwrap();
+                println!("file : {:?}", path.display());
+                println!("title : {:?}", matroska.info);
+parsing_season_and_episode(&path.clone().into_os_string().into_string().unwrap());
+            },
+            Err(e) => println!("{:?}", e),
+        }
+    }
+
+}
+
+
+
 
 fn rocket() -> rocket::Rocket {
     rocket::ignite()
@@ -263,6 +294,21 @@ fn rocket() -> rocket::Rocket {
             request_playlist
             ],
             )
+}
+
+fn parsing_season_and_episode(text: &str) -> bool {
+
+    lazy_static! {
+        static ref RE: Regex = Regex::new(r"S(\d{1,2})E(\d{1,2})").unwrap();
+    }
+    
+let foo : HashSet<&str> =     RE.find_iter(text).map(|mat| mat.as_str()).collect();
+
+
+
+    println!("{:?}", foo);
+
+    RE.is_match(text)
 }
 
 fn main() {

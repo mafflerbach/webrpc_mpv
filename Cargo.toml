@@ -22,7 +22,11 @@ url = "2.1.1"
 config = "0.9"
 tera = "1"
 reqwest = "0.9.3"
-
+glob = "0.3.0"
+rusqlite = "0.23.1"
+matroska = "0.4"
+lazy_static = "1.4.0"
+regex = "1"
 
 [dependencies.rocket_contrib]
 version = "0.4.5"
