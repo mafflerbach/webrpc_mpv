@@ -15,13 +15,14 @@ extern crate serde;
 extern crate serde_json;
 extern crate execute;
 
-#[macro_use] 
 extern crate lazy_static;
 
 use lazy_static::lazy_static;
 use regex::Regex;
 mod mpv;
+mod tmdb;
 mod settings;
+mod stubs;
 mod api_structs;
 
 
@@ -38,7 +39,6 @@ use crate::api_structs::UrlForm;
 use crate::api_structs::PlaylistControl;
 use crate::api_structs::VolumeControl;
 use crate::settings::SettingContext;
-use rocket::request::Form;
 use rocket::response::content;
 use rocket_contrib::json::Json;
 use rocket_contrib::serve::StaticFiles;
@@ -49,6 +49,9 @@ use url::form_urlencoded::{ parse};
 
 use std::fs::File;
 use matroska::Matroska;
+
+
+
 ///
 ///
 /// Resume a video after a pause
@@ -243,17 +246,23 @@ struct TemplateContext {
     settings : SettingContext
 }
 
+#[get("/scan")]
+fn request_scan() -> content::Json<String> {
+
+
+ //scan_dir();
+let tmdb_response = tmdb::tmdb::search("Marvel Agents of Shield".to_string());
+    content::Json(tmdb_response.to_string())
+}
+
 #[get("/")]
 fn hello() -> Template {
     let links_context = settings::init();
     let template_context = TemplateContext {
         settings : links_context
     };
-//scan_dir().is_ok();
 
- scan_dir();
-
-        Template::render("index", &template_context)
+    Template::render("index", &template_context)
 }
 
 fn scan_dir () {
@@ -291,6 +300,7 @@ fn rocket() -> rocket::Rocket {
             event_add_to_playlist,
             request_volume,
             request_play_from_url,
+            request_scan,
             request_playlist
             ],
             )

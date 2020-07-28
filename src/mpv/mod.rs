@@ -2,7 +2,7 @@
 pub mod mpv {
 
     extern crate execute;
-use crate::api_structs::VolumeControl;
+    use crate::api_structs::VolumeControl;
     use std::io::prelude::*;
     use std::os::unix::net::UnixStream;
     use rocket_contrib::json::Json;
@@ -53,7 +53,7 @@ use crate::api_structs::VolumeControl;
     pub fn init() {
 
         let settings = settings::init();
-        
+
         let mut mpv = Command::new("mpv");
         let ipc_param = format!("--input-ipc-server={}", settings.socket);
 
@@ -62,7 +62,7 @@ use crate::api_structs::VolumeControl;
             .arg(ipc_param)
             .arg("--fs=yes")
             .spawn()
-        .expect("OK");
+            .expect("OK");
     }
 
     pub fn write_to_socket(content: String) -> std::io::Result<String> {

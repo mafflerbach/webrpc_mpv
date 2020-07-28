@@ -1,0 +1,6 @@
+{% extends "base" %}
+
+{% block search %}
+    <h3>aswdfqwer</h3>
+    <p>Try goingsdfsd to <a href="/hello/YourName">/hello/YourName</a></p>
+{% endblock search %}

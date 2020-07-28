@@ -57,8 +57,6 @@ $(function() {
         });
     })
 
-
-
     $("#play_button").click(function (e) {
         e.preventDefault(); 
         $.ajax({
@@ -84,6 +82,29 @@ $(function() {
         $("#pause_button").hide();
         $("#play_button").show();
     })
+
+    $("#scan").click(function (){
+        $.ajax({
+            type: "GET",
+            url: "/scan",
+            success: function (data) {
+console.log(data.results);
+                for (let i =0; i < data.results.length; i++) {
+                   let elem = data.results[i];
+
+let clone = $("#searchResultCloneable").clone();
+                    clone.removeAttr("id");
+clone.find(".card-img-top").attr("src","https://image.tmdb.org/t/p/w500"+elem.poster_path );
+clone.find(".card-title").append(elem.name);
+clone.find(".card-text").append(elem.overview);
+
+clone.appendTo("#SearchBoxModalContent");
+                }
+                console.log(data);
+            },
+
+        });
+    });
 
 });
 

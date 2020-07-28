@@ -90,6 +90,15 @@ body {
     -o-user-select: none;
     user-select: none;
 }
+.searchResultThumbnail{
+position:relative;
+height:200px;
+overflow:hidden;
+}
+.searchResultThumbnail img {
+position:absolute;
+top:-150px;
+}
 .range input[type="range"] {
     outline: none;
 }
