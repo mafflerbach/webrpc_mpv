@@ -1,100 +1,107 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <title>Tera Demo</title>
 
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="./public/style.css"  />
-        <link rel="stylesheet" href="./public/bootstrap.css"  />
+<head>
+    <meta charset="utf-8" />
+    <title>Tera Demo</title>
 
-        <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script> 
-        <script src="public/script.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-    </head>
-    <body id="body">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="./public/style.css" />
+    <link rel="stylesheet" href="./public/bootstrap.css" />
 
-        {% block clientSelection %}{% endblock clientSelection %}
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="public/script.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
 
-        <div class="container">
-            <div class="row">
-                <div class="col">
-                    <div class="range" id="range">
-                        <input type="range" name="range" min="1" max="100" value="50" onchange="range.value=value">
-                        <output id="range">100</output>
-                    </div>
-                </div> 
-            </div> 
-            <div class="row">
-                <div class="col">
-                    <button type="button" class="btn btn-primary" id="play_button">
-                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-play-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
-                        </svg>
-                    </button>
-                    <button type="button" class="btn btn-primary" id="pause_button">
-                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pause-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"/>
-                        </svg>
-                    </button>
+<body id="body">
+
+    {% block clientSelection %}{% endblock clientSelection %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="range" id="range">
+                    <input type="range" name="range" min="1" max="100" value="50" onchange="range.value=value">
+                    <output id="range">100</output>
                 </div>
             </div>
         </div>
-        <div class="container my-4">
-            <div class="row">
-                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Video</a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Playlist</a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Stream</a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="locavid-tab" data-toggle="tab" href="#localvid" role="tab" aria-controls="localvid" aria-selected="false">Local Videos</a>
-                    </li>
+        <div class="row">
+            <div class="col">
+                <button type="button" class="btn btn-primary" id="play_button">
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-play-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z" />
+                    </svg>
+                </button>
+                <button type="button" class="btn btn-primary" id="pause_button">
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pause-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z" />
+                    </svg>
+                </button>
+                <button type="button" class="btn btn-primary" id="stop_button">
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-stop-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5z" />
+                    </svg>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="container my-4">
+        <div class="row">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Video</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Playlist</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Stream</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="locavid-tab" data-toggle="tab" href="#localvid" role="tab" aria-controls="localvid" aria-selected="false">Local Videos</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                <form action="/" method="post" accept-charset="utf-8" id="startVideo">
+                    URL:<input type="text" name="target" class="form-control" />
+                    <input type="hidden" name="action" value="video" />
+                    <input type="submit" value="Start" id="startBtn" class="btn btn-primary" />
+                </form>
+            </div>
+            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                <form action="/add" method="post" accept-charset="utf-8" id="addPlaylist">
+                    Add to Playlist:<input type="text" name="target" class="form-control">
+                    <input type="hidden" name="action" value="playlist" />
+                    <input type="submit" value="Start" class="btn btn-primary" />
+                </form>
+
+            </div>
+            <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                <ul class="list-group">
+                    {% for key, value in settings.streams %}
+                    <li><a href="/player/play?target={{value}}">{{key}}</a></li>
+                    {% endfor %}
                 </ul>
+
             </div>
+            <div class="tab-pane fade" id="localvid" role="tabpanel" aria-labelledby="localvid-tab">
 
-            <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                    <form action="/" method="post" accept-charset="utf-8" id="startVideo" >
-                        URL:<input type="text" name="target" class="form-control"/>
-                        <input type="hidden" name="action" value="video"/>
-                        <input type="submit" value="Start" id="startBtn" class="btn btn-primary"/>
-                    </form>
-                </div>
-                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                    <form action="/add" method="post" accept-charset="utf-8" id="addPlaylist">
-                        Add to Playlist:<input type="text" name="target" class="form-control">
-                        <input type="hidden" name="action" value="playlist"/>
-                        <input type="submit" value="Start" class="btn btn-primary"/>
-                    </form>
-
-                </div>
-                <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-                    <ul class="list-group">
-                        {% for key, value in settings.streams %}
-                        <li><a href="/play?target={{value}}">{{key}}</a></li>
-                        {% endfor %}
-                    </ul>
-
-                </div>
-                <div class="tab-pane fade" id="localvid" role="tabpanel" aria-labelledby="localvid-tab">
-
-                </div>
             </div>
-
-        </div> 
-        <div id="searchResult">
-        {% block searchResult %}{% endblock searchResult %}
         </div>
 
-    </body>
+    </div>
+    <div id="searchResult">
+        {% block searchResult %}{% endblock searchResult %}
+    </div>
+
+</body>
 
 </html>
-

@@ -3,7 +3,6 @@
 #[cfg(test)]
 mod tests;
 
-
 #[macro_use]
 extern crate rocket;
 #[macro_use]
@@ -19,304 +18,129 @@ extern crate lazy_static;
 
 use lazy_static::lazy_static;
 use regex::Regex;
+mod api_structs;
 mod mpv;
-mod tmdb;
 mod settings;
 mod stubs;
-mod api_structs;
+mod tmdb;
 
-
-use std::collections::HashSet;
-use std::collections::HashMap;
-//use std::time::Duration;
-//use reqwest::Client;
-//use reqwest::ClientBuilder;
 use glob::glob;
+use std::collections::HashMap;
+use std::collections::HashSet;
 extern crate reqwest;
-use std::vec::Vec;
-use std::env;
-use crate::api_structs::UrlForm;
-use crate::api_structs::PlaylistControl;
-use crate::api_structs::VolumeControl;
 use crate::settings::SettingContext;
 use rocket::response::content;
-use rocket_contrib::json::Json;
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::Template;
-use std::fs::OpenOptions;
-use std::io::Write;
-use url::form_urlencoded::{ parse};
-
-use std::fs::File;
-use matroska::Matroska;
-
-
-
-///
-///
-/// Resume a video after a pause
-///
-/// # Example
-/// ```sh
-/// curl 'http://localhost:8000/resume'
-/// ```
-#[get("/resume")]
-fn request_resume() -> content::Json<String> {
-    let resume_response = mpv::mpv::event_resume().unwrap();
-    println!("{}", resume_response);
-    content::Json(resume_response)
-}
-
-
-#[post("/volume", data="<request_content>")]
-fn request_change_volume(request_content: Json<VolumeControl>) -> content::Json<String> {
-
-    let volume_response = mpv::mpv::event_volume_change(request_content).unwrap();
-    println!("{}", volume_response);
-    content::Json(volume_response)
-}
-
-#[get("/volume")]
-fn request_volume() -> content::Json<String> {
-    let volume_response = mpv::mpv::event_volume().unwrap();
-    println!("{}", volume_response);
-    content::Json(volume_response)
-}
-
-/// Pause a video after
-///
-/// # Example
-/// ```sh
-/// curl 'http://localhost:8000/pause'
-/// ```
-#[get("/pause")]
-fn request_pause() -> content::Json<String> {
-    let pause_response = mpv::mpv::event_pause().unwrap();
-    println!("{}",pause_response );
-    content::Json(pause_response)
-}
-
-/// Load a playlist on the host system
-///
-/// # Example
-/// ```sh
-/// curl 'http://localhost:8000/playlist?/local/path/to/playlist'
-/// ```
-/// We are able to load a playlist file.
-/// * target is a absolute path on the host
-///
-#[get("/playlist")]
-fn request_playlist() -> content::Json<String> {
-    let playlist_response = mpv::mpv::event_play_from_list(String::from("/tmp/playlist")).unwrap();
-    println!("{}", playlist_response);
-    content::Json(playlist_response)
-}
-
-/// Stopt the actual video and starting a new video based on url/path
-///
-/// # Example
-/// ```sh
-/// curl 'http://localhost:8000/load?/local/path/to/playlist'
-/// curl 'http://localhost:8000/load?target=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DP3UIpTlFtc4y'
-/// ```
-/// We are able to load different targes
-/// * target is a absolute path on the host or a Encoded url
-///
-/// ## Further examples
-/// ```sh
-/// http://localhost:8000/play?target=/home/maren/Downloads/ytFiles/The Best Way To Practice Chords.webm
-/// http://localhost:8000/play?target=%2Fhome%joe%2FDownloads%2FytFiles%2FThe%20Best%20Way%20To%20Practice%20Chords.webm
-/// http://localhost:8000/play?target=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DP3UIpTlFtc4
-/// ```
-/// will FAIL:
-/// ```
-/// http://localhost:8000/load?target=https://www.youtube.com/watch?v=P3UIpTlFtc4
-/// ```
-#[get("/play?<target>")]
-fn request_load(target: String) -> content::Json<String> {
-    let load_response = mpv::mpv::event_load(target).unwrap();
-    println!("{}", load_response);
-    content::Json(load_response)
-}
-
-///
-/// play a video from url from form
-///
-#[post("/", data = "<url>")]
-fn request_play_from_url(url: Json<UrlForm>) -> content::Json<String> {
-    let target = url.target.to_string();
-    let client = url.client.clone();
-
-    let decoded: String = parse(target.as_bytes())
-        .map(|(key, val)| [key, val].concat())
-        .collect();
-    let mut play_response = json!({
-        "data": "ok",
-        "error":"NULL",
-        "request_id": 0
-    }).to_string();
-    ;
-
-    println!("CLIENT ID: {}", client);
-
-    if client == "null".to_string() {
-        println!("PLAY ON CLIENT");
-
-    println!("VIDEO URL: {}", decoded);
-        play_response = mpv::mpv::event_load(target).unwrap();
-    } else {
-        println!("PLAY ON REMOTE");
-        let client_url =  get_client(client);
-        let mut map = HashMap::new();
-        map.insert("target".to_string(), target.clone());
-        map.insert("client".to_string(), 0.to_string());
-
-        let res = send_request(client_url, map);
-        play_response = res.unwrap();
-    }
-
-    content::Json(play_response)
-}
-
-fn get_client(client : String) -> String {
-    let settings = settings::config();
-    let childs =  settings.unwrap().childs;
-    for client_setting in childs {
-        if client_setting.id == client {
-            return  client_setting.url;
-        }
-
-    }
-    return "".to_string();
-}
-
-
-fn send_request(target : String, map: HashMap<String, String>) -> Result<String, reqwest::Error>{
-    //TODO change to post, add fields target for video url and id = 0 for local 
-
-    let client = reqwest::Client::new();
-    client.post(&target.clone().to_string())
-        .json(&map)
-        .send()?.text()
-}
-
-
-#[post("/add", data = "<request_content>")]
-fn event_add_to_playlist(request_content: Json<PlaylistControl>)-> content::Json<String> {
-    let client = request_content.client.clone();
-    let mut message: String = "".to_string();
-
-
-    if client == 0.to_string() {
-        let mut file = OpenOptions::new()
-            .write(true)
-            .append(true)
-            .open("/tmp/playlist")
-            .unwrap();
-
-        message = "Added to playlist".to_string();
-        if let Err(e) = writeln!(file, "{}", request_content.value) {
-            message = format!("Couldn't write to file: {}", e);
-            eprintln!("Couldn't write to file: {}", e);
-        }
-
-    } else {
-        println!("PLAY ON REMOTE");
-        let  client_url =  get_client(client);
-        println!("{}/add", client_url);
-        let mut map = HashMap::new();
-        map.insert("value".to_string(), request_content.value.clone());
-        map.insert("client".to_string(), 0.to_string());
-
-        message = format!("FORWARDING");
-        let res = send_request(format!("{}/add", client_url), map);
-    }
-
-    let test = json!({
-        "data": "ok",
-        "error": message,
-        "request_id": 0
-    });
-    content::Json(test.to_string())
-
-}
+use std::env;
+use std::vec::Vec;
 
 #[derive(Serialize, Deserialize)]
 struct TemplateContext {
-    settings : SettingContext
+    settings: SettingContext,
 }
 
 #[get("/scan")]
 fn request_scan() -> content::Json<String> {
+    scan_dir();
+    let path_entries = get_first_level();
 
-
- //scan_dir();
-let tmdb_response = tmdb::tmdb::search("Marvel Agents of Shield".to_string());
-    content::Json(tmdb_response.to_string())
-}
-
-#[get("/")]
-fn hello() -> Template {
-    let links_context = settings::init();
-    let template_context = TemplateContext {
-        settings : links_context
-    };
-
-    Template::render("index", &template_context)
-}
-
-fn scan_dir () {
-    for entry in glob("/home/maren/Downloads/**/*.mkv").expect("Failed to read glob pattern") {
-        match entry {
-            Ok(path) => {
-
-                let f = File::open(path.clone()).unwrap();
-                let matroska = Matroska::open(f).unwrap();
-                println!("file : {:?}", path.display());
-                println!("title : {:?}", matroska.info);
-parsing_season_and_episode(&path.clone().into_os_string().into_string().unwrap());
-            },
-            Err(e) => println!("{:?}", e),
+    let mut test = Vec::new();
+    let mut tmdb_response;
+    for entry in &path_entries {
+        tmdb_response = tmdb::tmdb::search(entry.to_string());
+        for result in tmdb_response.results {
+            test.push(result);
         }
     }
 
+    println!("{:?}", test);
+
+    let me = serde_json::to_string(&test).unwrap();
+
+    content::Json(me.to_string())
 }
 
+#[get("/")]
+fn index() -> Template {
+    let links_context = settings::init();
+    let template_context = TemplateContext {
+        settings: links_context,
+    };
+    Template::render("index", &template_context)
+}
 
+use std::{fs, io};
+fn get_first_level() -> Vec<String> {
+    let settings = settings::init();
+    println!("{}", settings.scan_dir);
+    let base_path = settings.scan_dir.clone();
+    let mut entries = fs::read_dir(base_path)
+        .unwrap()
+        .map(|res| res.map(|e| e.path()))
+        .collect::<Result<Vec<_>, io::Error>>()
+        .unwrap();
 
+    entries.sort();
+    let path_part = settings.scan_dir.clone();
+    let mut stack = Vec::new();
+    for entry in &entries {
+        let foo = entry.display().to_string().replace(&path_part, "");
+        stack.push(foo)
+    }
 
+    return stack;
+}
+
+fn scan_dir() {
+    let settings = settings::init();
+    let pattern = format!("{}/**/*.mkv", settings.scan_dir);
+
+    for entry in glob(&pattern).expect("Failed to read glob pattern") {
+        match entry {
+            Ok(path) => {
+                parsing_season_and_episode(&path.clone().into_os_string().into_string().unwrap());
+            }
+            Err(e) => println!("{:?}", e),
+        }
+    }
+}
+mod mounts;
 fn rocket() -> rocket::Rocket {
     rocket::ignite()
         .attach(Template::fairing())
         .mount("/public", StaticFiles::from("templates/public"))
         .mount(
+            "/player",
+            routes![
+                mounts::player::event_add_to_playlist,
+                mounts::player::request_stop,
+                mounts::player::request_pause,
+                mounts::player::request_play_from_url,
+                mounts::player::request_playlist,
+                mounts::player::request_resume,
+                mounts::player::request_start_video,
+            ],
+        )
+        .mount(
             "/",
             routes![
-            hello,
-            request_load,
-            request_change_volume,
-            request_pause,
-            request_resume,
-            event_add_to_playlist,
-            request_volume,
-            request_play_from_url,
-            request_scan,
-            request_playlist
+                index,
+                mounts::volume::request_change_volume,
+                mounts::volume::request_volume,
+                request_scan
             ],
-            )
+        )
 }
 
 fn parsing_season_and_episode(text: &str) -> bool {
-
     lazy_static! {
         static ref RE: Regex = Regex::new(r"S(\d{1,2})E(\d{1,2})").unwrap();
     }
-    
-let foo : HashSet<&str> =     RE.find_iter(text).map(|mat| mat.as_str()).collect();
 
+    let _foo: HashSet<&str> = RE.find_iter(text).map(|mat| mat.as_str()).collect();
 
-
-    println!("{:?}", foo);
+    //println!("{:?}", foo);
 
     RE.is_match(text)
 }
@@ -327,9 +151,6 @@ fn main() {
 
     env::set_var("SETTINGS", setting_file);
 
-
     mpv::mpv::init();
     rocket().launch();
 }
-
-

@@ -29,37 +29,35 @@ pub mod tmdb {
     ///   ]
     /// }
     /// Result of https://api.themoviedb.org/3/search/tv?api_key=<APIKEY>&language=en-US&page=1&query=Marvel%20agent%20of%20shield&include_adult=false
-    
-#[derive(Serialize, Deserialize, Debug)]
-    struct SearchResultResponse {
-        results : Vec<SearchResult>,
+
+    #[derive(Serialize, Deserialize, Debug)]
+    pub struct SearchResultResponse {
+        pub results: Vec<SearchResult>,
     }
 
-#[derive(Serialize, Deserialize, Debug)]
-    struct SearchResult {
-        name : String,
+    #[derive(Serialize, Deserialize, Debug)]
+    pub struct SearchResult {
+        name: String,
         id: i32,
-        poster_path: String,
-        overview: String
+        poster_path: Option<String>,
+        overview: Option<String>,
     }
     use crate::settings;
     use crate::stubs;
-    use url::form_urlencoded::{ parse};
-    pub fn search(search_term : String) -> String  {
-
+    use url::form_urlencoded::parse;
+    pub fn search(search_term: String) -> SearchResultResponse {
         let settings = settings::init();
-        // url decode for search 
+        // url decode for search
         let decoded_search_term: String = parse(search_term.as_bytes())
             .map(|(key, val)| [key, val].concat())
             .collect();
-        let test = format!( "https://api.themoviedb.org/3/search/tv?api_key={}&language=en-US&page=1&query={}&include_adult=false", settings.tmdb_key, decoded_search_term);
-        println!("{}", test);
-        //let response =  send_request(test.to_string()).unwrap();
-      let response = stubs::read_fixture_file("/home/maren/development/rust/mpv/test/searchFixture.json");
-        let mut p: SearchResultResponse = serde_json::from_str(response.as_str()).unwrap();
-        
+        let _test = format!( "https://api.themoviedb.org/3/search/tv?api_key={}&language=en-US&page=1&query={}&include_adult=false", settings.tmdb_key, decoded_search_term);
+        //  let response =  send_request(test.to_string()).unwrap();
 
-        serde_json::to_string(&p).unwrap()
+        let response =
+            stubs::read_fixture_file("/home/maren/development/rust/mpv/test/searchFixture.json");
+        let p: SearchResultResponse = serde_json::from_str(response.as_str()).unwrap();
+        return p;
     }
 
     /// {
@@ -89,38 +87,34 @@ pub mod tmdb {
     ///   "poster_path": "/zu5HCP84rcBJJhoIQAafMXMeU2p.jpg",
     ///   "season_number": 7
     /// }
-    /// 
+    ///
     /// result from https://api.themoviedb.org/3/tv/1403/season/7?api_key=<APIKEY>&language=en-US
 
-#[derive(Serialize, Deserialize, Debug)]
+    #[derive(Serialize, Deserialize, Debug)]
     struct SeasonResult {
-        episodes : Vec<Episode>,
-        overview : String,
-        id : i32,
-        poster_path: String
+        episodes: Vec<Episode>,
+        overview: String,
+        id: i32,
+        poster_path: String,
     }
-#[derive(Serialize, Deserialize, Debug)]
+    #[derive(Serialize, Deserialize, Debug)]
     struct Episode {
         id: i32,
         name: String,
         overview: String,
         season_number: i32,
-        episode_number: i32
+        episode_number: i32,
     }
     //pub fn tv_season_result () -> SeasonResult {
     //}
 
-
-
     extern crate reqwest;
-    fn send_request(target : String) -> Result<String, reqwest::Error>{
-        //TODO change to post, add fields target for video url and id = 0 for local 
+    fn send_request(target: String) -> Result<String, reqwest::Error> {
+        //TODO change to post, add fields target for video url and id = 0 for local
 
         let client = reqwest::Client::new();
-        client.get(&target.clone().to_string())
-            .send()?.text()
+        let result = client.get(&target.clone().to_string()).send()?.text();
+        println!("{:?}", result);
+        return result;
     }
-
-
 }
-

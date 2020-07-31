@@ -1,19 +1,21 @@
-
 $(function() {
     get_volume();
 
-    $("#startVideo").submit(function(e){
+    $("#startVideo").submit(function(e) {
         // post to /
         e.preventDefault(e);
-        selectedClient = $( "#clientSelection" ).val();
+        selectedClient = $("#clientSelection").val();
         valueElement = $(this).find("input[name='target']");
         value = $(this).find("input[name='target']").val();
         $.ajax({
             type: "POST",
-            url: "/",
+            url: "/player",
             contenType: "application/json",
-            data: JSON.stringify({ "target":  value, "client": selectedClient}),
-            success: function (data) {
+            data: JSON.stringify({
+                "target": value,
+                "client": selectedClient
+            }),
+            success: function(data) {
                 console.log(data);
                 if (data.success == "success") {
                     valueElement.val("");
@@ -23,59 +25,119 @@ $(function() {
         });
 
     });
-    $("#addPlaylist").submit(function(e){
+
+
+    $("#add-serie").click(function() {
+
+        $.ajax({
+            type: "POST",
+            url: "/serie/add",
+            contenType: "application/json",
+            data: JSON.stringify({
+                "target": value,
+                "client": selectedClient
+            }),
+            success: function(data) {
+                console.log(data);
+                if (data.success == "success") {
+                    valueElement.val("");
+                }
+            },
+            dataType: 'json'
+        });
+
+    });
+    $("#ignore-serie").click(function() {
+
+        $.ajax({
+            type: "POST",
+            url: "/serie/ignore",
+            contenType: "application/json",
+            data: JSON.stringify({
+                "target": value,
+                "client": selectedClient
+            }),
+            success: function(data) {
+                console.log(data);
+                if (data.success == "success") {
+                    valueElement.val("");
+                }
+            },
+            dataType: 'json'
+        });
+
+    });
+
+
+    $("#addPlaylist").submit(function(e) {
         //  post to /add
 
         e.preventDefault(e);
-        
-        selectedClient = $( "#clientSelection" ).val();
-        
+
+        selectedClient = $("#clientSelection").val();
+
         value = $(this).find("input[name='target']").val()
         $.ajax({
             type: "POST",
-            url: "/add",
+            url: "/player/add",
             contenType: "application/json",
-            data: JSON.stringify({ "value":  value, "client": selectedClient}),
-            success: function () {
+            data: JSON.stringify({
+                "value": value,
+                "client": selectedClient
+            }),
+            success: function() {
                 return '{"fooo":"baaa"}'
             },
             dataType: 'json'
         });
     });
 
-    $("#range input").change(function(){
+    $("#range input").change(function() {
         var value = $(this).val();
         $.ajax({
             type: "POST",
             url: "/volume",
             contenType: "application/json",
-            data: JSON.stringify({ "value": value }),
-            success: function () {
-                return '{"fooo":"baaa"}'
+            data: JSON.stringify({
+                "value": value
+            }),
+            success: function(data) {
+                return data;
             },
             dataType: 'json'
         });
     })
 
-    $("#play_button").click(function (e) {
-        e.preventDefault(); 
+    $("#play_button").click(function(e) {
+        e.preventDefault();
         $.ajax({
             type: "GET",
-            url: "/resume",
-            success: function () {
+            url: "/player/resume",
+            success: function() {
                 return '{"fooo":"baaa"}'
             },
         });
         $("#play_button").hide();
         $("#pause_button").show();
     })
-
-    $("#pause_button").click(function (e) {
-        e.preventDefault(); 
+    
+    $("#stop_button").click(function(e) {
+        e.preventDefault();
         $.ajax({
             type: "GET",
-            url: "/pause",
-            success: function () {
+            url: "/player/stop",
+            success: function(data) {
+                return data
+            },
+        });
+    })
+
+    $("#pause_button").click(function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: "GET",
+            url: "/player/pause",
+            success: function() {
                 return '{"fooo":"baaa"}'
             },
         });
@@ -83,24 +145,28 @@ $(function() {
         $("#play_button").show();
     })
 
-    $("#scan").click(function (){
+    $("#scan").click(function() {
         $.ajax({
             type: "GET",
             url: "/scan",
-            success: function (data) {
-console.log(data.results);
-                for (let i =0; i < data.results.length; i++) {
-                   let elem = data.results[i];
+            success: function(data) {
 
-let clone = $("#searchResultCloneable").clone();
+                console.log(data.results);
+
+                for (let i = 0; i < data.length; i++) {
+                    let elem = data[i];
+
+                    let clone = $("#searchResultCloneable").clone();
                     clone.removeAttr("id");
-clone.find(".card-img-top").attr("src","https://image.tmdb.org/t/p/w500"+elem.poster_path );
-clone.find(".card-title").append(elem.name);
-clone.find(".card-text").append(elem.overview);
+                    let bgImage = "https://image.tmdb.org/t/p/w500" + elem.poster_path;
+                    clone.find(".cardContent").css("background-image", "url(" + bgImage + " )");
+                    clone.find(".card-title").append(elem.name);
+                    clone.find(".card-text").append(elem.overview);
+                    clone.find("#ignore-serie").attr("id", elem.id);
+                    clone.find("#add-serie").attr("id", elem.id);
 
-clone.appendTo("#SearchBoxModalContent");
+                    clone.appendTo("#SearchBoxModalContent");
                 }
-                console.log(data);
             },
 
         });
@@ -112,7 +178,7 @@ function get_volume() {
     $.ajax({
         type: "GET",
         url: "/volume",
-        success: function (data) {
+        success: function(data) {
             console.log(data);
             $("#range input").val(data.data);
         },

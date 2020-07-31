@@ -41,16 +41,18 @@
 </div>
 
 <div class="hide" id="searchResultCloneable">
-<div class="card mb-3">
-    <div class="searchResultThumbnail">
-  <img class="card-img-top img-thumbnail " src="" alt="Card image cap">
-  
+    <div class="card mb-3">
+        <div class="cardContent">
+            <div class="searchResultThumbnail">
+            </div>
+            <div class="card-body">
+                <h5 class="card-title"></h5>
+                <p class="card-text"></p>
+                <button type="button" class="btn btn-primary" id="add-serie">Add</button>
+                <button type="button" class="btn btn-primary" id="ignore-serie">Ignore</button>
+            </div>
+        </div>
     </div>
-  <div class="card-body">
-    <h5 class="card-title"></h5>
-    <p class="card-text"></p>
-  </div>
-</div>
 </div>
 
 {% endblock searchResult %}

@@ -1,22 +1,20 @@
-
 use std::collections::HashMap;
 
 #[derive(Serialize)]
 pub struct TemplateContext {
-    pub items: HashMap<String, String>
+    pub items: HashMap<String, String>,
 }
-
 
 #[derive(Serialize, Deserialize)]
 pub struct PlaylistControl {
-    pub  client: String,
-    pub    value : String
+    pub client: String,
+    pub value: String,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct VolumeControl {
-    pub  client: String,
-    pub    value : String
+    pub client: String,
+    pub value: String,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -25,7 +23,6 @@ struct Response {
     error: String,
     request_id: i32,
 }
-
 
 #[derive(Serialize, Deserialize)]
 struct VolumResponse {
@@ -36,7 +33,6 @@ struct VolumResponse {
 
 #[derive(Serialize, Deserialize)]
 pub struct UrlForm {
-    pub  target: String,
-    pub  client: String
+    pub target: String,
+    pub client: String,
 }
-
