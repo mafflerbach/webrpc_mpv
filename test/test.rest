@@ -1,0 +1,56 @@
+# addd item to playlist 
+http://localhost:9990
+POST /player/add 
+{"value":"asdfasdf","client":"null"}
+
+# Resume
+http://localhost:9990
+GET /player/resume
+
+# Pause
+http://localhost:9990
+GET /player/pause
+
+# Pause
+http://localhost:9990
+GET /player/stop
+
+# Start a video 
+http://localhost:9990
+POST /player
+{"target":"https://www.youtube.com/watch?v=dQw4w9WgXcQ","client":"null"}
+
+# get volume
+http://localhost:9990
+GET /volume
+
+# set volume
+http://localhost:9990
+POST /volume
+{"client": "null" , "value":"50"}
+
+# set volume
+http://localhost:9990
+POST /volume
+{"client": "null" , "value":"100"}
+
+# get propery
+http://localhost:9990
+GET /player/propery?target=time-pos
+
+
+# get scan result
+http://localhost:9990
+GET /library/scan
+
+
+# Ignore serie
+http://localhost:9990
+POST /library/ignore
+{"tmdb_id":1403}
+
+# add to library
+http://localhost:9990
+POST /library/add
+{"target":"1403"}
+

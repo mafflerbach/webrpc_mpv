@@ -49,6 +49,11 @@ pub mod mpv {
         write_to_socket(tjson.to_string() + "\n")
     }
 
+    pub fn event_get_property(propery : String) -> std::io::Result<String> {
+        let tjson = json!({ "command": ["get_property", propery] });
+        write_to_socket(tjson.to_string() + "\n")
+    }
+
     pub fn init() {
         let settings = settings::init();
 

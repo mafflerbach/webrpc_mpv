@@ -20,6 +20,7 @@ pub struct Streams {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Settings {
+    pub db: String,
     pub tmdb_key: String,
     pub debug: bool,
     pub scan_dir: String,
@@ -29,6 +30,7 @@ pub struct Settings {
 }
 #[derive(Serialize, Deserialize)]
 pub struct SettingContext {
+    pub db: String,
     pub tmdb_key: String,
     pub scan_dir: String,
     pub socket: String,
@@ -47,14 +49,17 @@ pub fn init() -> SettingContext {
 
     let mut streaming_links = HashMap::new();
     let mut clients = HashMap::new();
+    let mut db = String::new();
     let mut tmdb_key = String::new();
     let mut scan_dir = String::new();
     let mut socket = String::new();
+
     if res.is_ok() {
         let s: Settings = res.unwrap();
         socket = s.socket;
         scan_dir = s.scan_dir;
         tmdb_key = s.tmdb_key;
+        db = s.db;
         for i in &s.childs {
             clients.insert(i.id.to_string(), i.name.to_string());
         }
@@ -68,6 +73,7 @@ pub fn init() -> SettingContext {
     }
 
     let links_context = SettingContext {
+        db: db,
         scan_dir: scan_dir,
         tmdb_key: tmdb_key,
         socket: socket,

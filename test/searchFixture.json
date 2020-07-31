@@ -1,0 +1,65 @@
+{
+    "page": 1,
+    "total_results": 3,
+    "total_pages": 1,
+    "results": [
+        {
+            "original_name": "Marvel's Agents of S.H.I.E.L.D.",
+            "genre_ids": [
+                18,
+                10759,
+                10765
+            ],
+            "name": "Marvel's Agents of S.H.I.E.L.D.",
+            "popularity": 92.948,
+            "origin_country": [
+                "US"
+            ],
+            "vote_count": 1879,
+            "first_air_date": "2013-09-24",
+            "backdrop_path": "/mUCV0W6TaAk8UWA5yAmqCywC63F.jpg",
+            "original_language": "en",
+            "id": 1403,
+            "vote_average": 7.1,
+            "overview": "Agent Phil Coulson of S.H.I.E.L.D. (Strategic Homeland Intervention, Enforcement and Logistics Division) puts together a team of agents to investigate the new, the strange and the unknown around the globe, protecting the ordinary from the extraordinary.",
+            "poster_path": "/gHUCCMy1vvj58tzE3dZqeC9SXus.jpg"
+        },
+        {
+            "original_name": "Marvel's Agents of S.H.I.E.L.D.: Slingshot",
+            "genre_ids": [
+                10765
+            ],
+            "name": "Marvel's Agents of S.H.I.E.L.D.: Slingshot",
+            "popularity": 4.941,
+            "origin_country": [
+                "US"
+            ],
+            "vote_count": 30,
+            "first_air_date": "2016-12-13",
+            "backdrop_path": "/42jCFhJyYt8GhE3WAOkzK3rZABt.jpg",
+            "original_language": "en",
+            "id": 69088,
+            "vote_average": 6.2,
+            "poster_path": "/bwJej7WdmGRMCMyuDlotwAqVX7S.jpg"
+        },
+        {
+            "original_name": "Marvel's Agents of S.H.I.E.L.D.: Academy",
+            "genre_ids": [
+                10759,
+                10765
+            ],
+            "name": "Marvel's Agents of S.H.I.E.L.D.: Academy",
+            "popularity": 1.16,
+            "origin_country": [
+                "US"
+            ],
+            "vote_count": 2,
+            "first_air_date": "2016-03-09",
+            "backdrop_path": "/dPE2bdcPLy11YOpkzOMbFjgLCVr.jpg",
+            "original_language": "en",
+            "id": 98672,
+            "vote_average": 5.5,
+            "overview": "New recruits enroll at S.H.I.E.L.D Academy."
+        }
+    ]
+}

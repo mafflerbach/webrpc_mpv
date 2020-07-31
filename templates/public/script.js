@@ -27,15 +27,14 @@ $(function() {
     });
 
 
-    $("#add-serie").click(function() {
-
+    $("#searchResult").on("click", ".add-serie", function() {
+        value = $(this).attr("id");
         $.ajax({
             type: "POST",
-            url: "/serie/add",
+            url: "/library/add",
             contenType: "application/json",
             data: JSON.stringify({
                 "target": value,
-                "client": selectedClient
             }),
             success: function(data) {
                 console.log(data);
@@ -47,11 +46,12 @@ $(function() {
         });
 
     });
-    $("#ignore-serie").click(function() {
+
+    $(".ignore-serie").click(function() {
 
         $.ajax({
             type: "POST",
-            url: "/serie/ignore",
+            url: "/library/ignore",
             contenType: "application/json",
             data: JSON.stringify({
                 "target": value,
@@ -148,7 +148,7 @@ $(function() {
     $("#scan").click(function() {
         $.ajax({
             type: "GET",
-            url: "/scan",
+            url: "/library/scan",
             success: function(data) {
 
                 console.log(data.results);
@@ -162,8 +162,8 @@ $(function() {
                     clone.find(".cardContent").css("background-image", "url(" + bgImage + " )");
                     clone.find(".card-title").append(elem.name);
                     clone.find(".card-text").append(elem.overview);
-                    clone.find("#ignore-serie").attr("id", elem.id);
-                    clone.find("#add-serie").attr("id", elem.id);
+                    clone.find(".ignore-serie").attr("id", elem.id);
+                    clone.find(".add-serie").attr("id", elem.id);
 
                     clone.appendTo("#SearchBoxModalContent");
                 }

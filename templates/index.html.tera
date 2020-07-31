@@ -48,8 +48,8 @@
             <div class="card-body">
                 <h5 class="card-title"></h5>
                 <p class="card-text"></p>
-                <button type="button" class="btn btn-primary" id="add-serie">Add</button>
-                <button type="button" class="btn btn-primary" id="ignore-serie">Ignore</button>
+                <button type="button" class="btn btn-primary add-serie" id="">Add</button>
+                <button type="button" class="btn btn-primary ignore-serie" id="">Ignore</button>
             </div>
         </div>
     </div>
