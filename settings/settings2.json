@@ -1,6 +1,9 @@
 {
+    "tmdb_key" : "924375ec86dee2a9a78b5033367f4fe1",
     "debug": true,
     "socket":"/tmp/mpvsocket1",
+    "db" : "/home/maren/development/rust/mpv/db/restmpv.db",
+    "scan_dir" : "/home/maren/Downloads/complete/",
     "childs": [
     {
            "id":"1",

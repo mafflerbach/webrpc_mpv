@@ -1,3 +1,5 @@
+-- Your SQL goes here
+
 CREATE TABLE IF NOT EXISTS ignored (
     id integer PRIMARY KEY,
     tmdb_id integer not NULL

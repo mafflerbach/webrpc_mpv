@@ -47,7 +47,7 @@ GET /library/scan
 # Ignore serie
 http://localhost:9990
 POST /library/ignore
-{"tmdb_id":1403}
+{"tmdb_id":69088}
 
 # add to library
 http://localhost:9990

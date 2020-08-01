@@ -48,12 +48,9 @@ pub fn request_play_from_url(url: Json<UrlForm>) -> content::Json<String> {
     let decoded: String = parse(target.as_bytes())
         .map(|(key, val)| [key, val].concat())
         .collect();
-    let mut play_response = json!({
-        "data": "ok",
-        "error":"NULL",
-        "request_id": 0
-    })
-    .to_string();
+
+
+    let play_response;
 
     println!("CLIENT ID: {}", client);
 
@@ -105,7 +102,7 @@ use std::io::prelude::*;
 #[post("/add", data = "<request_content>")]
 pub fn event_add_to_playlist(request_content: Json<PlaylistControl>) -> content::Json<String> {
     let client = request_content.client.clone();
-    let mut message: String = "".to_string();
+    let mut message;
 
     if client == "null".to_string() {
         let mut file = OpenOptions::new()

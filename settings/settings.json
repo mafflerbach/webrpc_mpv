@@ -1,4 +1,5 @@
 {
+    "tmdb_key" : "924375ec86dee2a9a78b5033367f4fe1",
     "debug": true,
     "socket":"/tmp/mpvsocket2",
     "childs": [

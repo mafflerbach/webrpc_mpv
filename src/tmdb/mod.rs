@@ -38,7 +38,7 @@ pub mod tmdb {
     #[derive(Serialize, Deserialize, Debug)]
     pub struct SearchResult {
         name: String,
-        id: i32,
+        pub id: i32,
         poster_path: Option<String>,
         overview: Option<String>,
     }

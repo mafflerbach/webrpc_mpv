@@ -10,11 +10,11 @@ pub fn request_scan() -> content::Json<String> {
     for entry in &path_entries {
         tmdb_response = tmdb::tmdb::search(entry.to_string());
         for result in tmdb_response.results {
-            test.push(result);
+            if !check_tmdb_id(result.id) {
+                test.push(result);
+            }
         }
     }
-
-    println!("{:?}", test);
 
     let me = serde_json::to_string(&test).unwrap();
 
@@ -59,31 +59,40 @@ pub fn request_add_serie(request_content: Json<LibraryRequest>) -> content::Json
     content::Json(test.to_string())
 }
 
-use rusqlite::NO_PARAMS;
-use rusqlite::{Connection, Result};
+use diesel::prelude::*;
+use mpv_webrpc::models::*;
+fn check_tmdb_id(id_to_check: i32) -> bool {
+    use mpv_webrpc::schema::ignored::dsl::*;
+
+    let connection = mpv_webrpc::establish_connection();
+    let results = ignored
+        .filter(tmdb_id.eq(id_to_check))
+        .load::<Ignored>(&connection)
+        .expect("Error loading ingnored Table");
+
+    if results.len() >= 1 {
+        return true;
+    }
+    return false;
+}
+
 #[post("/ignore", data = "<request_content>")]
 pub fn request_ignore_serie(request_content: Json<LibraryRequest>) -> content::Json<String> {
-    let settings = settings::config().unwrap();
+    use mpv_webrpc::schema::ignored;
+    let connection = mpv_webrpc::establish_connection();
 
-    let conn = Connection::open(settings.db);
+    let ignore_serie = NewIgnored {
+        tmdb_id: &request_content.tmdb_id,
+    };
 
-    let message: String;
-    let sql = format!(
-        "insert into ignored (tmdb_id) values ({})",
-        request_content.tmdb_id
-    );
-    match conn {
-        Ok(conn) => {
-            let result = conn.execute(sql.as_str(), NO_PARAMS);
+    let insert_result = diesel::insert_into(ignored::table)
+        .values(&ignore_serie)
+        .execute(&connection);
+    let message;
 
-            match result {
-                Ok(_result) => {
-                    message = format!("tmdb id {} - IGNORED", request_content.tmdb_id);
-                }
-                Err(e) => message = format!("{}", e),
-            };
-        }
-        Err(e) => message = format!("{}", e),
+    match insert_result {
+        Ok(v) => message = format!("{:?}", v),
+        Err(e) => message = format!("{:?}", e),
     }
 
     let test = json!({
