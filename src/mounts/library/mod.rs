@@ -62,17 +62,39 @@ pub fn request_add_serie(request_content: Json<LibraryRequest>) -> content::Json
 use diesel::prelude::*;
 use mpv_webrpc::models::*;
 fn check_tmdb_id(id_to_check: i32) -> bool {
-    use mpv_webrpc::schema::ignored::dsl::*;
+    fn check_ignore(id_to_check: i32, connection: &SqliteConnection) -> bool {
+        use mpv_webrpc::schema::ignored::dsl::*;
+        let results = ignored
+            .filter(tmdb_id.eq(id_to_check))
+            .load::<Ignored>(connection)
+            .expect("Error loading ingnored Table");
+
+        if results.len() >= 1 {
+            return true;
+        }
+        return false;
+    }
+
+    fn check_serie(id_to_check: i32, connection: &SqliteConnection) -> bool {
+        use mpv_webrpc::schema::serie::dsl::*;
+        let results = serie
+            .filter(tmdb_id.eq(id_to_check))
+            .load::<Serie>(connection)
+            .expect("Error loading ingnored Table");
+        if results.len() >= 1 {
+            return true;
+        }
+        return false;
+    }
 
     let connection = mpv_webrpc::establish_connection();
-    let results = ignored
-        .filter(tmdb_id.eq(id_to_check))
-        .load::<Ignored>(&connection)
-        .expect("Error loading ingnored Table");
+    let serie_exists = check_serie(id_to_check.clone(), &connection);
+    let is_ignored = check_ignore(id_to_check.clone(), &connection);
 
-    if results.len() >= 1 {
+    if serie_exists || is_ignored {
         return true;
     }
+
     return false;
 }
 

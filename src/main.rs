@@ -78,7 +78,6 @@ fn rocket() -> rocket::Rocket {
 fn main() {
     let args: Vec<String> = env::args().collect();
     let setting_file = &args[1];
-
     env::set_var("SETTINGS", setting_file);
 
     mpv::mpv::init();

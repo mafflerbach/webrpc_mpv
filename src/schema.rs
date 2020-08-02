@@ -33,7 +33,7 @@ table! {
 
 table! {
     serie (id) {
-        id -> Nullable<Integer>,
+        id -> Integer,
         tmdb_id -> Integer,
         title -> Text,
         imagepath -> Text,
