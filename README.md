@@ -9,8 +9,8 @@ Plan is to start a Video on a specific client via http call.
 LICENSE - WTFPL
 
 
+# TODO
 Add to library
--serie
 -movie
 
 Display in library tab

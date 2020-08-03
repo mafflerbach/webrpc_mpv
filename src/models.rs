@@ -2,14 +2,13 @@
 #[derive(Queryable)]
 pub struct Episode {
     pub id: i32,
+    pub path: String,
     pub serie_id: i32,
     pub season_id: i32,
     pub episode_id: i32,
     pub tmdb_id: i32,
     pub title: String,
     pub description: String,
-    pub path: String,
-    pub imagepath: String,
 }
 
 use crate::schema::episode;
@@ -22,7 +21,6 @@ pub struct NewEpisode<'a> {
     pub episode_id: &'a i32,
     pub tmdb_id: &'a i32,
     pub title: &'a String,
-    pub imagepath: &'a String,
     pub description: &'a String,
 }
 
@@ -52,8 +50,8 @@ use crate::schema::season;
 pub struct NewSeason<'a> {
     pub imagepath: &'a String,
     pub tmdb_id: &'a i32,
-    pub title: &'a String,
     pub description: &'a String,
+    pub title: &'a String,
 }
 
 #[derive(Queryable)]

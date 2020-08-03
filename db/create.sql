@@ -8,9 +8,9 @@ CREATE TABLE IF NOT EXISTS episode  (
     path text NOT NULL,
     serie_id integer not null,
     season_id integer not null,
+    episode_id integer not null,
     tmdb_id integer not null,
     title text NOT NULL,
-    imagepath text NOT NULL  DEFAULT '',
     description  text NOT NULL default ''
 );
 
@@ -24,10 +24,9 @@ CREATE TABLE IF NOT EXISTS movie  (
 
 CREATE TABLE IF NOT EXISTS serie  (
     id integer PRIMARY KEY,
-    season_id integer not NULL,
+    imagepath text NOT NULL  DEFAULT '',
     tmdb_id integer not NULL,
     title text NOT NULL,
-    imagepath text NOT NULL  DEFAULT '',
     description  text NOT NULL default ''
 );
 
@@ -35,7 +34,7 @@ CREATE TABLE IF NOT EXISTS season  (
     id integer PRIMARY KEY,
     imagepath text NOT NULL  DEFAULT '',
     tmdb_id integer not null,
-    title  text NOT NULL default '',
-    description  text NOT NULL default ''
+    description  text NOT NULL default '',
+    title  text NOT NULL default ''
 );
 

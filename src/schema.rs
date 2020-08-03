@@ -33,8 +33,8 @@ table! {
         id -> Integer,
         imagepath -> Text,
         tmdb_id -> Integer,
-        title -> Text,
         description -> Text,
+        title -> Text,
     }
 }
 
@@ -48,19 +48,10 @@ table! {
     }
 }
 
-table! {
-    video (id) {
-        id -> Integer,
-        path -> Text,
-        imagepath -> Text,
-    }
-}
-
 allow_tables_to_appear_in_same_query!(
     episode,
     ignored,
     movie,
     season,
     serie,
-    video,
 );

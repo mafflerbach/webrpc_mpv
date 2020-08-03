@@ -95,6 +95,7 @@ fn sync_episodes(path: String, tmdb_id: i32) {
     let mkv_pattern = format!("{}/**/*.mkv", path);
     let mp4_pattern = format!("{}/**/*.mp4", path);
 
+    use mpv_webrpc::schema::episode;
     for entry in glob(&mkv_pattern)
         .unwrap()
         .chain(glob(&mp4_pattern).unwrap())
@@ -119,10 +120,15 @@ fn sync_episodes(path: String, tmdb_id: i32) {
                     serie_id: &tmdb_id,
                     season_id: &season,
                     episode_id: &episode,
+                    tmdb_id: &tmdb_id,
                     title: &episode_info.name,
                     description: &episode_info.overview,
                 };
 
+                let connection = mpv_webrpc::establish_connection();
+                let insert_result = diesel::insert_into(episode::table)
+                    .values(&epi_info)
+                    .execute(&connection);
                 println!("fetch episode info {:?}", episode_info);
             }
             Err(e) => println!("{:?}", e),
