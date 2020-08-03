@@ -1,0 +1,43 @@
+{
+  "movie_results": [],
+  "person_results": [],
+  "tv_results": [
+    {
+      "original_name": "Marvel's Agents of S.H.I.E.L.D.",
+      "id": 1403,
+      "name": "Marvel's Agents of S.H.I.E.L.D.",
+      "vote_count": 1905,
+      "vote_average": 7.2,
+      "first_air_date": "2013-09-24",
+      "poster_path": "/gHUCCMy1vvj58tzE3dZqeC9SXus.jpg",
+      "genre_ids": [
+        18,
+        10759,
+        10765
+      ],
+      "original_language": "en",
+      "backdrop_path": "/mUCV0W6TaAk8UWA5yAmqCywC63F.jpg",
+      "overview": "Agent Phil Coulson of S.H.I.E.L.D. (Strategic Homeland Intervention, Enforcement and Logistics Division) puts together a team of agents to investigate the new, the strange and the unknown around the globe, protecting the ordinary from the extraordinary.",
+      "origin_country": [
+        "US"
+      ],
+      "popularity": 126.704
+    }
+  ],
+  "tv_episode_results": [
+    {
+      "air_date": "1998-11-20",
+      "episode_number": 7,
+      "id": 143977,
+      "name": "Episode 6-07",
+      "overview": "New Conservative Leader   Newly elected Conservative Party leader Joe Clark demands a recount    Martha Stewart News   Martha Stewart chats with birthday boy Prince Charles    Videopion - Co-ed Scouts   Old boys Ernie and Harold share their thoughts on co-ed scouting    Quebec Debate '98   The Quebec election debate pits Lucien Bouchard and Jean Charest against moderator, Mike from Canmore    Saddam and Bobbie   At the Saddam Hussein Golf Classic, UN inspectors putt for show and explode for dough    Sadsack Psychiatrist   A psychiatrist attempts to help a man who has a dysfunctional family    Jock McBile   Jock scans the headlines and rants about Jean Chretien in Kuala Lumpur, Doug Flutie, Eaton's new boss, Zippergate, the Reform Party, BC Cigarette Tax, Toronto Police strip searches, Quebec Medicare, and The Grey Cup",
+      "production_code": "",
+      "season_number": 6,
+      "show_id": 2091,
+      "still_path": "/opsY5u9kPoMN4YPLl8Y5I4Xl8Uk.jpg",
+      "vote_average": 0,
+      "vote_count": 0
+    }
+  ],
+  "tv_season_results": []
+}

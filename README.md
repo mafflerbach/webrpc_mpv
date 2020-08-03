@@ -8,15 +8,33 @@ Plan is to start a Video on a specific client via http call.
 
 LICENSE - WTFPL
 
-TODO
-- better error handling 
- 
-TODO for the client
-- implement volume control for remote clients
-- prettier gui
 
-TODO for the server
-- fetching video information from tmdb
-- indexing videos on local
+Add to library
+-serie
+-movie
+
+Display in library tab
+
+Save video status per file
+forwarding current video 
+
+add video manualy
+open local file
+
+service discovery
+
+fix readme
+fix integration test
+fix config
+documentation
+add logging level 
+rename project
+
+installation processing for config 
+overhaul frontend
 
 
+Plugins:
+youtube
+twitch
+mediatheken

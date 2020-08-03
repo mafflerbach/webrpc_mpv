@@ -29,12 +29,14 @@ $(function() {
 
     $("#searchResult").on("click", ".add-serie", function() {
         value = $(this).attr("id");
+        path = $(this).data("path");
         $.ajax({
             type: "POST",
             url: "/library/add",
             contenType: "application/json",
             data: JSON.stringify({
-                "target": value,
+                "path": path,
+                "tmdb_id": parseInt(value),
             }),
             success: function(data) {
                 console.log(data);
@@ -164,6 +166,7 @@ $(function() {
                     clone.find(".card-text").append(elem.overview);
                     clone.find(".ignore-serie").attr("id", elem.id);
                     clone.find(".add-serie").attr("id", elem.id);
+                    clone.find(".add-serie").attr("data-path", elem.file_path);
 
                     clone.appendTo("#SearchBoxModalContent");
                 }

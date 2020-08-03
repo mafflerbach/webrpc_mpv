@@ -2,15 +2,17 @@ use crate::tmdb;
 use rocket::response::content;
 #[get("/scan")]
 pub fn request_scan() -> content::Json<String> {
-    scan_dir();
+    //scan_dir();
     let path_entries = get_first_level();
-
+    let settings = settings::init();
     let mut test = Vec::new();
     let mut tmdb_response;
     for entry in &path_entries {
         tmdb_response = tmdb::tmdb::search(entry.to_string());
-        for result in tmdb_response.results {
+        for mut result in tmdb_response.results {
             if !check_tmdb_id(result.id) {
+                let file_path: Option<String> = Some(format!("{}{}", settings.scan_dir, entry));
+                result.file_path = file_path;
                 test.push(result);
             }
         }
@@ -46,17 +48,48 @@ fn get_first_level() -> Vec<String> {
 #[derive(Serialize, Deserialize)]
 pub struct LibraryRequest {
     pub tmdb_id: i32,
+    pub path: String,
 }
 
 use rocket_contrib::json::Json;
 #[post("/add", data = "<request_content>")]
 pub fn request_add_serie(request_content: Json<LibraryRequest>) -> content::Json<String> {
+    let external_id = tmdb::tmdb::get_external_id(request_content.tmdb_id);
+    println!("External id: {}", external_id.tvdb_id);
+
+    let serie_information = tmdb::tmdb::find_by_external_id(external_id.tvdb_id);
+
+    //let season_informations = tmdb::tmdb::tv_season_get_details(external_id.tvdb_id, 7);
+
+    sync_episodes(request_content.path.clone());
+
     let test = json!({
         "data": "ok",
         "message": "",
         "request_id": 0
     });
     content::Json(test.to_string())
+}
+
+fn sync_episodes(path: String) {
+    let settings = settings::init();
+
+    let mkv_pattern = format!("{}/**/*.mkv", path);
+    let mp4_pattern = format!("{}/**/*.mp4", path);
+
+    for entry in glob(&mkv_pattern)
+        .unwrap()
+        .chain(glob(&mp4_pattern).unwrap())
+    {
+        match entry {
+            Ok(path) => {
+                println!("fetch for episodes and season in path: {:?}", path);
+                let captures = parsing_season_and_episode(&path.clone().into_os_string().into_string().unwrap());
+                // TODO update 
+            }
+            Err(e) => println!("{:?}", e),
+        }
+    }
 }
 
 use diesel::prelude::*;
@@ -144,14 +177,11 @@ extern crate lazy_static;
 use lazy_static::lazy_static;
 use regex::Regex;
 use std::collections::HashSet;
-fn parsing_season_and_episode(text: &str) -> bool {
+fn parsing_season_and_episode(text: &str) -> regex::Captures {
     lazy_static! {
-        static ref RE: Regex = Regex::new(r"S(\d{1,2})E(\d{1,2})").unwrap();
+        static ref RE: Regex = Regex::new(r"(S\d{1,2}|s\d{1,2})(E\d{1,2}|e\d{1,2})").unwrap();
     }
 
-    let _foo: HashSet<&str> = RE.find_iter(text).map(|mat| mat.as_str()).collect();
-
-    //println!("{:?}", foo);
-
-    RE.is_match(text)
+    let foo: HashSet<_> = RE.find_iter(text).map(|mat| mat.as_str()).collect();
+    RE.captures(text).unwrap()
 }

@@ -37,11 +37,13 @@ pub mod tmdb {
 
     #[derive(Serialize, Deserialize, Debug)]
     pub struct SearchResult {
-        name: String,
+        pub name: String,
         pub id: i32,
-        poster_path: Option<String>,
-        overview: Option<String>,
+        pub file_path: Option<String>,
+        pub poster_path: Option<String>,
+        pub overview: Option<String>,
     }
+
     use crate::settings;
     use crate::stubs;
     use url::form_urlencoded::parse;
@@ -57,6 +59,101 @@ pub mod tmdb {
         let response =
             stubs::read_fixture_file("/home/maren/development/rust/mpv/test/searchFixture.json");
         let p: SearchResultResponse = serde_json::from_str(response.as_str()).unwrap();
+        return p;
+    }
+
+    /// {
+    ///   "id": 1403,
+    ///   "imdb_id": "tt2364582",
+    ///   "freebase_mid": "/m/0lqhm3l",
+    ///   "freebase_id": null,
+    ///   "tvdb_id": 263365,
+    ///   "tvrage_id": 32656,
+    ///   "facebook_id": "AgentsofShield",
+    ///   "instagram_id": "agentsofshield",
+    ///   "twitter_id": "AgentsofSHIELD"
+    /// }    
+    /// https://api.themoviedb.org/3/tv/1403/external_ids?api_key=924375ec86dee2a9a78b5033367f4fe1&language=en-US
+
+    #[derive(Serialize, Deserialize, Debug)]
+    pub struct GetExternalIdResponse {
+        pub tvdb_id: i32,
+    }
+
+    pub fn get_external_id(tmdb_id: i32) -> GetExternalIdResponse {
+        let settings = settings::init();
+        // url decode for search
+
+        let _test = format!(
+            "https://api.themoviedb.org/3/tv/{}/external_ids?api_key={}&language=en-US",
+            tmdb_id, settings.tmdb_key
+        );
+        //  let response =  send_request(test.to_string()).unwrap();
+
+        let response =
+            stubs::read_fixture_file("/home/maren/development/rust/mpv/test/get_external_id.json");
+        let p: GetExternalIdResponse = serde_json::from_str(response.as_str()).unwrap();
+        return p;
+    }
+
+    /// {
+    ///   "movie_results": [],
+    ///   "person_results": [],
+    ///   "tv_results": [
+    ///     {
+    ///       "original_name": "Marvel's Agents of S.H.I.E.L.D.",
+    ///       "id": 1403,
+    ///       "name": "Marvel's Agents of S.H.I.E.L.D.",
+    ///       "vote_count": 1905,
+    ///       "vote_average": 7.2,
+    ///       "first_air_date": "2013-09-24",
+    ///       "poster_path": "/gHUCCMy1vvj58tzE3dZqeC9SXus.jpg",
+    ///       "genre_ids": [
+    ///         18,
+    ///         10759,
+    ///         10765
+    ///       ],
+    ///       "original_language": "en",
+    ///       "backdrop_path": "/mUCV0W6TaAk8UWA5yAmqCywC63F.jpg",
+    ///       "overview": "Agent Phil Coulson of S.H.I.E.L.D. (Strategic Homeland Intervention, Enforcement and Logistics Division) puts together a team of agents to investigate the new, the strange and the unknown around the globe, protecting the ordinary from the extraordinary.",
+    ///       "origin_country": [
+    ///         "US"
+    ///       ],
+    ///       "popularity": 126.704
+    ///     }
+    ///   ],
+    ///   "tv_episode_results": [
+    ///     {
+    ///       "air_date": "1998-11-20",
+    ///       "episode_number": 7,
+    ///       "id": 143977,
+    ///       "name": "Episode 6-07",
+    ///       "overview": "New Conservative Leader   Newly elected Conservative Party leader Joe Clark demands a recount    Martha Stewart News   Martha Stewart chats with birthday boy Prince Charles    Videopion - Co-ed Scouts   Old boys Ernie and Harold share their thoughts on co-ed scouting    Quebec Debate '98   The Quebec election debate pits Lucien Bouchard and Jean Charest against moderator, Mike from Canmore    Saddam and Bobbie   At the Saddam Hussein Golf Classic, UN inspectors putt for show and explode for dough    Sadsack Psychiatrist   A psychiatrist attempts to help a man who has a dysfunctional family    Jock McBile   Jock scans the headlines and rants about Jean Chretien in Kuala Lumpur, Doug Flutie, Eaton's new boss, Zippergate, the Reform Party, BC Cigarette Tax, Toronto Police strip searches, Quebec Medicare, and The Grey Cup",
+    ///       "production_code": "",
+    ///       "season_number": 6,
+    ///       "show_id": 2091,
+    ///       "still_path": "/opsY5u9kPoMN4YPLl8Y5I4Xl8Uk.jpg",
+    ///       "vote_average": 0,
+    ///       "vote_count": 0
+    ///     }
+    ///   ],
+    ///   "tv_season_results": []
+    /// }
+    /// https://api.themoviedb.org/3/find/263365?api_key=924375ec86dee2a9a78b5033367f4fe1&language=en-US&external_source=tvdb_id
+    #[derive(Serialize, Deserialize, Debug)]
+    pub struct FindByExternalIdResponse {
+        pub tv_results: Vec<SearchResult>,
+    }
+    pub fn find_by_external_id(external_id: i32) -> FindByExternalIdResponse {
+        let settings = settings::init();
+        // url decode for search
+        let _test = format!( "https://api.themoviedb.org/3/find/{}?api_key={}&language=en-US&external_source=tvdb_id", external_id , settings.tmdb_key);
+        //  let response =  send_request(test.to_string()).unwrap();
+
+        let response = stubs::read_fixture_file(
+            "/home/maren/development/rust/mpv/test/find_by_external_id.json",
+        );
+        let p: FindByExternalIdResponse = serde_json::from_str(response.as_str()).unwrap();
         return p;
     }
 
@@ -91,22 +188,32 @@ pub mod tmdb {
     /// result from https://api.themoviedb.org/3/tv/1403/season/7?api_key=<APIKEY>&language=en-US
 
     #[derive(Serialize, Deserialize, Debug)]
-    struct SeasonResult {
-        episodes: Vec<Episode>,
-        overview: String,
-        id: i32,
-        poster_path: String,
+    pub struct SeasonResult {
+        pub episodes: Vec<Episode>,
+        pub overview: String,
+        pub id: i32,
+        pub poster_path: String,
     }
     #[derive(Serialize, Deserialize, Debug)]
-    struct Episode {
-        id: i32,
-        name: String,
-        overview: String,
-        season_number: i32,
-        episode_number: i32,
+    pub struct Episode {
+        pub id: i32,
+        pub name: String,
+        pub overview: String,
+        pub season_number: i32,
+        pub episode_number: i32,
     }
-    //pub fn tv_season_result () -> SeasonResult {
-    //}
+    pub fn tv_season_get_details(tmdb_id: i32, season_id: i32) -> SeasonResult {
+        let settings = settings::init();
+        // url decode for search
+        let _test = format!( "https://api.themoviedb.org/3/tv/{}/season/{}??api_key={}&language=en-US&external_source=tvdb_id", tmdb_id , season_id , settings.tmdb_key);
+        //  let response =  send_request(test.to_string()).unwrap();
+
+        let response = stubs::read_fixture_file(
+            "/home/maren/development/rust/mpv/test/tv_season_get_details.json",
+        );
+        let p: SeasonResult = serde_json::from_str(response.as_str()).unwrap();
+        return p;
+    }
 
     extern crate reqwest;
     fn send_request(target: String) -> Result<String, reqwest::Error> {

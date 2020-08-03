@@ -52,5 +52,8 @@ POST /library/ignore
 # add to library
 http://localhost:9990
 POST /library/add
-{"target":"1403"}
+{
+    "tmdb_id":1403,
+    "path" : "/home/maren/Downloads/complete/Marvel's Agents of S.H.I.E.L.D"
+}
 
