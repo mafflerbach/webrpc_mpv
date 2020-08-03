@@ -215,6 +215,24 @@ pub mod tmdb {
         return p;
     }
 
+
+
+pub fn tv_episodes_get_details(tmdb_id: i32, season: i32, episode: i32) -> Episode {
+
+        let settings = settings::init();
+        // url decode for search
+        let _test = format!( "https://api.themoviedb.org/3/tv/{}/season/{}/episode/{}?api_key={}&language=en-US&external_source=tvdb_id", tmdb_id , season , episode,  settings.tmdb_key);
+        //  let response =  send_request(test.to_string()).unwrap();
+
+        let response = stubs::read_fixture_file(
+            "/home/maren/development/rust/mpv/test/tv_episodes_get_detail.json",
+        );
+        let p: Episode = serde_json::from_str(response.as_str()).unwrap();
+        return p;
+
+}
+
+
     extern crate reqwest;
     fn send_request(target: String) -> Result<String, reqwest::Error> {
         //TODO change to post, add fields target for video url and id = 0 for local

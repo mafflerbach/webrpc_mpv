@@ -4,6 +4,7 @@ pub struct Episode {
     pub id: i32,
     pub serie_id: i32,
     pub season_id: i32,
+    pub episode_id: i32,
     pub tmdb_id: i32,
     pub title: String,
     pub description: String,
@@ -18,6 +19,7 @@ pub struct NewEpisode<'a> {
     pub path: &'a String,
     pub serie_id: &'a i32,
     pub season_id: &'a i32,
+    pub episode_id: &'a i32,
     pub tmdb_id: &'a i32,
     pub title: &'a String,
     pub imagepath: &'a String,
@@ -76,14 +78,13 @@ pub struct Ignored {
     pub tmdb_id: i32,
 }
 use crate::schema::serie;
-#[derive(Insertable)]
+#[derive(Insertable, Debug)]
 #[table_name = "serie"]
 pub struct NewSerie<'a> {
     pub imagepath: &'a String,
     pub tmdb_id: &'a i32,
     pub title: &'a String,
     pub description: &'a String,
-    pub season_id: &'a i32,
 }
 
 #[derive(Queryable)]
@@ -93,5 +94,4 @@ pub struct Serie {
     pub tmdb_id: i32,
     pub title: String,
     pub description: String,
-    pub season_id: i32,
 }

@@ -4,9 +4,9 @@ table! {
         path -> Text,
         serie_id -> Integer,
         season_id -> Integer,
+        episode_id -> Integer,
         tmdb_id -> Integer,
         title -> Text,
-        imagepath -> Text,
         description -> Text,
     }
 }
@@ -45,7 +45,6 @@ table! {
         tmdb_id -> Integer,
         title -> Text,
         description -> Text,
-        season_id -> Integer,
     }
 }
 

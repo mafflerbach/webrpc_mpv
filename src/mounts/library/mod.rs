@@ -54,14 +54,32 @@ pub struct LibraryRequest {
 use rocket_contrib::json::Json;
 #[post("/add", data = "<request_content>")]
 pub fn request_add_serie(request_content: Json<LibraryRequest>) -> content::Json<String> {
+    fn first<T>(v: &Vec<T>) -> Option<&T> {
+        v.first()
+    }
     let external_id = tmdb::tmdb::get_external_id(request_content.tmdb_id);
     println!("External id: {}", external_id.tvdb_id);
 
     let serie_information = tmdb::tmdb::find_by_external_id(external_id.tvdb_id);
 
-    //let season_informations = tmdb::tmdb::tv_season_get_details(external_id.tvdb_id, 7);
+    println!("HHHEHHEHEHHE {:?}", serie_information);
 
-    sync_episodes(request_content.path.clone());
+    let info_vec = &first(&serie_information.tv_results).unwrap();
+
+    let serie_info = NewSerie {
+        imagepath: &info_vec.poster_path.as_ref().unwrap(),
+        tmdb_id: &request_content.tmdb_id,
+        title: &info_vec.name,
+        description: &info_vec.overview.as_ref().unwrap(),
+    };
+    println!("{:?}", serie_info);
+    let connection = mpv_webrpc::establish_connection();
+    use mpv_webrpc::schema::serie;
+    let insert_result = diesel::insert_into(serie::table)
+        .values(&serie_info)
+        .execute(&connection);
+
+    sync_episodes(request_content.path.clone(), request_content.tmdb_id);
 
     let test = json!({
         "data": "ok",
@@ -71,7 +89,7 @@ pub fn request_add_serie(request_content: Json<LibraryRequest>) -> content::Json
     content::Json(test.to_string())
 }
 
-fn sync_episodes(path: String) {
+fn sync_episodes(path: String, tmdb_id: i32) {
     let settings = settings::init();
 
     let mkv_pattern = format!("{}/**/*.mkv", path);
@@ -84,8 +102,28 @@ fn sync_episodes(path: String) {
         match entry {
             Ok(path) => {
                 println!("fetch for episodes and season in path: {:?}", path);
-                let captures = parsing_season_and_episode(&path.clone().into_os_string().into_string().unwrap());
-                // TODO update 
+                let foo = &path.clone().into_os_string().into_string().unwrap();
+                let captures = parsing_season_and_episode(foo);
+                //
+                let mut s = captures.get(1).map_or("", |m| m.as_str()).replace("S", "");
+                let season: i32 = s.replace("s", "").parse::<i32>().unwrap();
+
+                let mut e = captures.get(2).map_or("", |m| m.as_str()).replace("E", "");
+                let episode: i32 = e.replace("e", "").parse::<i32>().unwrap();
+
+                let episode_info = tmdb::tmdb::tv_episodes_get_details(tmdb_id, season, episode);
+                // TODO update
+
+                let epi_info = NewEpisode {
+                    path: foo,
+                    serie_id: &tmdb_id,
+                    season_id: &season,
+                    episode_id: &episode,
+                    title: &episode_info.name,
+                    description: &episode_info.overview,
+                };
+
+                println!("fetch episode info {:?}", episode_info);
             }
             Err(e) => println!("{:?}", e),
         }
@@ -129,6 +167,10 @@ fn check_tmdb_id(id_to_check: i32) -> bool {
     }
 
     return false;
+}
+#[derive(Serialize, Deserialize)]
+pub struct LibraryIgnoreRequest {
+    pub tmdb_id: i32,
 }
 
 #[post("/ignore", data = "<request_content>")]
