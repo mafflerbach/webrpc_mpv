@@ -190,6 +190,7 @@ pub mod tmdb {
     #[derive(Serialize, Deserialize, Debug)]
     pub struct SeasonResult {
         pub episodes: Vec<Episode>,
+        pub name: String,
         pub overview: String,
         pub id: i32,
         pub poster_path: String,
@@ -239,7 +240,7 @@ pub fn tv_episodes_get_details(tmdb_id: i32, season: i32, episode: i32) -> Episo
 
         let client = reqwest::Client::new();
         let result = client.get(&target.clone().to_string()).send()?.text();
-        println!("{:?}", result);
+        println!("RESPONSE: {:?}", result);
         return result;
     }
 }
