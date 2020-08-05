@@ -76,7 +76,9 @@ pub fn request_add_serie(request_content: Json<LibraryRequest>) -> content::Json
     let serie_information = tmdb::tmdb::find_by_external_id(external_id.tvdb_id);
 
     let info_vec = &first(&serie_information.tv_results).unwrap();
-
+let poster_path = info_vec.poster_path.as_ref().unwrap();
+    let description = info_vec.overview.as_ref().unwrap();
+    let name = &info_vec.name;
     if !check_serie(request_content.tmdb_id) {
         let serie_info = NewSerie {
             imagepath: &info_vec.poster_path.as_ref().unwrap(),
@@ -84,6 +86,16 @@ pub fn request_add_serie(request_content: Json<LibraryRequest>) -> content::Json
             title: &info_vec.name,
             description: &info_vec.overview.as_ref().unwrap(),
         };
+        let serie_obj = Serie {
+            id: 0,
+            imagepath: poster_path.clone(),
+            tmdb_id: request_content.tmdb_id,
+            title: name.clone(),
+            description: description.clone(),
+        };
+
+
+        println!("{:?}", serie_info.check_serie(request_content.tmdb_id));
         println!("{:?}", serie_info);
         let connection = mpv_webrpc::establish_connection();
         use mpv_webrpc::schema::serie;

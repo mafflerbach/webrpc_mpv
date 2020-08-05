@@ -76,6 +76,8 @@ pub struct Ignored {
     pub tmdb_id: i32,
 }
 use crate::schema::serie;
+use crate::establish_connection;
+
 #[derive(Insertable, Debug)]
 #[table_name = "serie"]
 pub struct NewSerie<'a> {
@@ -93,3 +95,26 @@ pub struct Serie {
     pub title: String,
     pub description: String,
 }
+
+impl NewSerie<'_> {
+
+pub fn check_serie(&self, id_to_check: i32) -> bool {
+    use crate::schema::serie::dsl::*;
+
+    use diesel::prelude::*;
+    use crate::models::*;
+    let connection = establish_connection();
+        let results = serie
+            .filter(tmdb_id.eq(id_to_check))
+            .load::<Serie>(&connection)
+            .expect("Error loading Serie Table");
+
+        if results.len() >= 1 {
+            return true;
+        }
+        return false;
+    }
+
+
+}
+

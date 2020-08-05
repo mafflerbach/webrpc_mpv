@@ -28,6 +28,8 @@ lazy_static = "1.4.0"
 regex = "1"
 diesel = { version = "1.4.4", features = ["sqlite"] }
 dotenv = "0.15.0"
+openssl = { version = "0.10.30", features = ["vendored"] }
+
 
 [dependencies.rocket_contrib]
 version = "0.4.5"
