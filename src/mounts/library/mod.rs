@@ -54,19 +54,6 @@ pub struct LibraryRequest {
 use rocket_contrib::json::Json;
 #[post("/add", data = "<request_content>")]
 pub fn request_add_serie(request_content: Json<LibraryRequest>) -> content::Json<String> {
-    fn check_serie(id_to_check: i32) -> bool {
-        use mpv_webrpc::schema::serie::dsl::*;
-        let connection = mpv_webrpc::establish_connection();
-        let results = serie
-            .filter(tmdb_id.eq(id_to_check))
-            .load::<Serie>(&connection)
-            .expect("Error loading Serie Table");
-
-        if results.len() >= 1 {
-            return true;
-        }
-        return false;
-    }
     fn first<T>(v: &Vec<T>) -> Option<&T> {
         v.first()
     }
@@ -76,27 +63,18 @@ pub fn request_add_serie(request_content: Json<LibraryRequest>) -> content::Json
     let serie_information = tmdb::tmdb::find_by_external_id(external_id.tvdb_id);
 
     let info_vec = &first(&serie_information.tv_results).unwrap();
-let poster_path = info_vec.poster_path.as_ref().unwrap();
+    let poster_path = info_vec.poster_path.as_ref().unwrap();
     let description = info_vec.overview.as_ref().unwrap();
     let name = &info_vec.name;
-    if !check_serie(request_content.tmdb_id) {
-        let serie_info = NewSerie {
-            imagepath: &info_vec.poster_path.as_ref().unwrap(),
-            tmdb_id: &request_content.tmdb_id,
-            title: &info_vec.name,
-            description: &info_vec.overview.as_ref().unwrap(),
-        };
-        let serie_obj = Serie {
-            id: 0,
-            imagepath: poster_path.clone(),
-            tmdb_id: request_content.tmdb_id,
-            title: name.clone(),
-            description: description.clone(),
-        };
 
+    let serie_info = NewSerie {
+        imagepath: &info_vec.poster_path.as_ref().unwrap(),
+        tmdb_id: &request_content.tmdb_id,
+        title: &info_vec.name,
+        description: &info_vec.overview.as_ref().unwrap(),
+    };
 
-        println!("{:?}", serie_info.check_serie(request_content.tmdb_id));
-        println!("{:?}", serie_info);
+    if !serie_info.check_serie() {
         let connection = mpv_webrpc::establish_connection();
         use mpv_webrpc::schema::serie;
         let insert_result = diesel::insert_into(serie::table)
@@ -113,10 +91,11 @@ let poster_path = info_vec.poster_path.as_ref().unwrap();
     });
     content::Json(test.to_string())
 }
-fn sync_season(tmdb_id_to_insert: i32, season_id: i32) {
+fn sync_season(tmdb_id_to_insert: i32, season_id_to_insert: i32) {
     use mpv_webrpc::schema::season;
-    let season_in = tmdb::tmdb::tv_season_get_details(tmdb_id_to_insert, season_id);
+    let season_in = tmdb::tmdb::tv_season_get_details(tmdb_id_to_insert, season_id_to_insert);
     let season_info = NewSeason {
+        season_id: &season_id_to_insert,
         tmdb_id: &tmdb_id_to_insert,
         title: &season_in.name,
         imagepath: &season_in.poster_path,
@@ -130,36 +109,6 @@ fn sync_season(tmdb_id_to_insert: i32, season_id: i32) {
 }
 
 fn sync_episodes(path: String, tmdb_id: i32) {
-    fn check_season(id_to_check: i32, season_to_check: i32) -> bool {
-        use mpv_webrpc::schema::season::dsl::*;
-        let connection = mpv_webrpc::establish_connection();
-        let results = season
-            .filter(tmdb_id.eq(id_to_check))
-            .load::<Season>(&connection)
-            .expect("Error loading episode Table");
-
-                   println!("Season exist {}", results.len()); 
-        if results.len() >= 1 {
-            return true;
-        }
-        return false;
-    }
-    fn check_episode(id_to_check: i32, season_to_check: i32, episode_to_check: i32) -> bool {
-        use mpv_webrpc::schema::episode::dsl::*;
-        let connection = mpv_webrpc::establish_connection();
-        let results = episode
-            .filter(tmdb_id.eq(id_to_check))
-            .filter(season_id.eq(season_to_check))
-            .filter(episode_id.eq(episode_to_check))
-            .load::<Episode>(&connection)
-            .expect("Error loading episode Table");
-
-        if results.len() >= 1 {
-            return true;
-        }
-        return false;
-    }
-
     let settings = settings::init();
 
     let mkv_pattern = format!("{}/**/*.mkv", path);
@@ -182,23 +131,34 @@ fn sync_episodes(path: String, tmdb_id: i32) {
                 let e = captures.get(2).map_or("", |m| m.as_str()).replace("E", "");
                 let episode: i32 = e.replace("e", "").parse::<i32>().unwrap();
 
-                if !check_season(tmdb_id, season) {
+                let season_info = NewSeason {
+                    season_id: &season,
+                    tmdb_id: &tmdb_id,
+                    title: &"".to_string(),
+                    imagepath: &"".to_string(),
+                    description: &"".to_string(),
+                };
+
+                if !season_info.check_season() {
                     println!("insert season information for {} {}", tmdb_id, season);
                     sync_season(tmdb_id, season);
                 }
-                if !check_episode(tmdb_id, season, episode) {
+
+                let mut epi_info = NewEpisode {
+                    path: file_name,
+                    serie_id: &tmdb_id,
+                    season_id: &season,
+                    episode_id: &episode,
+                    tmdb_id: &tmdb_id,
+                    title: &"".to_string(),
+                    description: &"".to_string(),
+                };
+                if !epi_info.check_episode() {
                     let episode_info =
                         tmdb::tmdb::tv_episodes_get_details(tmdb_id, season, episode);
 
-                    let epi_info = NewEpisode {
-                        path: file_name,
-                        serie_id: &tmdb_id,
-                        season_id: &season,
-                        episode_id: &episode,
-                        tmdb_id: &tmdb_id,
-                        title: &episode_info.name,
-                        description: &episode_info.overview,
-                    };
+                    epi_info.title = &episode_info.name;
+                    epi_info.description = &episode_info.overview;
 
                     let connection = mpv_webrpc::establish_connection();
                     let insert_result = diesel::insert_into(episode::table)
@@ -215,34 +175,21 @@ fn sync_episodes(path: String, tmdb_id: i32) {
 use diesel::prelude::*;
 use mpv_webrpc::models::*;
 fn check_tmdb_id(id_to_check: i32) -> bool {
-    fn check_ignore(id_to_check: i32, connection: &SqliteConnection) -> bool {
-        use mpv_webrpc::schema::ignored::dsl::*;
-        let results = ignored
-            .filter(tmdb_id.eq(id_to_check))
-            .load::<Ignored>(connection)
-            .expect("Error loading ingnored Table");
-
-        if results.len() >= 1 {
-            return true;
-        }
-        return false;
-    }
-
-    fn check_serie(id_to_check: i32, connection: &SqliteConnection) -> bool {
-        use mpv_webrpc::schema::serie::dsl::*;
-        let results = serie
-            .filter(tmdb_id.eq(id_to_check))
-            .load::<Serie>(connection)
-            .expect("Error loading ingnored Table");
-        if results.len() >= 1 {
-            return true;
-        }
-        return false;
-    }
-
     let connection = mpv_webrpc::establish_connection();
-    let serie_exists = check_serie(id_to_check.clone(), &connection);
-    let is_ignored = check_ignore(id_to_check.clone(), &connection);
+
+    let ignored = NewIgnored {
+        tmdb_id: &id_to_check.clone(),
+    };
+
+    let serie_info = NewSerie {
+        tmdb_id: &id_to_check.clone(),
+        description: &"".to_string(),
+        title: &"".to_string(),
+        imagepath: &"".to_string(),
+    };
+
+    let is_ignored = ignored.is_ignored();
+    let serie_exists = serie_info.check_serie();
 
     if serie_exists || is_ignored {
         return true;

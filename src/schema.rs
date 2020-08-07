@@ -35,6 +35,7 @@ table! {
         tmdb_id -> Integer,
         description -> Text,
         title -> Text,
+        season_id -> Integer,
     }
 }
 

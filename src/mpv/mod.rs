@@ -64,6 +64,7 @@ pub mod mpv {
         mpv.arg("--idle=yes")
             .arg(ipc_param)
             .arg("--fs=yes")
+            .arg("--vo=gpu")
             .spawn()
             .expect("OK");
     }
