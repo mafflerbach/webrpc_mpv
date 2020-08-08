@@ -33,6 +33,7 @@ struct TemplateContext {
     settings: SettingContext,
 }
 
+
 #[get("/")]
 fn index() -> Template {
     let links_context = settings::init();
@@ -64,6 +65,15 @@ fn rocket() -> rocket::Rocket {
                mounts::library::request_scan,
                mounts::library::request_add_serie,
                mounts::library::request_ignore_serie
+        ])
+        .mount("/series", routes![
+            mounts::series::index,
+            mounts::series::detail,
+        ])
+        .mount("/episodes", routes![
+            mounts::episodes::detail,
+            mounts::episodes::index
+
         ])
         .mount(
             "/",

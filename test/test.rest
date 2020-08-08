@@ -24,10 +24,6 @@ POST /player
 http://localhost:9990
 GET /volume
 
-# set volume
-http://localhost:9990
-POST /volume
-{"client": "null" , "value":"50"}
 
 # set volume
 http://localhost:9990
@@ -58,4 +54,21 @@ POST /library/add
     "tmdb_id":1403,
     "path" : "/home/maren/Downloads/complete/Marvel's Agents of S.H.I.E.L.D"
 }
+
+
+# add to library
+http://localhost:9990
+GET /series/detail/85948
+
+http://localhost:9990
+GET /series
+
+http://localhost:9990
+GET /episodes
+
+http://localhost:9990
+GET /episodes/1403/3
+
+http://localhost:9990
+GET /episodes/1403/3/1
 

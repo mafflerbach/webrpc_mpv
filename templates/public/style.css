@@ -105,6 +105,7 @@ background-color: rgba(255, 255, 250, 0.8);
 position:absolute;
 top:-150px;
 }
+
 .range input[type="range"] {
     outline: none;
 }

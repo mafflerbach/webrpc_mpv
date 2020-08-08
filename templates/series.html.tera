@@ -1,0 +1,15 @@
+    {% for serie in series %}
+
+    <div class="card mb-3 ">
+        <div class="cardContent" style="background-size: cover;background-position: -50%; background-image:url('https://image.tmdb.org/t/p/w500/{{serie.imagepath}}')">
+
+            <div class="searchResultThumbnail">
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{serie.title}}</h5>
+                <p class="card-text">{{serie.description}}</p>
+                <button type="button" class="btn btn-primary get-seasons" data-id="{{serie.tmdb_id}}">Seasons</button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}

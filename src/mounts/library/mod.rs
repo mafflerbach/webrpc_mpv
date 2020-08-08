@@ -1,8 +1,10 @@
+pub mod episodes;
+pub mod series;
 use crate::tmdb;
 use rocket::response::content;
 #[get("/scan")]
 pub fn request_scan() -> content::Json<String> {
-    //scan_dir();
+    scan_dir();
     let path_entries = get_first_level();
     let settings = settings::init();
     let mut test = Vec::new();
@@ -63,10 +65,6 @@ pub fn request_add_serie(request_content: Json<LibraryRequest>) -> content::Json
     let serie_information = tmdb::tmdb::find_by_external_id(external_id.tvdb_id);
 
     let info_vec = &first(&serie_information.tv_results).unwrap();
-    let poster_path = info_vec.poster_path.as_ref().unwrap();
-    let description = info_vec.overview.as_ref().unwrap();
-    let name = &info_vec.name;
-
     let serie_info = NewSerie {
         imagepath: &info_vec.poster_path.as_ref().unwrap(),
         tmdb_id: &request_content.tmdb_id,
@@ -77,7 +75,7 @@ pub fn request_add_serie(request_content: Json<LibraryRequest>) -> content::Json
     if !serie_info.check_serie() {
         let connection = mpv_webrpc::establish_connection();
         use mpv_webrpc::schema::serie;
-        let insert_result = diesel::insert_into(serie::table)
+        let _insert_result = diesel::insert_into(serie::table)
             .values(&serie_info)
             .execute(&connection);
 
@@ -103,14 +101,12 @@ fn sync_season(tmdb_id_to_insert: i32, season_id_to_insert: i32) {
     };
 
     let connection = mpv_webrpc::establish_connection();
-    let insert_result = diesel::insert_into(season::table)
+    let _insert_result = diesel::insert_into(season::table)
         .values(&season_info)
         .execute(&connection);
 }
 
 fn sync_episodes(path: String, tmdb_id: i32) {
-    let settings = settings::init();
-
     let mkv_pattern = format!("{}/**/*.mkv", path);
     let mp4_pattern = format!("{}/**/*.mp4", path);
 
@@ -125,10 +121,22 @@ fn sync_episodes(path: String, tmdb_id: i32) {
                 let file_name = &path.clone().into_os_string().into_string().unwrap();
                 let captures = parsing_season_and_episode(file_name);
                 //
-                let s = captures.get(1).map_or("", |m| m.as_str()).replace("S", "");
+                if captures.is_none() {
+                    println!("Pattern not match");
+                    continue;
+                }
+
+                let unwrap_cap = captures.unwrap();
+                let s = unwrap_cap
+                    .get(1)
+                    .map_or("", |m| m.as_str())
+                    .replace("S", "");
                 let season: i32 = s.replace("s", "").parse::<i32>().unwrap();
 
-                let e = captures.get(2).map_or("", |m| m.as_str()).replace("E", "");
+                let e = unwrap_cap
+                    .get(2)
+                    .map_or("", |m| m.as_str())
+                    .replace("E", "");
                 let episode: i32 = e.replace("e", "").parse::<i32>().unwrap();
 
                 let season_info = NewSeason {
@@ -161,7 +169,7 @@ fn sync_episodes(path: String, tmdb_id: i32) {
                     epi_info.description = &episode_info.overview;
 
                     let connection = mpv_webrpc::establish_connection();
-                    let insert_result = diesel::insert_into(episode::table)
+                    let _insert_result = diesel::insert_into(episode::table)
                         .values(&epi_info)
                         .execute(&connection);
                     println!("insert episode info {:?}", episode_info);
@@ -175,8 +183,6 @@ fn sync_episodes(path: String, tmdb_id: i32) {
 use diesel::prelude::*;
 use mpv_webrpc::models::*;
 fn check_tmdb_id(id_to_check: i32) -> bool {
-    let connection = mpv_webrpc::establish_connection();
-
     let ignored = NewIgnored {
         tmdb_id: &id_to_check.clone(),
     };
@@ -247,10 +253,11 @@ fn scan_dir() {
 extern crate lazy_static;
 use lazy_static::lazy_static;
 use regex::Regex;
-fn parsing_season_and_episode(text: &str) -> regex::Captures {
+fn parsing_season_and_episode(text: &str) -> Option<regex::Captures> {
+    println!("{}", text);
     lazy_static! {
         static ref RE: Regex = Regex::new(r"(S\d{1,2}|s\d{1,2})(E\d{1,2}|e\d{1,2})").unwrap();
     }
 
-    RE.captures(text).unwrap()
+    RE.captures(text)
 }
