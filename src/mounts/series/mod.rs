@@ -2,22 +2,11 @@ use crate::mounts::library::series;
 use rocket::response::content;
 use rocket_contrib::templates::Template;
 
-#[derive(Serialize, Deserialize)]
-struct TemplateContext {
-    series: Vec<mpv_webrpc::models::Serie>,
-}
-
 #[get("/")]
 pub fn index() -> Template {
-    let series = series::get_series();
-    //let j = match serde_json::to_string(&series) {
-        //Ok(j) => j,
-        //Err(_) => panic!("could not connect to socket"),
-    //};
+    let series = series::get_series_season_aggregation();
 
-    let template = TemplateContext { series: series };
-
-    Template::render("series", &template)
+    Template::render("series", &series)
 }
 
 #[get("/detail/<id>")]

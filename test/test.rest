@@ -67,7 +67,7 @@ http://localhost:9990
 GET /episodes
 
 http://localhost:9990
-GET /episodes/1403/3
+GET /episodes/1403/7
 
 http://localhost:9990
 GET /episodes/1403/3/1

@@ -1,7 +1,3 @@
-[target.armv7-unknown-linux-gnueabihf]
-image = "mafflerbach/armv7-unknown-linux-gnueabihf"
-
-
 [target.aarch64-unknown-linux-gnu]
 image = "mafflerbach/aarch64-unknown-linux-gnu"
 

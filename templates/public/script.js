@@ -22,6 +22,24 @@ $(function() {
     });
   });
 
+
+  $("#episodeModal").on("click", ".play-video-link", function() {
+    
+
+    selectedClient = $("#clientSelection").val();
+    value = $(this).data("file");
+    $.ajax({
+      type : "POST",
+      url : "/player",
+      contenType : "application/json",
+      data : JSON.stringify({"target" : value, "client" : selectedClient}),
+      success : function(data) {
+        console.log(data);
+      },
+      dataType : 'json'
+    });
+
+});
   $("#searchResult").on("click", ".add-serie", function() {
     value = $(this).data("id");
     path = $(this).data("path");
@@ -125,12 +143,36 @@ $(function() {
     $("#play_button").show();
   })
 
+  scan();
+});
+
+function appendSeasonDetails() {
+
+  $(".season-detail").click(function() {
+    tmdb_id = $(this).data("serie");
+    season_id = $(this).data("season");
+    url = "/episodes/" + tmdb_id + "/" + season_id;
+    $.ajax({
+      type : "GET",
+      url : url,
+      dataType : "html",
+      success : function(data) {
+        console.log(data);
+        $("#EpisodeBoxModalContent").empty();
+        $("#EpisodeBoxModalContent").append(data);
+$('#episodeModal').modal('show')
+
+      },
+    });
+  });
+}
+
+function scan() {
   $("#scan").click(function() {
     $.ajax({
       type : "GET",
       url : "/library/scan",
       success : function(data) {
-        console.log(data.results);
 
         for (let i = 0; i < data.length; i++) {
           let elem = data[i];
@@ -148,11 +190,12 @@ $(function() {
 
           clone.appendTo("#SearchBoxModalContent");
         }
-      },
+      }
 
     });
-  });
-});
+  })
+}
+
 function init_series() {
 
   $.ajax({
@@ -162,6 +205,7 @@ function init_series() {
     success : function(data) {
       console.log(data);
       $("#localvid").append(data);
+      appendSeasonDetails();
     },
   });
 }

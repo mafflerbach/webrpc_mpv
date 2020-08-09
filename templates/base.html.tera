@@ -102,6 +102,7 @@
         {% block searchResult %}{% endblock searchResult %}
     </div>
 
+        {% block episodeModal %}{% endblock episodeModal %}
 </body>
 
 </html>

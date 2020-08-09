@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Queryable,Serialize, Deserialize)]
+#[derive(Debug, Queryable, Serialize, Deserialize)]
 pub struct Episode {
     pub id: i32,
     pub path: String,
@@ -44,7 +44,7 @@ impl NewEpisode<'_> {
     }
 }
 
-#[derive(Queryable,Serialize, Deserialize)]
+#[derive(Queryable, Serialize, Deserialize)]
 pub struct Movie {
     pub id: i32,
     pub path: String,
@@ -74,7 +74,7 @@ pub struct NewSeason<'a> {
     pub season_id: &'a i32,
 }
 
-#[derive(Queryable,Serialize, Deserialize)]
+#[derive(Debug, Queryable, Serialize, Deserialize)]
 pub struct Season {
     pub id: i32,
     pub imagepath: String,
@@ -110,7 +110,7 @@ pub struct NewIgnored<'a> {
     pub tmdb_id: &'a i32,
 }
 
-#[derive(Queryable,Serialize, Deserialize)]
+#[derive(Queryable, Serialize, Deserialize)]
 pub struct Ignored {
     pub id: i32,
     pub tmdb_id: i32,
@@ -146,7 +146,7 @@ pub struct NewSerie<'a> {
     pub description: &'a String,
 }
 
-#[derive(Queryable,Serialize, Deserialize)]
+#[derive(Queryable, Serialize, Clone, Deserialize, Debug)]
 pub struct Serie {
     pub id: i32,
     pub imagepath: String,
