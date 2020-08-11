@@ -78,7 +78,6 @@ pub mod tmdb {
     pub struct SearchMovieResult {
         pub title: String,
         pub id: i32,
-        pub tmdb_id: i32,
         pub file_path: Option<String>,
         pub poster_path: Option<String>,
         pub overview: Option<String>,

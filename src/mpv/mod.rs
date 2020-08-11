@@ -34,6 +34,10 @@ pub mod mpv {
         let tjson = json!({ "command": ["set_property", "pause", true] });
         write_to_socket(tjson.to_string() + "\n")
     }
+    pub fn event_quit() -> std::io::Result<String> {
+        let tjson = json!({ "command": ["quit"] });
+        write_to_socket(tjson.to_string() + "\n")
+    }
 
     pub fn event_stop() -> std::io::Result<String> {
         let tjson = json!({ "command": ["stop"] });
@@ -71,8 +75,9 @@ pub mod mpv {
 
     pub fn write_to_socket(content: String) -> std::io::Result<String> {
         let settings = settings::init();
+        println!("{}", settings.socket);
         let mut stream = match UnixStream::connect(settings.socket) {
-            Err(_) => panic!("could not connect to socket"),
+            Err(e) => panic!("could not connect to socket {}", e),
             Ok(stream) => stream,
         };
 

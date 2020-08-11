@@ -3,17 +3,14 @@ $(function() {
   init_series();
   init_movies();
   search_movie_term();
-
-$("#start-playlist").click(function () {
-
+  get_pos_property();
+  $("#start-playlist").click(function() {
     $.ajax({
       type : "GET",
       url : "/player/playlist",
       success : function() { return '{"fooo":"baaa"}' },
     });
-});
-
-
+  });
 
   $("#startVideo").submit(function(e) {
     // post to /
@@ -167,7 +164,6 @@ $("#start-playlist").click(function () {
     let id = $(this).data("id");
     let path = $("#searchModal").data("path");
 
-
     $.ajax({
       type : "POST",
       url : "/library/add-movie",
@@ -184,12 +180,9 @@ $("#start-playlist").click(function () {
       },
       dataType : 'json'
     });
-
-
   })
 
   scan();
-  search_movie();
 });
 
 function appendSeasonDetails() {
@@ -210,17 +203,6 @@ function appendSeasonDetails() {
       },
     });
   });
-}
-function search_movie() {
-  $(".add-movie").click(function() {
-    $.ajax({
-      type : "GET",
-      url : "/library/search-movie",
-      dataType : "html",
-      success : function(data) { $("#searchMovieContainer").append(data); }
-
-    });
-  })
 }
 
 function search_movie_term() {
@@ -294,6 +276,22 @@ function get_volume() {
     success : function(data) {
       console.log(data);
       $("#range input").val(data.data);
+    },
+  });
+}
+function get_pos_property() {
+  $.ajax({
+    type : "GET",
+    url : "/player/propery?target=time-pos",
+    success : function(data) {
+      console.log(data.data);
+      $("#play_button").hide();
+      $("#pause_button").show();
+      if (data.data == undefined) {
+
+        $("#play_button").show();
+        $("#pause_button").hide();
+      }
     },
   });
 }

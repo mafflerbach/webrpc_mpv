@@ -1,7 +1,6 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
-#[cfg(test)]
-mod tests;
+#[cfg(test)] mod tests;
 
 #[macro_use]
 extern crate rocket;
@@ -13,7 +12,6 @@ extern crate serde;
 #[macro_use]
 extern crate serde_json;
 extern crate execute;
-
 
 mod api_structs;
 mod mpv;
@@ -32,7 +30,6 @@ use std::vec::Vec;
 struct TemplateContext {
     settings: SettingContext,
 }
-
 
 #[get("/")]
 fn index() -> Template {
@@ -61,28 +58,31 @@ fn rocket() -> rocket::Rocket {
                 mounts::player::request_start_video,
             ],
         )
-        .mount("/library", routes![
-               mounts::library::request_scan,
-               mounts::library::request_add_movie,
-               mounts::library::request_add_serie,
-               mounts::library::request_search_movie_get,
-               mounts::library::request_search_movie_post,
-               mounts::library::request_ignore_serie
-        ])
-        .mount("/series", routes![
-            mounts::series::index,
-            mounts::series::detail,
-        ])
-        .mount("/movies", routes![
-            mounts::movies::detail,
-            mounts::movies::index
-
-        ])
-        .mount("/episodes", routes![
-            mounts::episodes::detail,
-            mounts::episodes::index
-
-        ])
+        .mount(
+            "/library",
+            routes![
+                mounts::library::request_scan,
+                mounts::library::request_add_movie,
+                mounts::library::request_add_serie,
+                mounts::library::request_ignore_serie
+            ],
+        )
+        .mount(
+            "/series",
+            routes![mounts::series::index, mounts::series::detail,],
+        )
+        .mount(
+            "/movies",
+            routes![
+                mounts::movies::detail,
+                mounts::movies::index,
+                mounts::movies::request_search_movie_post,
+            ],
+        )
+        .mount(
+            "/episodes",
+            routes![mounts::episodes::detail, mounts::episodes::index],
+        )
         .mount(
             "/",
             routes![

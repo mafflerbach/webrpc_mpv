@@ -1,46 +1,52 @@
 
+    use std::process::Command;
 use super::rocket;
-use rocket::local::Client;
+use crate::mpv;
 use rocket::http::*;
-use std::process::Command;
+use rocket::local::Client;
+use std::env;
+use std::{thread, time};
 
 #[test]
 fn request_volume() {
-    init();
+
+    env::set_var("SETTINGS", "settings/settings_testing.json");
     let client = Client::new(rocket()).expect("valid rocket instance");
     let mut response = client.get("/volume").dispatch();
     assert_eq!(response.status(), Status::Ok);
-    assert_eq!(response.body_string(), Some("{\"request_id\":0,\"error\":\"success\"}\n".into()));
+    assert_eq!(
+        response.body_string(),
+        Some("{\"data\":100.000000,\"request_id\":0,\"error\":\"success\"}\n".into())
+    );
+
 }
 
+#[test]
+fn request_resume() {
+    env::set_var("SETTINGS", "settings/settings_testing.json");
+    let client = Client::new(rocket()).expect("valid rocket instance");
+    let mut response = client.get("/player/resume").dispatch();
+    assert_eq!(response.status(), Status::Ok);
+    assert_eq!(
+        response.body_string(),
+        Some("{\"request_id\":0,\"error\":\"success\"}\n".into())
+    );
 
-//#[test]
-//fn request_resume() {
-    //init();
-    //let client = Client::new(rocket()).expect("valid rocket instance");
-    //let mut response = client.get("/player/resume").dispatch();
-    //assert_eq!(response.status(), Status::Ok);
-    //assert_eq!(response.body_string(), Some("{\"request_id\":0,\"error\":\"success\"}\n".into()));
-//}
+}
 
-//#[test]
-//fn request_pause() {
-    //init();
-    //let client = Client::new(rocket()).expect("valid rocket instance");
-    //let mut response = client.get("/player/pause").dispatch();
-    //assert_eq!(response.status(), Status::Ok);
-    //assert_eq!(response.body_string(), Some("{\"request_id\":0,\"error\":\"success\"}\n".into()));
-//}
+#[test]
+fn request_pause() {
+    env::set_var("SETTINGS", "settings/settings_testing.json");
+    let client = Client::new(rocket()).expect("valid rocket instance");
+    let mut response = client.get("/player/resume").dispatch();
+    assert_eq!(response.status(), Status::Ok);
+    assert_eq!(
+        response.body_string(),
+        Some("{\"request_id\":0,\"error\":\"success\"}\n".into())
+    );
 
-fn init() {
-        let mut mpv = Command::new("mpv");
-        mpv.arg("--idle=yes")
-            .arg("--input-ipc-server=/tmp/mpvsocket")
-            .arg("--fs=yes")
-            .spawn()
-            .expect("OK");
-    }
+}
 
-
+use std::panic;
 
 

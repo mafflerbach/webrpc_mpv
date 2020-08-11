@@ -11,20 +11,22 @@ LICENSE - WTFPL
 
 # TODO
 
-Save video status per file
-fix play/ pause button
-forwarding current video to different client
-
-
 overhaul frontend
-fix integration test
-fix config
-documentation
+refactoring 
+ - fix config
+ - documentation
+
+- write tests
+- configuration for testing/overwriting 
+Save video status per file
+forwarding current video to different client
+Plugin Interface
+
 add logging level 
 rename project
 
 service discovery
-installation processing for config 
+installation processing for config and templates
 
 
 Plugins:

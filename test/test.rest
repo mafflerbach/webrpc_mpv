@@ -77,13 +77,11 @@ http://localhost:9990
 GET /movies
 
 http://localhost:9990
-GET /movies/2
+GET /movies/431693
+
 
 http://localhost:9990
-GET /library/search-movie
-
-http://localhost:9990
-POST /library/search-movie
+POST /movies/search-movie
 {
     "term" : "Spione undercover eine wilde"
 }

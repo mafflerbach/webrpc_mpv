@@ -26,7 +26,7 @@ pub fn request_scan() -> Template {
         }
     }
 
-    let testdas = add_movies(test).to_vec();
+    let testdas = scan_movies(test).to_vec();
 
     #[derive(Debug, Serialize, Deserialize)]
     struct TemplateContext {
@@ -36,7 +36,7 @@ pub fn request_scan() -> Template {
     Template::render("searchResult", &return_context)
 }
 
-fn add_movies(mut results: Vec<SearchResult>) -> Vec<SearchResult> {
+fn scan_movies(mut results: Vec<SearchResult>) -> Vec<SearchResult> {
     let settings = settings::init();
     let path = settings.scan_dir_movies.clone();
 
@@ -59,7 +59,7 @@ fn add_movies(mut results: Vec<SearchResult>) -> Vec<SearchResult> {
         let movie_result = movie
             .filter(path.eq(&file_path))
             .load::<Movie>(&connection)
-            .expect("Error loading Serie Table");
+            .expect("Error loading Movie Table");
 
         if movie_result.len() > 0 {
             continue;
@@ -146,35 +146,6 @@ pub fn request_add_serie(request_content: Json<LibraryRequest>) -> content::Json
     content::Json(test.to_string())
 }
 
-#[derive(Serialize, Deserialize)]
-pub struct TmdbSearchTerm {
-    pub term: String,
-}
-#[post("/search-movie", data = "<request_content>")]
-pub fn request_search_movie_post(request_content: Json<TmdbSearchTerm>) -> Template {
-    let term = &request_content.term;
-    let tmdb_response = tmdb::tmdb::search_movie(term.to_string());
-
-    #[derive(Serialize, Deserialize)]
-    struct TemplateContext {
-        results: tmdb::tmdb::SearchMovieResultResponse,
-    }
-    //let return_context = TemplateContext { results: tmdb_response };
-    Template::render("searchMovieResult", &tmdb_response)
-}
-#[get("/search-movie")]
-pub fn request_search_movie_get() -> Template {
-    #[derive(Serialize, Deserialize)]
-    struct TemplateContext {
-        name: String,
-    }
-
-    let context = TemplateContext {
-        name: "foo".to_string(),
-    };
-    Template::render("searchForm", &context)
-}
-
 #[post("/add-movie", data = "<request_content>")]
 pub fn request_add_movie(request_content: Json<LibraryRequest>) -> content::Json<String> {
     // TODO gui for adding movies via search on tmdb
@@ -186,7 +157,7 @@ pub fn request_add_movie(request_content: Json<LibraryRequest>) -> content::Json
         title: &movie_details.title,
         path: &request_content.path,
         description: &movie_details.overview.unwrap(),
-        tmdb_id: &movie_details.tmdb_id,
+        tmdb_id: &movie_details.id,
     };
     print!("INSERT");
     print!("{}", &movie_details.title);
