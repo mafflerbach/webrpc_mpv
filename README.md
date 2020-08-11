@@ -10,28 +10,21 @@ LICENSE - WTFPL
 
 
 # TODO
-Add to library
--movie
-
-Display in library tab
 
 Save video status per file
-forwarding current video 
+fix play/ pause button
+forwarding current video to different client
 
-add video manualy
-open local file
 
-service discovery
-
-fix readme
+overhaul frontend
 fix integration test
 fix config
 documentation
 add logging level 
 rename project
 
+service discovery
 installation processing for config 
-overhaul frontend
 
 
 Plugins:
