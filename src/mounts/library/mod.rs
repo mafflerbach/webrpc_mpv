@@ -1,10 +1,14 @@
+pub mod movies;
 pub mod episodes;
 pub mod series;
 use crate::tmdb;
 use rocket::response::content;
+use tmdb::tmdb::SearchResult;
+
+use rocket_contrib::templates::Template;
+use std::path::Path;
 #[get("/scan")]
-pub fn request_scan() -> content::Json<String> {
-    scan_dir();
+pub fn request_scan() -> Template {
     let path_entries = get_first_level();
     let settings = settings::init();
     let mut test = Vec::new();
@@ -13,24 +17,76 @@ pub fn request_scan() -> content::Json<String> {
         tmdb_response = tmdb::tmdb::search(entry.to_string());
         for mut result in tmdb_response.results {
             if !check_tmdb_id(result.id) {
-                let file_path: Option<String> = Some(format!("{}{}", settings.scan_dir, entry));
+                let file_path: Option<String> =
+                    Some(format!("{}{}", settings.scan_dir_series, entry));
                 result.file_path = file_path;
+                result.type_of = serde::export::Some("tv".to_string());
                 test.push(result);
             }
         }
     }
 
-    let me = serde_json::to_string(&test).unwrap();
+    let testdas = add_movies(test).to_vec();
 
-    content::Json(me.to_string())
+    #[derive(Debug, Serialize, Deserialize)]
+    struct TemplateContext {
+        results: Vec<tmdb::tmdb::SearchResult>,
+    }
+    let return_context = TemplateContext { results: testdas };
+    Template::render("searchResult", &return_context)
+}
+
+fn add_movies(mut results: Vec<SearchResult>) -> Vec<SearchResult> {
+    let settings = settings::init();
+    let path = settings.scan_dir_movies.clone();
+
+    let mkv_pattern = format!("{}/**/*.mkv", path);
+    let mp4_pattern = format!("{}/**/*.mp4", path);
+    let webm_pattern = format!("{}/**/*.webm", path);
+
+    for entry in glob(&mkv_pattern)
+        .unwrap()
+        .chain(glob(&mp4_pattern).unwrap())
+        .chain(glob(&webm_pattern).unwrap())
+    {
+        let file_path = entry.unwrap().into_os_string().into_string().unwrap();
+        let name_of_file = Path::new(&file_path).file_name();
+
+        let connection = mpv_webrpc::establish_connection();
+        use diesel::prelude::*;
+        use mpv_webrpc::schema::movie::dsl::*;
+
+        let movie_result = movie
+            .filter(path.eq(&file_path))
+            .load::<Movie>(&connection)
+            .expect("Error loading Serie Table");
+
+        if movie_result.len() > 0 {
+            continue;
+        }
+        let tjson = SearchResult {
+            name: name_of_file.unwrap().to_str().unwrap().to_string(),
+            id: 0,
+            poster_path: serde::export::Some("".to_string()),
+            file_path: serde::export::Some(file_path),
+            overview: serde::export::Some("overview".to_string()),
+            type_of: serde::export::Some("movie".to_string()),
+        };
+
+        let mut test = Vec::new();
+        test.push(tjson);
+        results.append(&mut test);
+    }
+
+    results
 }
 
 use crate::settings;
 use std::{fs, io};
 fn get_first_level() -> Vec<String> {
     let settings = settings::init();
-    println!("{}", settings.scan_dir);
-    let base_path = settings.scan_dir.clone();
+    println!("SERRINGS SCANDIR{}", settings.scan_dir_series);
+    let base_path = settings.scan_dir_series.clone();
     let mut entries = fs::read_dir(base_path)
         .unwrap()
         .map(|res| res.map(|e| e.path()))
@@ -38,7 +94,7 @@ fn get_first_level() -> Vec<String> {
         .unwrap();
 
     entries.sort();
-    let path_part = settings.scan_dir.clone();
+    let path_part = settings.scan_dir_series.clone();
     let mut stack = Vec::new();
     for entry in &entries {
         let foo = entry.display().to_string().replace(&path_part, "");
@@ -89,6 +145,66 @@ pub fn request_add_serie(request_content: Json<LibraryRequest>) -> content::Json
     });
     content::Json(test.to_string())
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct TmdbSearchTerm {
+    pub term: String,
+}
+#[post("/search-movie", data = "<request_content>")]
+pub fn request_search_movie_post(request_content: Json<TmdbSearchTerm>) -> Template {
+    let term = &request_content.term;
+    let tmdb_response = tmdb::tmdb::search_movie(term.to_string());
+
+    #[derive(Serialize, Deserialize)]
+    struct TemplateContext {
+        results: tmdb::tmdb::SearchMovieResultResponse,
+    }
+    //let return_context = TemplateContext { results: tmdb_response };
+    Template::render("searchMovieResult", &tmdb_response)
+}
+#[get("/search-movie")]
+pub fn request_search_movie_get() -> Template {
+    #[derive(Serialize, Deserialize)]
+    struct TemplateContext {
+        name: String,
+    }
+
+    let context = TemplateContext {
+        name: "foo".to_string(),
+    };
+    Template::render("searchForm", &context)
+}
+
+#[post("/add-movie", data = "<request_content>")]
+pub fn request_add_movie(request_content: Json<LibraryRequest>) -> content::Json<String> {
+    // TODO gui for adding movies via search on tmdb
+    let name_of_file = Path::new(&request_content.path).file_name();
+    let movie_details = tmdb::tmdb::movie_get_detail_by_id(&request_content.tmdb_id);
+
+    let movie_info = NewMovie {
+        imagepath: &movie_details.poster_path.unwrap(),
+        title: &movie_details.title,
+        path: &request_content.path,
+        description: &movie_details.overview.unwrap(),
+        tmdb_id: &movie_details.tmdb_id,
+    };
+    print!("INSERT");
+    print!("{}", &movie_details.title);
+
+    let connection = mpv_webrpc::establish_connection();
+    use mpv_webrpc::schema::movie;
+    let _insert_result = diesel::insert_into(movie::table)
+        .values(&movie_info)
+        .execute(&connection);
+
+    let test = json!({
+        "data": "ok",
+        "message": "",
+        "request_id": 0
+    });
+    content::Json(test.to_string())
+}
+
 fn sync_season(tmdb_id_to_insert: i32, season_id_to_insert: i32) {
     use mpv_webrpc::schema::season;
     let season_in = tmdb::tmdb::tv_season_get_details(tmdb_id_to_insert, season_id_to_insert);
@@ -109,11 +225,13 @@ fn sync_season(tmdb_id_to_insert: i32, season_id_to_insert: i32) {
 fn sync_episodes(path: String, tmdb_id: i32) {
     let mkv_pattern = format!("{}/**/*.mkv", path);
     let mp4_pattern = format!("{}/**/*.mp4", path);
+    let webm_pattern = format!("{}/**/*.webm", path);
 
     use mpv_webrpc::schema::episode;
     for entry in glob(&mkv_pattern)
         .unwrap()
         .chain(glob(&mp4_pattern).unwrap())
+        .chain(glob(&webm_pattern).unwrap())
     {
         match entry {
             Ok(path) => {
@@ -236,19 +354,6 @@ pub fn request_ignore_serie(request_content: Json<LibraryRequest>) -> content::J
 }
 
 use glob::glob;
-fn scan_dir() {
-    let settings = settings::init();
-    let pattern = format!("{}/**/*.mkv", settings.scan_dir);
-
-    for entry in glob(&pattern).expect("Failed to read glob pattern") {
-        match entry {
-            Ok(path) => {
-                parsing_season_and_episode(&path.clone().into_os_string().into_string().unwrap());
-            }
-            Err(e) => println!("{:?}", e),
-        }
-    }
-}
 
 extern crate lazy_static;
 use lazy_static::lazy_static;

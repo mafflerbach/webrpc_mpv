@@ -3,7 +3,8 @@
     "debug": true,
     "socket":"/tmp/mpvsocket1",
     "db" : "/home/maren/development/rust/mpv/db/restmpv.db",
-    "scan_dir" : "/home/maren/Downloads/complete/",
+    "scan_dir_series" : "/home/maren/Downloads/complete/series",
+    "scan_dir_movies" : "/home/maren/Downloads/complete/movies",
     "childs": [
     {
            "id":"1",

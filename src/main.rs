@@ -63,12 +63,20 @@ fn rocket() -> rocket::Rocket {
         )
         .mount("/library", routes![
                mounts::library::request_scan,
+               mounts::library::request_add_movie,
                mounts::library::request_add_serie,
+               mounts::library::request_search_movie_get,
+               mounts::library::request_search_movie_post,
                mounts::library::request_ignore_serie
         ])
         .mount("/series", routes![
             mounts::series::index,
             mounts::series::detail,
+        ])
+        .mount("/movies", routes![
+            mounts::movies::detail,
+            mounts::movies::index
+
         ])
         .mount("/episodes", routes![
             mounts::episodes::detail,

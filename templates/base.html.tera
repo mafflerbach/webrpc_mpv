@@ -6,8 +6,10 @@
     <title>Tera Demo</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    
     <link rel="stylesheet" href="./public/style.css" />
     <link rel="stylesheet" href="./public/bootstrap.css" />
 
@@ -63,7 +65,10 @@
                     <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Stream</a>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <a class="nav-link" id="locavid-tab" data-toggle="tab" href="#localvid" role="tab" aria-controls="localvid" aria-selected="false">Local Videos</a>
+                    <a class="nav-link" id="locavid-tab" data-toggle="tab" href="#tv-shows" role="tab" aria-controls="tv-shows" aria-selected="false">TV Shows</a>
+                </li>
+<li class="nav-item" role="presentation">
+                    <a class="nav-link" id="locavid-tab" data-toggle="tab" href="#movies" role="tab" aria-controls="movies" aria-selected="false">Movies</a>
                 </li>
             </ul>
         </div>
@@ -80,9 +85,9 @@
                 <form action="/add" method="post" accept-charset="utf-8" id="addPlaylist">
                     Add to Playlist:<input type="text" name="target" class="form-control">
                     <input type="hidden" name="action" value="playlist" />
-                    <input type="submit" value="Start" class="btn btn-primary" />
+                    <input type="submit" value="Add" class="btn btn-primary" />
                 </form>
-
+                <button value="Start" id="start-playlist" class="btn btn-primary">Start</button>
             </div>
             <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
                 <ul class="list-group">
@@ -92,8 +97,9 @@
                 </ul>
 
             </div>
-            <div class="tab-pane fade" id="localvid" role="tabpanel" aria-labelledby="localvid-tab">
-
+            <div class="tab-pane fade" id="tv-shows" role="tabpanel" aria-labelledby="tv-shows-tab">
+            </div>
+            <div class="tab-pane fade" id="movies" role="tabpanel" aria-labelledby="movies-tab">
             </div>
         </div>
 
@@ -102,6 +108,11 @@
         {% block searchResult %}{% endblock searchResult %}
     </div>
 
+<div id="searchMovieContainer">
+
+        {% block movieSearchModal %}{% endblock movieSearchModal %}
+
+</div>
         {% block episodeModal %}{% endblock episodeModal %}
 </body>
 

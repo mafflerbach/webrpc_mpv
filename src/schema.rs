@@ -25,6 +25,7 @@ table! {
         title -> Text,
         imagepath -> Text,
         description -> Text,
+        tmdb_id -> Integer,
     }
 }
 

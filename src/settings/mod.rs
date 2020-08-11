@@ -23,7 +23,8 @@ pub struct Settings {
     pub db: String,
     pub tmdb_key: String,
     pub debug: bool,
-    pub scan_dir: String,
+    pub scan_dir_movies: String,
+    pub scan_dir_series: String,
     pub socket: String,
     pub childs: Vec<Childs>,
     pub stream_urls: Vec<Streams>,
@@ -32,7 +33,8 @@ pub struct Settings {
 pub struct SettingContext {
     pub db: String,
     pub tmdb_key: String,
-    pub scan_dir: String,
+    pub scan_dir_movies: String,
+    pub scan_dir_series: String,
     pub socket: String,
     pub clients: HashMap<String, String>,
     pub streams: HashMap<String, String>,
@@ -51,13 +53,15 @@ pub fn init() -> SettingContext {
     let mut clients = HashMap::new();
     let mut db = String::new();
     let mut tmdb_key = String::new();
-    let mut scan_dir = String::new();
+    let mut scan_dir_movies = String::new();
+    let mut scan_dir_series = String::new();
     let mut socket = String::new();
 
     if res.is_ok() {
         let s: Settings = res.unwrap();
         socket = s.socket;
-        scan_dir = s.scan_dir;
+        scan_dir_series = s.scan_dir_series;
+        scan_dir_movies = s.scan_dir_movies;
         tmdb_key = s.tmdb_key;
         db = s.db;
         for i in &s.childs {
@@ -74,7 +78,8 @@ pub fn init() -> SettingContext {
 
     let links_context = SettingContext {
         db: db,
-        scan_dir: scan_dir,
+        scan_dir_movies: scan_dir_movies,
+        scan_dir_series: scan_dir_series,
         tmdb_key: tmdb_key,
         socket: socket,
         clients: clients,

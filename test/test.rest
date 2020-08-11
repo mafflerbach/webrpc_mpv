@@ -72,3 +72,29 @@ GET /episodes/1403/7
 http://localhost:9990
 GET /episodes/1403/3/1
 
+
+http://localhost:9990
+GET /movies
+
+http://localhost:9990
+GET /movies/2
+
+http://localhost:9990
+GET /library/search-movie
+
+http://localhost:9990
+POST /library/search-movie
+{
+    "term" : "Spione undercover eine wilde"
+}
+
+
+http://localhost:9990
+POST /library/add-movie
+{
+    "tmdb_id":431693,
+    "path" : "/home/maren/Downloads/complete/movies/Spione.undercover.Eine.wilde.Verwandlung.2019.German.720p.BluRay.x264/spione.undercover.eine.wilde.verwandlung.2019.german.720p.bluray.x264-details.mkv"
+}
+
+
+

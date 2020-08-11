@@ -44,13 +44,14 @@ impl NewEpisode<'_> {
     }
 }
 
-#[derive(Queryable, Serialize, Deserialize)]
+#[derive(Debug, Queryable, Serialize, Deserialize)]
 pub struct Movie {
     pub id: i32,
     pub path: String,
     pub title: String,
     pub imagepath: String,
     pub description: String,
+    pub tmdb_id: i32,
 }
 
 use crate::schema::movie;
@@ -61,6 +62,7 @@ pub struct NewMovie<'a> {
     pub title: &'a String,
     pub imagepath: &'a String,
     pub description: &'a String,
+    pub tmdb_id: &'a i32,
 }
 
 use crate::schema::season;

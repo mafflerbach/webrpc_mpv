@@ -1,0 +1,16 @@
+    {% for result in results %}
+    <div class="card mb-3">
+        <div class="cardContent" style="background-image:url('https://image.tmdb.org/t/p/w780{{result.poster_path}}')">
+            <div class="searchResultThumbnail">
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{result.title}}</h5>
+                <p class="card-text">{{result.overview}}</p>
+                <button type="button" class="btn btn-primary add-movie-information"   data-id="{{result.id}}">Add</button>
+
+                <button type="button" class="btn btn-primary ignore-movie-information" data-id="{{result.id}}">Ignore</button>
+            </div>
+        </div>
+    </div>
+
+    {% endfor %}

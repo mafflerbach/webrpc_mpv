@@ -35,16 +35,18 @@ pub mod tmdb {
         pub results: Vec<SearchResult>,
     }
 
-    #[derive(Serialize, Deserialize, Debug)]
+    #[derive(Clone, Serialize, Deserialize, Debug)]
     pub struct SearchResult {
         pub name: String,
         pub id: i32,
         pub file_path: Option<String>,
         pub poster_path: Option<String>,
         pub overview: Option<String>,
+        pub type_of: Option<String>,
     }
 
     use crate::settings;
+    use crate::stubs;
     use url::form_urlencoded::parse;
     pub fn search(search_term: String) -> SearchResultResponse {
         let settings = settings::init();
@@ -52,15 +54,77 @@ pub mod tmdb {
         let decoded_search_term: String = parse(search_term.as_bytes())
             .map(|(key, val)| [key, val].concat())
             .collect();
-        let test = format!( "https://api.themoviedb.org/3/search/tv?api_key={}&language=en-US&page=1&query={}&include_adult=false", settings.tmdb_key, decoded_search_term);
-          let response =  send_request(test.to_string()).unwrap();
+        let _test = format!( "https://api.themoviedb.org/3/search/tv?api_key={}&language=en-US&page=1&query={}&include_adult=false", settings.tmdb_key, decoded_search_term);
+        // let response =  send_request(test.to_string()).unwrap();
+        let response = stubs::read_fixture_file(
+            "/home/maren/development/rust/mpv/test/searchFixtureEmpty.json",
+        );
 
-        //let response =
-            //stubs::read_fixture_file("/home/maren/development/rust/mpv/test/searchFixture.json");
         let p: SearchResultResponse = serde_json::from_str(response.as_str()).unwrap();
+
+        if p.results.len() == 0 {
+            println!("GOTSCHA {}", search_term);
+        }
+
         return p;
     }
 
+    #[derive(Serialize, Deserialize, Debug)]
+    pub struct SearchMovieResultResponse {
+        pub results: Vec<SearchMovieResult>,
+    }
+
+    #[derive(Clone, Serialize, Deserialize, Debug)]
+    pub struct SearchMovieResult {
+        pub title: String,
+        pub id: i32,
+        pub tmdb_id: i32,
+        pub file_path: Option<String>,
+        pub poster_path: Option<String>,
+        pub overview: Option<String>,
+        pub type_of: Option<String>,
+    }
+
+    #[derive(Debug, Serialize, Deserialize)]
+    struct TemplateContext {
+        results: Vec<SearchResult>,
+    }
+    pub fn search_movie(search_term: String) -> SearchMovieResultResponse {
+        let settings = settings::init();
+        // url decode for search
+        let decoded_search_term: String = parse(search_term.as_bytes())
+            .map(|(key, val)| [key, val].concat())
+            .collect();
+        let test = format!( "https://api.themoviedb.org/3/search/movie?api_key={}&language=en-US&page=1&query={}&include_adult=false", settings.tmdb_key, decoded_search_term);
+        
+        let response = stubs::read_fixture_file(
+            "/home/maren/development/rust/mpv/test/search_movies.json",
+        );
+
+        //let response = send_request(test.to_string()).unwrap();
+        let p: SearchMovieResultResponse = serde_json::from_str(response.as_str()).unwrap();
+
+        if p.results.len() == 0 {
+            println!("GOTSCHA {}", search_term);
+        }
+
+        return p;
+    }
+
+    pub fn movie_get_detail_by_id(id: &i32) -> SearchMovieResult {
+        let settings = settings::init();
+        let test = format!( "https://api.themoviedb.org/3/search/movie/{}?api_key={}&language=en-US&page=1", id, settings.tmdb_key);
+        
+        let response = stubs::read_fixture_file(
+            "/home/maren/development/rust/mpv/test/movie_get_detail_by_id.json",
+        );
+
+        //let response = send_request(test.to_string()).unwrap();
+        let p: SearchMovieResult = serde_json::from_str(response.as_str()).unwrap();
+
+        println!("{:?}", p);
+        return p;
+    }
     /// {
     ///   "id": 1403,
     ///   "imdb_id": "tt2364582",
@@ -87,10 +151,10 @@ pub mod tmdb {
             "https://api.themoviedb.org/3/tv/{}/external_ids?api_key={}&language=en-US",
             tmdb_id, settings.tmdb_key
         );
-          let response =  send_request(test.to_string()).unwrap();
+        let response = send_request(test.to_string()).unwrap();
 
         //let response =
-            //stubs::read_fixture_file("/home/maren/development/rust/mpv/test/get_external_id.json");
+        //stubs::read_fixture_file("/home/maren/development/rust/mpv/test/get_external_id.json");
         let p: GetExternalIdResponse = serde_json::from_str(response.as_str()).unwrap();
         return p;
     }
@@ -147,10 +211,10 @@ pub mod tmdb {
         let settings = settings::init();
         // url decode for search
         let test = format!( "https://api.themoviedb.org/3/find/{}?api_key={}&language=en-US&external_source=tvdb_id", external_id , settings.tmdb_key);
-          let response =  send_request(test.to_string()).unwrap();
+        let response = send_request(test.to_string()).unwrap();
 
         //let response = stubs::read_fixture_file(
-            //"/home/maren/development/rust/mpv/test/find_by_external_id.json",
+        //"/home/maren/development/rust/mpv/test/find_by_external_id.json",
         //);
         let p: FindByExternalIdResponse = serde_json::from_str(response.as_str()).unwrap();
         return p;
@@ -206,32 +270,27 @@ pub mod tmdb {
         let settings = settings::init();
         // url decode for search
         let test = format!( "https://api.themoviedb.org/3/tv/{}/season/{}?api_key={}&language=en-US&external_source=tvdb_id", tmdb_id , season_id , settings.tmdb_key);
-          let response =  send_request(test.to_string()).unwrap();
+        let response = send_request(test.to_string()).unwrap();
 
         //let response = stubs::read_fixture_file(
-            //"/home/maren/development/rust/mpv/test/tv_season_get_details.json",
+        //"/home/maren/development/rust/mpv/test/tv_season_get_details.json",
         //);
         let p: SeasonResult = serde_json::from_str(response.as_str()).unwrap();
         return p;
     }
 
-
-
-pub fn tv_episodes_get_details(tmdb_id: i32, season: i32, episode: i32) -> Episode {
-
+    pub fn tv_episodes_get_details(tmdb_id: i32, season: i32, episode: i32) -> Episode {
         let settings = settings::init();
         // url decode for search
         let test = format!( "https://api.themoviedb.org/3/tv/{}/season/{}/episode/{}?api_key={}&language=en-US&external_source=tvdb_id", tmdb_id , season , episode,  settings.tmdb_key);
-          let response =  send_request(test.to_string()).unwrap();
+        let response = send_request(test.to_string()).unwrap();
 
         //let response = stubs::read_fixture_file(
-            //"/home/maren/development/rust/mpv/test/tv_episodes_get_detail.json",
+        //"/home/maren/development/rust/mpv/test/tv_episodes_get_detail.json",
         //);
         let p: Episode = serde_json::from_str(response.as_str()).unwrap();
         return p;
-
-}
-
+    }
 
     extern crate reqwest;
     fn send_request(target: String) -> Result<String, reqwest::Error> {

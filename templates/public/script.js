@@ -1,6 +1,20 @@
 $(function() {
   get_volume();
   init_series();
+  init_movies();
+  search_movie_term();
+
+$("#start-playlist").click(function () {
+
+    $.ajax({
+      type : "GET",
+      url : "/player/playlist",
+      success : function() { return '{"fooo":"baaa"}' },
+    });
+});
+
+
+
   $("#startVideo").submit(function(e) {
     // post to /
     e.preventDefault(e);
@@ -22,10 +36,7 @@ $(function() {
     });
   });
 
-
-  $("#episodeModal").on("click", ".play-video-link", function() {
-    
-
+  $("#episodeModal, #movies").on("click", ".play-video-link", function() {
     selectedClient = $("#clientSelection").val();
     value = $(this).data("file");
     $.ajax({
@@ -33,13 +44,21 @@ $(function() {
       url : "/player",
       contenType : "application/json",
       data : JSON.stringify({"target" : value, "client" : selectedClient}),
-      success : function(data) {
-        console.log(data);
-      },
+      success : function(data) { console.log(data); },
       dataType : 'json'
     });
+  });
 
-});
+  $("#searchResult").on("click", ".add-movie", function() {
+    value = $(this).data("id");
+    path = $(this).data("path");
+
+    $("#searchModal").attr("data-path", path);
+    var searchModal = new bootstrap.Modal(
+        document.getElementById('searchModal'), {keyboard : false})
+    searchModal.show();
+  });
+
   $("#searchResult").on("click", ".add-serie", function() {
     value = $(this).data("id");
     path = $(this).data("path");
@@ -101,12 +120,13 @@ $(function() {
   });
 
   $("#range input").change(function() {
+    selectedClient = $("#clientSelection").val();
     var value = $(this).val();
     $.ajax({
       type : "POST",
       url : "/volume",
       contenType : "application/json",
-      data : JSON.stringify({"value" : value}),
+      data : JSON.stringify({"value" : value, "client" : selectedClient}),
       success : function(data) { return data; },
       dataType : 'json'
     });
@@ -143,7 +163,33 @@ $(function() {
     $("#play_button").show();
   })
 
+  $("#searchMovieContainer").on("click", ".add-movie-information", function() {
+    let id = $(this).data("id");
+    let path = $("#searchModal").data("path");
+
+
+    $.ajax({
+      type : "POST",
+      url : "/library/add-movie",
+      contenType : "application/json",
+      data : JSON.stringify({
+        "path" : path,
+        "tmdb_id" : parseInt(id),
+      }),
+      success : function(data) {
+        console.log(data);
+        if (data.success == "success") {
+          valueElement.val("");
+        }
+      },
+      dataType : 'json'
+    });
+
+
+  })
+
   scan();
+  search_movie();
 });
 
 function appendSeasonDetails() {
@@ -160,9 +206,37 @@ function appendSeasonDetails() {
         console.log(data);
         $("#EpisodeBoxModalContent").empty();
         $("#EpisodeBoxModalContent").append(data);
-$('#episodeModal').modal('show')
-
+        $('#episodeModal').modal('show')
       },
+    });
+  });
+}
+function search_movie() {
+  $(".add-movie").click(function() {
+    $.ajax({
+      type : "GET",
+      url : "/library/search-movie",
+      dataType : "html",
+      success : function(data) { $("#searchMovieContainer").append(data); }
+
+    });
+  })
+}
+
+function search_movie_term() {
+
+  $("#searchMovieContainer").on("click", ".search-movie-term", function() {
+    value = $(".movie-term").val();
+    $.ajax({
+      type : "POST",
+      url : "/library/search-movie",
+      contenType : "application/json",
+      data : JSON.stringify({"term" : value}),
+      success : function(data) {
+        $("#movie-search-result-box").empty();
+        $("#movie-search-result-box").append(data);
+      },
+      dataType : 'html'
     });
   });
 }
@@ -172,28 +246,31 @@ function scan() {
     $.ajax({
       type : "GET",
       url : "/library/scan",
+      dataType : "html",
       success : function(data) {
-
-        for (let i = 0; i < data.length; i++) {
-          let elem = data[i];
-
-          let clone = $("#searchResultCloneable").clone();
-          clone.removeAttr("id");
-          let bgImage = "https://image.tmdb.org/t/p/w500" + elem.poster_path;
-          clone.find(".cardContent")
-              .css("background-image", "url(" + bgImage + " )");
-          clone.find(".card-title").append(elem.name);
-          clone.find(".card-text").append(elem.overview);
-          clone.find(".ignore-serie").attr("data-id", elem.id);
-          clone.find(".add-serie").attr("data-id", elem.id);
-          clone.find(".add-serie").attr("data-path", elem.file_path);
-
-          clone.appendTo("#SearchBoxModalContent");
-        }
+        $("#SearchBoxModalContent").empty();
+        $("#SearchBoxModalContent").append(data);
+        var myModal = new bootstrap.Modal(
+            document.getElementById('exampleModal'), {keyboard : false})
+        myModal.show();
       }
 
     });
   })
+}
+
+function init_movies() {
+
+  $.ajax({
+    type : "GET",
+    url : "/movies",
+    dataType : "html",
+    success : function(data) {
+      console.log(data);
+      $("#movies").append(data);
+      appendSeasonDetails();
+    },
+  });
 }
 
 function init_series() {
@@ -204,7 +281,7 @@ function init_series() {
     dataType : "html",
     success : function(data) {
       console.log(data);
-      $("#localvid").append(data);
+      $("#tv-shows").append(data);
       appendSeasonDetails();
     },
   });
