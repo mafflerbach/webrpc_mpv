@@ -1,7 +1,7 @@
 {% for series in series_collection %}
 
 <div class="card mb-3 ">
-    <div class="cardContent" style="background-size: cover;background-position: -50%; background-image:url('https://image.tmdb.org/t/p/w500/{{series.serie.imagepath}}')">
+    <div class="cardContent" style="background-size: cover;background-position: -50%; background-image:url('https://image.tmdb.org/t/p/w780/{{series.serie.imagepath}}')">
 
         <div class="searchResultThumbnail">
         </div>

@@ -1,7 +1,7 @@
 {% for movie in movies %}
 
 <div class="card mb-3 ">
-    <div class="cardContent" style="background-size: cover;background-position: -50%; background-image:url('https://image.tmdb.org/t/p/w500/{{movie.imagepath}}')">
+    <div class="cardContent" style="background-size: cover;background-position: -50%; background-image:url('https://image.tmdb.org/t/p/w780/{{movie.imagepath}}')">
 
         <div class="searchResultThumbnail">
         </div>

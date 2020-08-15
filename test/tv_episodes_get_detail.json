@@ -1,178 +1,106 @@
 {
-  "air_date": "2020-06-10",
+  "air_date": "2020-05-27",
   "crew": [
     {
-      "id": 1226643,
-      "credit_id": "58ac5b8d925141590e013bb3",
-      "name": "Lilla Zuckerman",
-      "department": "Writing",
-      "job": "Writer",
-      "gender": 0,
-      "profile_path": null
-    },
-    {
-      "id": 1226644,
-      "credit_id": "58ac5bb3c3a36849e0013759",
-      "name": "Nora Zuckerman",
-      "department": "Writing",
-      "job": "Writer",
-      "gender": 0,
-      "profile_path": null
-    },
-    {
-      "id": 1122804,
-      "credit_id": "5a74a0d70e0a26643c024880",
-      "name": "Nina Lopez-Corrado",
+      "id": 101518,
+      "credit_id": "54530efd0e0a2648c500049f",
+      "name": "Kevin Tancharoen",
       "department": "Directing",
       "job": "Director",
-      "gender": 1,
-      "profile_path": "/bNqZOW11UesTNSFNsM0gAUjimRa.jpg"
-    }
-  ],
-  "episode_number": 3,
-  "guest_stars": [
-    {
-      "id": 183070,
-      "name": "Julian Acosta",
-      "credit_id": "5edb0fc21dcb7700200111c4",
-      "character": "Dr. Pascal Vega",
-      "order": 405,
       "gender": 2,
       "profile_path": null
     },
     {
-      "id": 33241,
-      "name": "Michael Gaston",
-      "credit_id": "5edb0fde726fb1002085e687",
-      "character": "Gerald Sharpe",
-      "order": 406,
+      "id": 1878868,
+      "credit_id": "59a576cfc3a368402500b9ac",
+      "name": "George Kitson",
+      "department": "Writing",
+      "job": "Writer",
       "gender": 2,
-      "profile_path": "/ohdf9vJz8IuEY6o53IsRiVOstK0.jpg"
-    },
+      "profile_path": null
+    }
+  ],
+  "episode_number": 1,
+  "guest_stars": [
     {
       "id": 951643,
       "name": "Tobias Jelinek",
-      "credit_id": "5ed01a65aaec710021677e35",
-      "character": "Luke",
-      "order": 407,
+      "credit_id": "5ebccdc93d3557001cdbc563",
+      "character": "William Dole / Luke",
+      "order": 390,
       "gender": 2,
       "profile_path": "/rGHghEJ13ez2uvTQ3SNPB7LoW75.jpg"
     },
     {
-      "id": 1148451,
-      "name": "Christian Gehring",
-      "credit_id": "5ee19e8a90dde00021a9688c",
-      "character": "Lt. Carpenter",
-      "order": 409,
+      "id": 103834,
+      "name": "Joe Reegan",
+      "credit_id": "5ebccdd5c50ad2002484ded3",
+      "character": "Cain",
+      "order": 391,
       "gender": 2,
-      "profile_path": "/QjJ8ib1qPSKrU0bRn8FIp4FgwL.jpg"
+      "profile_path": "/2VJ2bDuhMbzdMHfhdCDig571TJ4.jpg"
     },
     {
-      "id": 1441197,
-      "name": "Zac Pullam",
-      "credit_id": "5ee19e9390dde00022a7b516",
-      "character": "Biff",
-      "order": 410,
-      "gender": 2,
-      "profile_path": "/g4gHOPL0GPMLGL9k89cn4hYrGGY.jpg"
-    },
-    {
-      "id": 1591330,
-      "name": "Brion Brionson",
-      "credit_id": "5ee19ec9f36a32001e8df030",
-      "character": "Neatnik Scientist",
-      "order": 411,
+      "id": 1385419,
+      "name": "Luke Baines",
+      "credit_id": "5ebcce4f1283e9001eca58fa",
+      "character": "Luke",
+      "order": 394,
       "gender": 0,
-      "profile_path": null
+      "profile_path": "/n3A657S33fGH73lT6cr7dqFiToN.jpg"
     },
     {
-      "id": 2429815,
-      "name": "Erik Gersovitz",
-      "credit_id": "5ee19ed5f36a32001e8df047",
-      "character": "Timid Lab Tech",
-      "order": 412,
+      "id": 206864,
+      "name": "Greg Finley",
+      "credit_id": "5ebcd4523d3557001ddb734c",
+      "character": "Tillman",
+      "order": 395,
       "gender": 2,
-      "profile_path": "/wV1YDHECkKXZoeMnctAYGdUBPjq.jpg"
+      "profile_path": "/nNrkeOaNQhDfgT85h6lr8JrfyEs.jpg"
     },
     {
-      "id": 1836952,
-      "name": "Kara Gibson",
-      "credit_id": "5ee19ee790dde00021a96934",
-      "character": "Salty Waitress",
-      "order": 413,
+      "id": 10872,
+      "name": "Patton Oswalt",
+      "credit_id": "5ebcce5b8e2e000021119821",
+      "character": "Ernest Koenig",
+      "order": 396,
+      "gender": 2,
+      "profile_path": "/ljQvjbPmcIAl205Lb2Mu4CW8WO7.jpg"
+    },
+    {
+      "id": 34070,
+      "name": "Nora Zehetner",
+      "credit_id": "5ebccde1c50ad2002484e008",
+      "character": "Viola",
+      "order": 403,
       "gender": 1,
-      "profile_path": null
+      "profile_path": "/phkIjo1nXj9i8FMkZWWa1IXU5pI.jpg"
     },
     {
-      "id": 39464,
-      "name": "Tamara Taylor",
-      "credit_id": "5edb0ffc1dcb770020011228",
-      "character": "Sibyl",
-      "order": 414,
-      "gender": 1,
-      "profile_path": "/lAAQHoRQJizp8lefGUbuajwbJcI.jpg"
-    },
-    {
-      "id": 1461713,
-      "name": "Stephan Käfer",
-      "credit_id": "5ee19efb4c1bb0001fa368bb",
-      "character": "German Scientist",
-      "order": 414,
+      "id": 2000335,
+      "name": "Darren Barnet",
+      "credit_id": "5ecf280421c4ca001fdbe164",
+      "character": "Wilfred \"Freddy\" Malick",
+      "order": 403,
       "gender": 2,
-      "profile_path": null
+      "profile_path": "/z3hQP19QgHsKZ4j0sXNzrhScDMO.jpg"
     },
     {
-      "id": 1351363,
-      "name": "Mary Eileen O'Donnell",
-      "credit_id": "5ee19f194c1bb0001ea40412",
-      "character": "Stern Woman",
-      "order": 415,
-      "gender": 0,
-      "profile_path": null
-    },
-    {
-      "id": 570119,
-      "name": "Hugh Holub",
-      "credit_id": "5ee19f3290dde00021a969f3",
-      "character": "Tightly-Wound Scientist",
-      "order": 416,
+      "id": 155978,
+      "name": "Joel Stoffer",
+      "credit_id": "5a249a37c3a3680b8f0d0a95",
+      "character": "Enoch",
+      "order": 433,
       "gender": 2,
-      "profile_path": "/kdTrfrVKlSxDL9aHwQvb8oF49u4.jpg"
-    },
-    {
-      "id": 1916439,
-      "name": "Karson Kern",
-      "credit_id": "5ee19f3d97eab4001fdfeaf9",
-      "character": "Crew Cut Guy",
-      "order": 417,
-      "gender": 0,
-      "profile_path": "/iY1w0XrVBzQqcgjjyZQjxHNb79o.jpg"
-    },
-    {
-      "id": 141255,
-      "name": "Alex Ross",
-      "credit_id": "5ee19f8390dde00020a8a5a6",
-      "character": "Well-Dressed Man",
-      "order": 418,
-      "gender": 0,
-      "profile_path": null
-    },
-    {
-      "id": 1224022,
-      "name": "Enver Gjokaj",
-      "credit_id": "5edb106bf36a320020870352",
-      "character": "Daniel Sousa",
-      "order": 428,
-      "gender": 0,
-      "profile_path": "/1M3ISdFIaf4p1N3ZZTK7KnZwj9p.jpg"
+      "profile_path": "/uYVpFmgks5XjiFqJQL60e1qKaLe.jpg"
     }
   ],
-  "name": "Alien Commies from the Future!",
-  "overview": "A surprise leap forward in time has stranded Enoch in 1931 and landed the team in yet another unfamiliar decade. Now, in order to stop the chronicoms from launching their newest future-dismantling plan, the agents will have to infiltrate one of S.H.I.E.L.D.’s most secure bases.",
-  "id": 2283759,
+  "name": "The New Deal",
+  "overview": "Coulson and the Agents of S.H.I.E.L.D. are thrust backward in time and stranded in 1931 New York City. With the all-new Zephyr set to time-jump at any moment, the team must hurry to find out exactly what happened.",
+  "id": 2226179,
   "production_code": "",
   "season_number": 7,
-  "still_path": "/6iuYwXFN3GCEf14cgVmBAwWciyF.jpg",
-  "vote_average": 7.75,
-  "vote_count": 4
+  "still_path": "/gsqIC0yTTZNxxNIvf0NSsRDRHJy.jpg",
+  "vote_average": 6.833,
+  "vote_count": 6
 }

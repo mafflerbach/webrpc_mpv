@@ -64,7 +64,7 @@ pub mod mpv {
         let mut mpv = Command::new("mpv");
         let ipc_param = format!("--input-ipc-server={}", settings.socket);
 
-        println!("{}", ipc_param);
+        println!("Starting parameter for mpv: {}", ipc_param);
         mpv.arg("--idle=yes")
             .arg(ipc_param)
             .arg("--fs=yes")
@@ -75,7 +75,6 @@ pub mod mpv {
 
     pub fn write_to_socket(content: String) -> std::io::Result<String> {
         let settings = settings::init();
-        println!("{}", settings.socket);
         let mut stream = match UnixStream::connect(settings.socket) {
             Err(e) => panic!("could not connect to socket {}", e),
             Ok(stream) => stream,

@@ -211,7 +211,7 @@ function search_movie_term() {
     value = $(".movie-term").val();
     $.ajax({
       type : "POST",
-      url : "/library/search-movie",
+      url : "/movies/search-movie",
       contenType : "application/json",
       data : JSON.stringify({"term" : value}),
       success : function(data) {

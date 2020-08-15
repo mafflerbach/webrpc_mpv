@@ -120,7 +120,6 @@ pub fn event_add_to_playlist(request_content: Json<PlaylistControl>) -> content:
     } else {
         println!("PLAY ON REMOTE");
         let client_url = get_client(client);
-        println!("{}/add", client_url);
         let mut map = HashMap::new();
         map.insert("value".to_string(), request_content.value.clone());
         map.insert("client".to_string(), 0.to_string());

@@ -149,7 +149,6 @@ pub fn request_add_serie(request_content: Json<LibraryRequest>) -> content::Json
 #[post("/add-movie", data = "<request_content>")]
 pub fn request_add_movie(request_content: Json<LibraryRequest>) -> content::Json<String> {
     // TODO gui for adding movies via search on tmdb
-    let name_of_file = Path::new(&request_content.path).file_name();
     let movie_details = tmdb::tmdb::movie_get_detail_by_id(&request_content.tmdb_id);
 
     let movie_info = NewMovie {
@@ -191,6 +190,7 @@ fn sync_season(tmdb_id_to_insert: i32, season_id_to_insert: i32) {
     let _insert_result = diesel::insert_into(season::table)
         .values(&season_info)
         .execute(&connection);
+    println!("Insert done for season");
 }
 
 fn sync_episodes(path: String, tmdb_id: i32) {
@@ -251,6 +251,7 @@ fn sync_episodes(path: String, tmdb_id: i32) {
                     description: &"".to_string(),
                 };
                 if !epi_info.check_episode() {
+                    println!("insert episode information for {} {}", tmdb_id, season);
                     let episode_info =
                         tmdb::tmdb::tv_episodes_get_details(tmdb_id, season, episode);
 

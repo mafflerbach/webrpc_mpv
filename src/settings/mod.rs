@@ -17,7 +17,9 @@ pub struct Streams {
     pub name: String,
     pub url: String,
 }
+pub struct TmpUrls{
 
+}
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Settings {
     pub db: String,
@@ -27,6 +29,7 @@ pub struct Settings {
     pub scan_dir_series: String,
     pub socket: String,
     pub childs: Vec<Childs>,
+    pub tmdb: HashMap<String, String>,
     pub stream_urls: Vec<Streams>,
 }
 #[derive(Serialize, Deserialize)]
@@ -42,14 +45,12 @@ pub struct SettingContext {
 
 pub fn config() -> Result<Settings, Box<dyn Error>> {
     let setting_file = env::var("SETTINGS");
-    println!("SETTINGS config: {:?}", setting_file);
     read_settings_file(setting_file.unwrap())
 }
 
 pub fn init() -> SettingContext {
     let setting_file = env::var("SETTINGS");
     let res = read_settings_file(setting_file.unwrap());
-    println!("SETTINGS init: {:?}", res);
 
     let mut streaming_links = HashMap::new();
     let mut clients = HashMap::new();
@@ -95,9 +96,9 @@ fn read_settings_file<P: AsRef<Path>>(path: P) -> Result<Settings, Box<dyn Error
     // Open the file in read-only mode with buffer.
     let file = File::open(path)?;
     let reader = BufReader::new(file);
-    println!("SETTINGS read_settings: {:?}", reader);
 
     let u: Settings = serde_json::from_reader(reader)?;
 
     Ok(u)
 }
+

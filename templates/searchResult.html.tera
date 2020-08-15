@@ -1,17 +1,17 @@
     {% for result in results %}
     <div class="card mb-3">
-        <div class="cardContent" style="background-img:url('https://image.tmdb.org/t/p/w500{{result.poster_path}}')">
+        <div class="cardContent" style="background-image:url('https://image.tmdb.org/t/p/w780{{result.poster_path}}')">
             <div class="searchResultThumbnail">
             </div>
             <div class="card-body">
                 <h5 class="card-title">{{result.name}}</h5>
                 <p class="card-text">{{result.overview}}</p>
 {% if result.type_of == 'movie'  %}
-                <button type="button" class="btn btn-primary add-movie" data-id="{{result.id}}" data-path="{{result.file_path}}" data-path="{{result.name}}">Add</button>
+                <button type="button" class="btn btn-primary add-movie" data-id="{{result.id}}" data-path="{{result.file_path}}" ">Add</button>
 
                 <button type="button" class="btn btn-primary ignore-movie" data-id="{{result.id}}">Ignore</button>
 {% else %}
-                <button type="button" class="btn btn-primary add-serie" data-id="{{result.id}}">Add</button>
+                <button type="button" class="btn btn-primary add-serie" data-id="{{result.id}}" data-path="{{result.file_path}}">Add</button>
                 <button type="button" class="btn btn-primary ignore-serie" data-id="{{result.id}}">Ignore</button>
 {% endif %}
             </div>

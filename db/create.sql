@@ -39,3 +39,5 @@ CREATE TABLE IF NOT EXISTS season  (
     season_id integer NOT NULL default 0
 );
 
+ALTER TABLE movie 
+ADD COLUMN tmdb_id integer;

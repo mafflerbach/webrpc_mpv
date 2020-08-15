@@ -1,42 +1,46 @@
 {
-    "tmdb_key" : "924375ec86dee2a9a78b5033367f4fe1",
+    "tmdb_key": "924375ec86dee2a9a78b5033367f4fe1",
     "debug": true,
-    "socket":"/tmp/mpvsocket1",
-    "db" : "/home/maren/development/rust/mpv/db/restmpv.db",
-    "scan_dir_series" : "/home/maren/Downloads/complete/series",
-    "scan_dir_movies" : "/home/maren/Downloads/complete/movies",
-    "childs": [
-    {
-           "id":"1",
-           "name":"client 1",
-           "url":"http://localhost:9999"
-       },{
-       
-           "id":"2",
-           "name":"client 2",
-           "url":"http://localhost:9990"
-       }
-    ],
-   "stream_urls": [
-       {
-           "name":"ard",
-           "url":"https://mcdn.daserste.de/daserste/de/master.m3u8?arn=1"
-       },{
-           "name":"zdf",
-           "url":"https://zdf-hls-01.akamaized.net/hls/live/2002460/de/high/master.m3u8"
-       },{
-           "name":"arte",
-           "url":"https://artelive-lh.akamaihd.net/i/artelive_de@393591/index_1_av-p.m3u8"
-       },{
-           "name":"kika",
-           "url":"https://kikageohls-i.akamaihd.net/hls/live/1006268/livetvkika_de/master.m3u8"
-       },{
-           "name":"3sat",
-           "url":"https://zdfhls18-i.akamaihd.net/hls/live/744751/dach/high/master.m3u8"
-       },{
-           "name":"phoenix",
-           "url":"https://zdfhls19-i.akamaihd.net/hls/live/744752/de/high/master.m3u8"
-       }
-   ]
+    "socket": "/tmp/mpvsocket1",
+    "db": "/home/maren/development/rust/mpv/db/restmpv.db",
+    "scan_dir_series": "/home/maren/Downloads/complete/series",
+    "scan_dir_movies": "/home/maren/Downloads/complete/movies",
+    "childs": [{
+        "id": "1",
+        "name": "client 1",
+        "url": "http://localhost:9999"
+    }, {
 
+        "id": "2",
+        "name": "client 2",
+        "url": "http://localhost:9990"
+    }],
+    "stream_urls": [{
+        "name": "ard",
+        "url": "https://mcdn.daserste.de/daserste/de/master.m3u8?arn=1"
+    }, {
+        "name": "zdf",
+        "url": "https://zdf-hls-01.akamaized.net/hls/live/2002460/de/high/master.m3u8"
+    }, {
+        "name": "arte",
+        "url": "https://artelive-lh.akamaihd.net/i/artelive_de@393591/index_1_av-p.m3u8"
+    }, {
+        "name": "kika",
+        "url": "https://kikageohls-i.akamaihd.net/hls/live/1006268/livetvkika_de/master.m3u8"
+    }, {
+        "name": "3sat",
+        "url": "https://zdfhls18-i.akamaihd.net/hls/live/744751/dach/high/master.m3u8"
+    }, {
+        "name": "phoenix",
+        "url": "https://zdfhls19-i.akamaihd.net/hls/live/744752/de/high/master.m3u8"
+    }],
+    "tmdb": {
+        "find_by_external_id": "https://api.themoviedb.org/3/find/##1##?api_key=##2##&language=en-US&external_source=tvdb_id",
+        "get_external_id": "https://api.themoviedb.org/3/tv/##1##/external_ids?api_key=##2##&language=en-US",
+        "search_movie": "https://api.themoviedb.org/3/search/movie?api_key=##1##&language=en-US&page=1&query=##2##&include_adult=false",
+        "search_movie_by_id": "https://api.themoviedb.org/3/search/movie/{}?api_key={}&language=en-US&page=1",
+        "search_tv": "https://api.themoviedb.org/3/search/tv?api_key=##1##&language=en-US&page=1&query=##2##&include_adult=false",
+        "tv_episodes_get_details": "https://api.themoviedb.org/3/tv/##1##/season/##2##/episode/##3##?api_key=##4##&language=en-US&external_source=tvdb_id",
+        "tv_season_get_details": "https://api.themoviedb.org/3/tv/##1##/season/##2##?api_key=##3##&language=en-US&external_source=tvdb_id"
+    }
 }
