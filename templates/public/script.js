@@ -1,7 +1,11 @@
+var playerStatusInterval;
 $(function() {
+  get_video_status();
+  tabbing();
   get_volume();
   init_series();
   init_movies();
+  init_favourites();
   search_movie_term();
   get_pos_property();
   $("#start-playlist").click(function() {
@@ -27,13 +31,17 @@ $(function() {
         console.log(data);
         if (data.success == "success") {
           valueElement.val("");
+          playerStatusInterval = setInterval(get_video_status, 500);
         }
       },
       dataType : 'json'
     });
   });
+  $(document).on("click", "button[data-dismiss='modal']",
+                 function() { $.modal.close(); })
 
-  $("#episodeModal, #movies").on("click", ".play-video-link", function() {
+
+  $(document).on("click", ".play-video-link", function() {
     selectedClient = $("#clientSelection").val();
     value = $(this).data("file");
     $.ajax({
@@ -46,17 +54,24 @@ $(function() {
     });
   });
 
-  $("#searchResult").on("click", ".add-movie", function() {
+  $(document).on("click", ".add-movie", function() {
     value = $(this).data("id");
     path = $(this).data("path");
 
     $("#searchModal").attr("data-path", path);
-    var searchModal = new bootstrap.Modal(
-        document.getElementById('searchModal'), {keyboard : false})
-    searchModal.show();
+
+    $('#searchModal').modal();
   });
 
-  $("#searchResult").on("click", ".add-serie", function() {
+  $(document).on("click", ".card .btn-link", function() {
+    console.log("click");
+    var id = $(this).attr("data-target");
+    console.log(id);
+    $(".card div[id='" + id + "'] .card-body").addClass("active");
+    $(".card div[id!='" + id + "'] .card-body").removeClass("active");
+  });
+
+  $(document).on("click", ".add-serie", function() {
     value = $(this).data("id");
     path = $(this).data("path");
     $.ajax({
@@ -77,7 +92,7 @@ $(function() {
     });
   });
 
-  $("#searchResult").on("click", ".ignore-serie", function() {
+  $(document).on("click", ".ignore-serie", function() {
     value = $(this).data("id");
     path = $(this).data("path");
     $.ajax({
@@ -99,6 +114,7 @@ $(function() {
   });
 
   $("#addPlaylist").submit(function(e) {
+    //
     //  post to /add
 
     e.preventDefault(e);
@@ -116,9 +132,10 @@ $(function() {
     });
   });
 
-  $("#range input").change(function() {
+  $("#video-volume input").change(function() {
     selectedClient = $("#clientSelection").val();
     var value = $(this).val();
+    $("#video-volume-output").html(value);
     $.ajax({
       type : "POST",
       url : "/volume",
@@ -131,6 +148,7 @@ $(function() {
 
   $("#play_button").click(function(e) {
     e.preventDefault();
+    playerStatusInterval = setInterval(get_video_status, 500);
     $.ajax({
       type : "GET",
       url : "/player/resume",
@@ -142,6 +160,7 @@ $(function() {
 
   $("#stop_button").click(function(e) {
     e.preventDefault();
+    clearInterval(playerStatusInterval);
     $.ajax({
       type : "GET",
       url : "/player/stop",
@@ -151,6 +170,8 @@ $(function() {
 
   $("#pause_button").click(function(e) {
     e.preventDefault();
+    console.log("clear interval");
+    clearInterval(playerStatusInterval);
     $.ajax({
       type : "GET",
       url : "/player/pause",
@@ -160,7 +181,7 @@ $(function() {
     $("#play_button").show();
   })
 
-  $("#searchMovieContainer").on("click", ".add-movie-information", function() {
+  $(document).on("click", ".add-movie-information", function() {
     let id = $(this).data("id");
     let path = $("#searchModal").data("path");
 
@@ -182,6 +203,23 @@ $(function() {
     });
   })
 
+  $(document).on('input', "#video-length input", function() {
+    let value = $(this).val();
+    $.ajax({
+      type : "POST",
+      url : "/player/propery",
+      contenType : "application/json",
+      data : JSON.stringify({"propery" : "time-pos", "value" : value}),
+      success : function(data) {
+        console.log(data);
+        if (data.success == "success") {
+          valueElement.val("");
+        }
+      },
+      dataType : 'json'
+    });
+  });
+
   scan();
 });
 
@@ -199,7 +237,8 @@ function appendSeasonDetails() {
         console.log(data);
         $("#EpisodeBoxModalContent").empty();
         $("#EpisodeBoxModalContent").append(data);
-        $('#episodeModal').modal('show')
+
+        $('#episodeModal').modal();
       },
     });
   });
@@ -232,13 +271,24 @@ function scan() {
       success : function(data) {
         $("#SearchBoxModalContent").empty();
         $("#SearchBoxModalContent").append(data);
-        var myModal = new bootstrap.Modal(
-            document.getElementById('exampleModal'), {keyboard : false})
-        myModal.show();
+        $('#exampleModal').modal();
       }
 
     });
   })
+}
+
+function init_favourites() {
+
+  $.ajax({
+    type : "GET",
+    url : "/favourites",
+    dataType : "html",
+    success : function(data) {
+      $("#favourites").append(data);
+      appendSeasonDetails();
+    },
+  });
 }
 
 function init_movies() {
@@ -248,7 +298,6 @@ function init_movies() {
     url : "/movies",
     dataType : "html",
     success : function(data) {
-      console.log(data);
       $("#movies").append(data);
       appendSeasonDetails();
     },
@@ -262,7 +311,6 @@ function init_series() {
     url : "/series",
     dataType : "html",
     success : function(data) {
-      console.log(data);
       $("#tv-shows").append(data);
       appendSeasonDetails();
     },
@@ -275,7 +323,8 @@ function get_volume() {
     url : "/volume",
     success : function(data) {
       console.log(data);
-      $("#range input").val(data.data);
+      $("#video-volume input").val(data.data);
+      $("#video-volume-output").html(data.data);
     },
   });
 }
@@ -288,10 +337,61 @@ function get_pos_property() {
       $("#play_button").hide();
       $("#pause_button").show();
       if (data.data == undefined) {
-
         $("#play_button").show();
         $("#pause_button").hide();
       }
     },
   });
+}
+
+function get_video_status() {
+
+  function fancyTimeFormat(duration) {
+    // Hours, minutes and seconds
+    var hrs = ~~(duration / 3600);
+    var mins = ~~((duration % 3600) / 60);
+    var secs = ~~duration % 60;
+    var ret = "";
+    if (hrs > 0) {
+      ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+    }
+    ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+    ret += "" + secs;
+    return ret;
+  }
+
+  let test = $.ajax({
+                type : "GET",
+                async : false,
+                url : "/player/propery?target=duration",
+              }).done(function(data) {
+    if (data.data != undefined) {
+      $("#video-length input").attr("max", data.data);
+      $.ajax({
+        type : "GET",
+        url : "/player/propery?target=time-pos",
+        success : function(data) {
+          $("#video-length input").attr("value", data.data);
+          $("#video-length output").text(fancyTimeFormat(data.data));
+        },
+      });
+    }
+  });
+}
+function cards() {
+  $(".btn-link").click(function() {
+    var id = $(this).attr("aria-controls");
+    $(".card div[aria-labelledby='" + id + "']").addClass("active");
+    $(".card div[aria-labelledby!='" + id + "']").removeClass("active");
+    ;
+  })
+}
+
+function tabbing() {
+  $(".nav-link").click(function() {
+    var id = $(this).attr("id");
+    $(".tab-content div[aria-labelledby='" + id + "']").addClass("active");
+    $(".tab-content div[aria-labelledby!='" + id + "']").removeClass("active");
+    ;
+  })
 }

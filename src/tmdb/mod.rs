@@ -305,7 +305,6 @@ pub mod tmdb {
 
     extern crate reqwest;
     fn send_request(target: String) -> String {
-        //TODO change to post, add fields target for video url and id = 0 for local
 
         let settings2 = &settings::config();
         let debug = settings2.as_ref().unwrap().debug.to_string();

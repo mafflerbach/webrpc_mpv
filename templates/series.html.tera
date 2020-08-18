@@ -1,7 +1,7 @@
 {% for series in series_collection %}
 
 <div class="card mb-3 ">
-    <div class="cardContent" style="background-size: cover;background-position: -50%; background-image:url('https://image.tmdb.org/t/p/w780/{{series.serie.imagepath}}')">
+    <div class="cardContent" style="background-size: cover;background-image:url('https://image.tmdb.org/t/p/w780/{{series.serie.imagepath}}')">
 
         <div class="searchResultThumbnail">
         </div>
@@ -11,7 +11,7 @@
 
             {% for seasons in series.seasons %}
                 {% for season in seasons%}
-                <button type="button" data-toggle="modal" data-target="#episodeModal" class="season-detail btn btn-primary" data-season="{{season.season_id}}" data-serie="{{season.tmdb_id}}" class="btn btn-primary">
+                <button type="button" data-toggle="modal" rel="modal:close" data-target="#episodeModal" class="season-detail btn btn-primary" data-season="{{season.season_id}}" data-serie="{{season.tmdb_id}}" class="btn btn-primary">
                     {{season.description}}
                 </button>
 

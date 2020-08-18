@@ -1,25 +1,28 @@
-use crate::mounts::library::episodes;
-use rocket::response::content;
-use rocket_contrib::templates::Template;
+use diesel::prelude::*;
+use mpv_webrpc::models::*;
+use mpv_webrpc::schema::episode::dsl::*;
 
-#[derive(Debug, Serialize, Deserialize)]
-struct TemplateContext {
-    episodes: Vec<mpv_webrpc::models::Episode>,
-}
-#[get("/<series_id>/<season_id>")]
-pub fn index(series_id: i32, season_id: i32) -> Template {
-    let episodes = episodes::get_episodes(series_id, season_id);
-    let return_context = TemplateContext { episodes: episodes };
-    Template::render("episodes", &return_context)
+pub fn get_episodes(ser_id:i32, sea_id:i32) -> Vec<mpv_webrpc::models::Episode> {
+    let connection = mpv_webrpc::establish_connection();
+    episode
+        .filter(tmdb_id.eq(ser_id))
+        .filter(season_id.eq(sea_id))
+        .order_by(episode_id.desc())
+        .load::<Episode>(&connection)
+        .expect("Error loading Episode Table")
 }
 
-#[get("/<series_id>/<season_id>/<episode>")]
-pub fn detail(series_id: i32, season_id: i32, episode: i32) -> content::Json<String> {
-    let episode_details = episodes::get_detail(series_id, season_id, episode);
+pub fn get_detail(ser_id:i32, sea_id:i32, epi_id:i32) -> Vec<mpv_webrpc::models::Episode> {
+    let connection = mpv_webrpc::establish_connection();
+    episode
 
-    let j = match serde_json::to_string(&episode_details) {
-        Ok(j) => j,
-        Err(_) => panic!("could not connect to socket"),
-    };
-    content::Json(j)
+        .filter(tmdb_id.eq(ser_id))
+        .filter(season_id.eq(sea_id))
+        .filter(episode_id.eq(epi_id))
+        .order_by(episode_id.desc())
+        .load::<Episode>(&connection)
+        .expect("Error loading Episode Table")
 }
+
+
+

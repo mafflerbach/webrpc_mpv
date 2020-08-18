@@ -10,11 +10,10 @@
                         <path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z" />
                     </svg>
                 </button>
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{episode.id}}" aria-expanded="true" aria-controls="collapseOne">{{episode.title}}</button> </h5>
+                <button class="btn btn-link" data-toggle="collapse" rel="modal:close" data-target="collapse{{episode.id}}" aria-expanded="true" aria-controls="collapseOne">{{episode.episode_id}}. {{episode.title}}</button> </h5>
         </div>
-
         <div id="collapse{{episode.id}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
-            <div class="card-body">{{episode.description}}</div>
+            <div class="card-body"> {{episode.description}}</div>
         </div>
     </div>
     {% endfor %}

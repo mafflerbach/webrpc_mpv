@@ -20,7 +20,7 @@ mod stubs;
 mod tmdb;
 
 extern crate reqwest;
-use crate::settings::SettingContext;
+use crate::settings::Settings;
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::Template;
 use std::env;
@@ -28,7 +28,7 @@ use std::vec::Vec;
 
 #[derive(Serialize, Deserialize)]
 struct TemplateContext {
-    settings: SettingContext,
+    settings: Settings,
 }
 
 #[get("/")]
@@ -40,6 +40,7 @@ fn index() -> Template {
     Template::render("index", &template_context)
 }
 
+mod library;
 mod mounts;
 fn rocket() -> rocket::Rocket {
     rocket::ignite()
@@ -55,6 +56,7 @@ fn rocket() -> rocket::Rocket {
                 mounts::player::request_playlist,
                 mounts::player::request_resume,
                 mounts::player::request_get_property,
+                mounts::player::request_set_property,
                 mounts::player::request_start_video,
             ],
         )
@@ -80,8 +82,12 @@ fn rocket() -> rocket::Rocket {
             ],
         )
         .mount(
+            "/favourites",
+            routes![mounts::favourites::index],
+        )
+        .mount(
             "/episodes",
-            routes![mounts::episodes::detail, mounts::episodes::index],
+            routes![mounts::library::episodes::detail, mounts::library::episodes::index],
         )
         .mount(
             "/",

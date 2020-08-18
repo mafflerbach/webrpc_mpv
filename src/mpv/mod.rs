@@ -53,6 +53,11 @@ pub mod mpv {
         write_to_socket(tjson.to_string() + "\n")
     }
 
+    pub fn event_set_property(propery : String, value: String) -> std::io::Result<String> {
+        let tjson = json!({ "command": ["set_property", propery, value] });
+        write_to_socket(tjson.to_string() + "\n")
+    }
+
     pub fn event_get_property(propery : String) -> std::io::Result<String> {
         let tjson = json!({ "command": ["get_property", propery] });
         write_to_socket(tjson.to_string() + "\n")
@@ -63,10 +68,10 @@ pub mod mpv {
 
         let mut mpv = Command::new("mpv");
         let ipc_param = format!("--input-ipc-server={}", settings.socket);
-
         println!("Starting parameter for mpv: {}", ipc_param);
         mpv.arg("--idle=yes")
             .arg(ipc_param)
+            .arg("--hwdec=mmal-copy")
             .arg("--fs=yes")
             .arg("--vo=gpu")
             .spawn()

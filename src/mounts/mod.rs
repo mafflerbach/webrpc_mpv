@@ -5,3 +5,4 @@ pub mod movies;
 pub mod series;
 pub mod volume;
 pub mod episodes;
+pub mod favourites;

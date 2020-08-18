@@ -3,6 +3,7 @@ use mpv_webrpc::models::*;
 use mpv_webrpc::schema::serie::dsl::*;
 
 use serde::{Deserialize, Serialize};
+
 pub fn get_series() -> Vec<mpv_webrpc::models::Serie> {
     let connection = mpv_webrpc::establish_connection();
     serie
