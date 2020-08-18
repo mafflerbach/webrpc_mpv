@@ -10,28 +10,23 @@ LICENSE - WTFPL
 
 
 # TODO
-Add to library
--movie
 
-Display in library tab
+overhaul frontend
+refactoring 
+ - fix config
+ - documentation
 
+- write tests
+- configuration for testing/overwriting 
 Save video status per file
-forwarding current video 
+forwarding current video to different client
+Plugin Interface
 
-add video manualy
-open local file
-
-service discovery
-
-fix readme
-fix integration test
-fix config
-documentation
 add logging level 
 rename project
 
-installation processing for config 
-overhaul frontend
+service discovery
+installation processing for config and templates
 
 
 Plugins:

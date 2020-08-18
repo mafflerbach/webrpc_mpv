@@ -1,5 +1,4 @@
 -- Your SQL goes here
-
 CREATE TABLE IF NOT EXISTS ignored (
     id integer PRIMARY KEY,
     tmdb_id integer not NULL
@@ -37,6 +36,7 @@ CREATE TABLE IF NOT EXISTS season  (
     imagepath text NOT NULL  DEFAULT '',
     tmdb_id integer not null,
     description  text NOT NULL default '',
-    title  text NOT NULL default ''
+    title  text NOT NULL default '',
+    season_id integer NOT NULL default 0
 );
 

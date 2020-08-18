@@ -12,6 +12,12 @@ pub struct PlaylistControl {
 }
 
 #[derive(Serialize, Deserialize)]
+pub struct Property {
+    pub propery: String,
+    pub value: String,
+}
+
+#[derive(Serialize, Deserialize)]
 pub struct VolumeControl {
     pub client: String,
     pub value: String,

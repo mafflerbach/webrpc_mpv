@@ -1,123 +1,163 @@
+@import url('https://fonts.googleapis.com/css2?family=Jaldi:wght@400;700&family=Poppins:wght@400;700;900&display=swap');
 
 body {
+    font-family: 'Poppins', sans-serif;
     padding: 70px 0px;
-    background-color:;
+    background-color: #202a30 !important;
+    margin: 0;
+    color: white;
+    font-size: 14px;
+    padding: 0px 2em;
 }
-
-.range {
-    display: table;
-    position: relative;
-    height: 25px;
-    margin-top: 20px;
-    background-color: rgb(245, 245, 245);
-    border-radius: 4px;
-    -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
+.nav {
+padding:0;
+margin:0;
 }
+.nav-item a {
+    text-decoration:none;
+    margin:1em;
+    padding:1em;
+    color:white;
+}
+.nav-item {
+display:inline-block;
 
-.range input[type="range"] {
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    -ms-appearance: none !important;
-    -o-appearance: none !important;
-    appearance: none !important;
-
-    display: table-cell;
+    margin:0.5em;
+    padding:0.5em;
+    box-shadow: 7px 7px 10px #0c1013, -5px -6px 10px #2e3b42;
+}
+input[type="range"] {
+    -webkit-appearance: none;
     width: 100%;
-    background-color: transparent;
-    height: 25px;
+    background: transparent;
+    position: relative;
+}
+
+input[type="range"]:focus {
+    outline: 0;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    /* Removes the default styling */
+    -webkit-appearance: none;
+    width: 1em;
+    height: 1em;
+    border-radius: 3px;
+    box-shadow: 7px 7px 10px #0c1013, -5px -6px 10px #2e3b42;
+    background: #32414a;
     cursor: pointer;
 }
-.range input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    -ms-appearance: none !important;
-    -o-appearance: none !important;
-    appearance: none !important;
 
-    width: 11px;
-    height: 25px;
-    color: rgb(255, 255, 255);
+/*All the same stuff for firefox */
+input[type=range]::-moz-range-thumb {
+    width: 3em;
+    height: 3em;
+    margin: .5em 0;
+    border-radius: 100%;
+    box-shadow: 7px 7px 10px #0c1013 inset, -5px -6px 10px #2e3b42 inset;
+    background: #32414a;
+
+    cursor: pointer;
+    border: 0;
+}
+
+
+/* RUNNABLE TRACK -> represented by the indented carve in which the ball (thumb) moves */
+/* Webkit browsers */
+input[type="range"]::-webkit-slider-runnable-track {
+    background: transparent;
+    width: 100%;
+    height: 1em;
+    padding: 0 1em;
+    border-radius: 2em;
+    border-radius: 3px;
+    box-shadow: 7px 7px 10px #0c1013 inset, -5px -6px 10px #2e3b42 inset;
+
+}
+
+/* For firefox */
+input[type=range]::-moz-range-track {
+    background: transparent;
+    width: 100%;
+    height: 1em;
+    padding: 0 0em;
+    border-radius: 0em;
+    border-radius: 3px;
+    box-shadow: 7px 7px 10px #0c1013 inset, -5px -6px 10px #2e3b42 inset;
+}
+
+input[type="range"]::before {
+    position: absolute;
     text-align: center;
-    white-space: nowrap;
-    vertical-align: baseline;
-    border-radius: 0px;
-    background-color: rgb(153, 153, 153);
+    color: #c4c4c4;
+    font-size: 1em;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1.6em;
+    text-shadow: .5px .5px 0.9px rgba(0, 0, 0, .4);
+    z-index: -1;
 }
 
-.range input[type="range"]::-moz-slider-thumb {
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    -ms-appearance: none !important;
-    -o-appearance: none !important;
-    appearance: none !important;
-    
-    width: 11px;
-    height: 25px;
-    color: rgb(255, 255, 255);
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: baseline;
-    border-radius: 0px;
-    background-color: rgb(153, 153, 153);
+.range output {}
+
+.searchResultThumbnail {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
 }
 
-.range output {
-    display: table-cell;
-    padding: 3px 5px 2px;
-    min-width: 40px;
-    color: rgb(255, 255, 255);
-    background-color: rgb(153, 153, 153);
-    text-align: center;
-    text-decoration: none;
-    border-radius: 4px;
-    border-bottom-left-radius: 0;
-    border-top-left-radius: 0;
-    width: 1%;
-    white-space: nowrap;
-    vertical-align: middle;
+.card-body {
+    background-color: rgba(32, 42, 48, 0.8);
+    padding: 1em;
+}
 
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    -ms-transition: all 0.5s ease;
-    transition: all 0.5s ease;
+.collapse .card-body {
+    display: none;
+}
 
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: -moz-none;
-    -o-user-select: none;
-    user-select: none;
+.collapse .card-body.active {
+    display: block;
 }
-.searchResultThumbnail{
-position:relative;
-height:200px;
-overflow:hidden;
+
+.card-title {
+    font-size: 180%;
+
 }
-.card-body{
-background-color: rgba(255, 255, 250, 0.8);
+
+.container {
+
+    padding: 0.5em;
 }
-.cardContent{
-    background-position:center;
+
+.cardContent {
+    background-position: center;
 }
+
 .searchResultThumbnail img {
-position:absolute;
-top:-150px;
+    position: absolute;
+    top: -150px;
 }
+
+
 .range input[type="range"] {
+    width: 77%;
     outline: none;
 }
 
 .range.range-primary input[type="range"]::-webkit-slider-thumb {
     background-color: rgb(66, 139, 202);
 }
+
 .range.range-primary input[type="range"]::-moz-slider-thumb {
     background-color: rgb(66, 139, 202);
 }
+
 .range.range-primary output {
     background-color: rgb(66, 139, 202);
 }
+
 .range.range-primary input[type="range"] {
     outline-color: rgb(66, 139, 202);
 }
@@ -125,12 +165,15 @@ top:-150px;
 .range.range-success input[type="range"]::-webkit-slider-thumb {
     background-color: rgb(92, 184, 92);
 }
+
 .range.range-success input[type="range"]::-moz-slider-thumb {
     background-color: rgb(92, 184, 92);
 }
+
 .range.range-success output {
     background-color: rgb(92, 184, 92);
 }
+
 .range.range-success input[type="range"] {
     outline-color: rgb(92, 184, 92);
 }
@@ -138,12 +181,15 @@ top:-150px;
 .range.range-info input[type="range"]::-webkit-slider-thumb {
     background-color: rgb(91, 192, 222);
 }
+
 .range.range-info input[type="range"]::-moz-slider-thumb {
     background-color: rgb(91, 192, 222);
 }
+
 .range.range-info output {
     background-color: rgb(91, 192, 222);
 }
+
 .range.range-info input[type="range"] {
     outline-color: rgb(91, 192, 222);
 }
@@ -151,12 +197,15 @@ top:-150px;
 .range.range-warning input[type="range"]::-webkit-slider-thumb {
     background-color: rgb(240, 173, 78);
 }
+
 .range.range-warning input[type="range"]::-moz-slider-thumb {
     background-color: rgb(240, 173, 78);
 }
+
 .range.range-warning output {
     background-color: rgb(240, 173, 78);
 }
+
 .range.range-warning input[type="range"] {
     outline-color: rgb(240, 173, 78);
 }
@@ -164,12 +213,203 @@ top:-150px;
 .range.range-danger input[type="range"]::-webkit-slider-thumb {
     background-color: rgb(217, 83, 79);
 }
+
 .range.range-danger input[type="range"]::-moz-slider-thumb {
     background-color: rgb(217, 83, 79);
 }
+
 .range.range-danger output {
     background-color: rgb(217, 83, 79);
 }
+
 .range.range-danger input[type="range"] {
     outline-color: rgb(217, 83, 79);
+}
+
+.btn,
+button {
+    list-style: none;
+}
+
+button.close {
+    position: absolute;
+    right: 1em;
+    top: 0.7em;
+}
+
+.modal-title {
+    position: absolute;
+    left: 1.3em;
+}
+
+.modal-header {
+    height: 3em;
+    position: relative;
+}
+
+
+.btn,
+button {
+    border-radius: 10px;
+    background: linear-gradient(145deg, #1d262b, #222d33);
+    box-shadow: 7px 7px 10px #0c1013, -5px -6px 10px #2e3b42;
+    border: 0;
+    color: white;
+    padding: 0.5em;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+}
+
+.card {
+    margin: 1em 0;
+    box-shadow: 7px 7px 10px #0c1013, -5px -6px 10px #2e3b42;
+}
+.modal-footer  {
+    margin: 1.5em;
+}
+.card-header h5 {
+    margin: 0 1em;
+}
+
+h5 {
+margin:0.5em 0;
+}
+.card-header {
+    padding: 1em 0em;
+}
+
+.card-header button {
+    margin: 0 0.5em;
+}
+
+.btn svg {
+    width: 1em;
+    height: 1em;
+}
+
+textarea:focus,
+input:focus {
+    border-radius: 10px;
+    outline-color: #536975;
+    -moz-outline-radius: 15px;
+}
+
+input[type='text'],
+select {
+    border-radius: 10px;
+    background: #202a30;
+    box-shadow: 7px 7px 10px #0c1013 inset, -5px -6px 10px #2e3b42 inset;
+    font-family: 'Poppins', sans-serif;
+    padding: 0.5em;
+    border: 0;
+    color: white;
+}
+
+
+#searchResultCloneable {
+    display: none;
+}
+
+.row {
+    float: none;
+}
+
+.col {
+    display: inline-block;
+    margin: 0.5em;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+
+.player-bar {
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(32, 42, 48, 0.5);
+    box-shadow: 7px 7px 10px #0c1013, -5px -6px 10px #2e3b42;
+    padding: 2em 0em;
+}
+
+
+
+
+[class*="col-"] {
+    width: 100%;
+}
+
+@media only screen and (max-width: 768px) {
+
+    /* For mobile phones: */
+    [class*="col-"] {
+        width: 100%;
+    }
+}
+
+@media only screen and (min-height: 759px) {
+
+    /* For desktop: */
+    .col-sm-1 {
+        width: 8.33%;
+    }
+
+    .col-sm-2 {
+        width: 16.66%;
+    }
+
+    .col-sm-3 {
+        width: 25%;
+    }
+
+    .col-sm-4 {
+        width: 33.33%;
+    }
+
+    .col-sm-5 {
+        width: 41.66%;
+    }
+
+    .col-sm-6 {
+        width: 50%;
+    }
+
+    .col-sm-7 {
+        width: 58.33%;
+    }
+
+    .col-sm-8 {
+        width: 66.66%;
+    }
+
+    .col-sm-9 {
+        width: 75%;
+    }
+
+    .col-sm-10 {
+        width: 83.33%;
+    }
+
+    .col-sm-11 {
+        width: 91.66%;
+    }
+
+    .col-sm-12 {
+        width: 100%;
+    }
+
+    .player-bar {
+        position: fixed;
+        bottom: 0;
+    }
+
+    .btn svg {
+        width: 1.3em;
+        height: 1.3em;
+    }
+
 }

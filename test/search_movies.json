@@ -1,0 +1,28 @@
+{
+  "page": 1,
+  "total_results": 1,
+  "total_pages": 1,
+  "results": [
+    {
+      "popularity": 37.413,
+      "vote_count": 1544,
+      "video": false,
+      "poster_path": "/30YacPAcxpNemhhwX0PVUl9pVA3.jpg",
+      "id": 431693,
+      "adult": false,
+      "backdrop_path": "/lwSOhnpwrzjtKi2RD3e5RAcGzvt.jpg",
+      "original_language": "en",
+      "original_title": "Spies in Disguise",
+      "genre_ids": [
+        28,
+        12,
+        16,
+        35
+      ],
+      "title": "Spies in Disguise",
+      "vote_average": 7.8,
+      "overview": "Super spy Lance Sterling and scientist Walter Beckett are almost exact opposites. Lance is smooth, suave and debonair. Walter is… not. But what Walter lacks in social skills he makes up for in smarts and invention, creating the awesome gadgets Lance uses on his epic missions. But when events take an unexpected turn, Walter and Lance suddenly have to rely on each other in a whole new way.",
+      "release_date": "2019-12-04"
+    }
+  ]
+}

@@ -22,6 +22,14 @@ pub fn request_resume() -> content::Json<String> {
     content::Json(resume_response)
 }
 
+use crate::api_structs::Property;
+#[post("/propery", data = "<request_content>")]
+pub fn request_set_property(request_content: Json<Property>) -> content::Json<String> {
+    let load_response = mpv::mpv::event_set_property(request_content.propery.clone(), request_content.value.clone()).unwrap();
+    println!("{}", load_response);
+    content::Json(load_response)
+}
+
 #[get("/propery?<target>")]
 pub fn request_get_property(target: String) -> content::Json<String> {
     let load_response = mpv::mpv::event_get_property(target).unwrap();
@@ -48,7 +56,6 @@ pub fn request_play_from_url(url: Json<UrlForm>) -> content::Json<String> {
     let decoded: String = parse(target.as_bytes())
         .map(|(key, val)| [key, val].concat())
         .collect();
-
 
     let play_response;
 
@@ -120,7 +127,6 @@ pub fn event_add_to_playlist(request_content: Json<PlaylistControl>) -> content:
     } else {
         println!("PLAY ON REMOTE");
         let client_url = get_client(client);
-        println!("{}/add", client_url);
         let mut map = HashMap::new();
         map.insert("value".to_string(), request_content.value.clone());
         map.insert("client".to_string(), 0.to_string());

@@ -35,6 +35,9 @@ CREATE TABLE IF NOT EXISTS season  (
     imagepath text NOT NULL  DEFAULT '',
     tmdb_id integer not null,
     description  text NOT NULL default '',
-    title  text NOT NULL default ''
+    title  text NOT NULL default '',
+    season_id integer NOT NULL default 0
 );
 
+ALTER TABLE movie 
+ADD COLUMN tmdb_id integer;

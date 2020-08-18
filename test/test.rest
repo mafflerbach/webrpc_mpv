@@ -1,3 +1,6 @@
+http://localhost:9990
+GET /
+
 # addd item to playlist 
 http://localhost:9990
 POST /player/add 
@@ -24,10 +27,6 @@ POST /player
 http://localhost:9990
 GET /volume
 
-# set volume
-http://localhost:9990
-POST /volume
-{"client": "null" , "value":"50"}
 
 # set volume
 http://localhost:9990
@@ -38,6 +37,9 @@ POST /volume
 http://localhost:9990
 GET /player/propery?target=time-pos
 
+http://localhost:9990
+POST /player/propery
+{"client": "null" , "value":"100"}
 
 # get scan result
 http://localhost:9990
@@ -58,4 +60,47 @@ POST /library/add
     "tmdb_id":1403,
     "path" : "/home/maren/Downloads/complete/Marvel's Agents of S.H.I.E.L.D"
 }
+
+
+# add to library
+http://localhost:9990
+GET /series/detail/85948
+
+http://localhost:9990
+GET /series
+
+http://localhost:9990
+GET /episodes
+
+http://localhost:9990
+GET /episodes/1403/7
+
+http://localhost:9990
+GET /episodes/1403/3/1
+
+
+http://localhost:9990
+GET /movies
+
+http://localhost:9990
+GET /movies/431693
+
+
+http://localhost:9990
+POST /movies/search-movie
+{
+    "term" : "Spione undercover eine wilde"
+}
+
+
+http://localhost:9990
+POST /library/add-movie
+{
+    "tmdb_id":431693,
+    "path" : "/home/maren/Downloads/complete/movies/Spione.undercover.Eine.wilde.Verwandlung.2019.German.720p.BluRay.x264/spione.undercover.eine.wilde.verwandlung.2019.german.720p.bluray.x264-details.mkv"
+}
+
+
+http://localhost:9990
+GET /favourites
 

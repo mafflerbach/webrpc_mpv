@@ -1,0 +1,26 @@
+{% for series in series_collection %}
+
+<div class="card mb-3 ">
+    <div class="cardContent" style="background-size: cover;background-image:url('https://image.tmdb.org/t/p/w780/{{series.serie.imagepath}}')">
+
+        <div class="searchResultThumbnail">
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">{{series.serie.title}}</h5>
+            <p class="card-text">{{series.serie.description}}</p>
+
+            {% for seasons in series.seasons %}
+                {% for season in seasons%}
+                <button type="button" data-toggle="modal" rel="modal:close" data-target="#episodeModal" class="season-detail btn btn-primary" data-season="{{season.season_id}}" data-serie="{{season.tmdb_id}}" class="btn btn-primary">
+                    {{season.description}}
+                </button>
+
+                {% endfor %}
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
+
+
+{% endfor %}

@@ -1,7 +1,6 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
-#[cfg(test)]
-mod tests;
+#[cfg(test)] mod tests;
 
 #[macro_use]
 extern crate rocket;
@@ -14,7 +13,6 @@ extern crate serde;
 extern crate serde_json;
 extern crate execute;
 
-
 mod api_structs;
 mod mpv;
 mod settings;
@@ -22,7 +20,7 @@ mod stubs;
 mod tmdb;
 
 extern crate reqwest;
-use crate::settings::SettingContext;
+use crate::settings::Settings;
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::Template;
 use std::env;
@@ -30,7 +28,7 @@ use std::vec::Vec;
 
 #[derive(Serialize, Deserialize)]
 struct TemplateContext {
-    settings: SettingContext,
+    settings: Settings,
 }
 
 #[get("/")]
@@ -42,6 +40,7 @@ fn index() -> Template {
     Template::render("index", &template_context)
 }
 
+mod library;
 mod mounts;
 fn rocket() -> rocket::Rocket {
     rocket::ignite()
@@ -57,14 +56,39 @@ fn rocket() -> rocket::Rocket {
                 mounts::player::request_playlist,
                 mounts::player::request_resume,
                 mounts::player::request_get_property,
+                mounts::player::request_set_property,
                 mounts::player::request_start_video,
             ],
         )
-        .mount("/library", routes![
-               mounts::library::request_scan,
-               mounts::library::request_add_serie,
-               mounts::library::request_ignore_serie
-        ])
+        .mount(
+            "/library",
+            routes![
+                mounts::library::request_scan,
+                mounts::library::request_add_movie,
+                mounts::library::request_add_serie,
+                mounts::library::request_ignore_serie
+            ],
+        )
+        .mount(
+            "/series",
+            routes![mounts::series::index, mounts::series::detail,],
+        )
+        .mount(
+            "/movies",
+            routes![
+                mounts::movies::detail,
+                mounts::movies::index,
+                mounts::movies::request_search_movie_post,
+            ],
+        )
+        .mount(
+            "/favourites",
+            routes![mounts::favourites::index],
+        )
+        .mount(
+            "/episodes",
+            routes![mounts::library::episodes::detail, mounts::library::episodes::index],
+        )
         .mount(
             "/",
             routes![

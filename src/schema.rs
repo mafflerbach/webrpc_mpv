@@ -25,6 +25,7 @@ table! {
         title -> Text,
         imagepath -> Text,
         description -> Text,
+        tmdb_id -> Integer,
     }
 }
 
@@ -35,6 +36,7 @@ table! {
         tmdb_id -> Integer,
         description -> Text,
         title -> Text,
+        season_id -> Integer,
     }
 }
 
