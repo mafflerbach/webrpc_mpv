@@ -1,5 +1,13 @@
+use crate::settings;
+use crate::api_structs::PlaylistControl;
+use crate::api_structs::UrlForm;
 use crate::mpv;
 use rocket::response::content;
+use rocket_contrib::json::Json;
+use std::collections::HashMap;
+use std::fs::OpenOptions;
+use std::io::prelude::*;
+use url::form_urlencoded::parse;
 
 #[get("/pause")]
 pub fn request_pause() -> content::Json<String> {
@@ -44,10 +52,6 @@ pub fn request_start_video(target: String) -> content::Json<String> {
     content::Json(load_response)
 }
 
-use crate::api_structs::UrlForm;
-use rocket_contrib::json::Json;
-use std::collections::HashMap;
-use url::form_urlencoded::parse;
 #[post("/", data = "<url>")]
 pub fn request_play_from_url(url: Json<UrlForm>) -> content::Json<String> {
     let target = url.target.to_string();
@@ -80,32 +84,7 @@ pub fn request_play_from_url(url: Json<UrlForm>) -> content::Json<String> {
     content::Json(play_response)
 }
 
-fn send_request(target: String, map: HashMap<String, String>) -> Result<String, reqwest::Error> {
-    //TODO change to post, add fields target for video url and id = 0 for local
 
-    let client = reqwest::Client::new();
-    client
-        .post(&target.clone().to_string())
-        .json(&map)
-        .send()?
-        .text()
-}
-
-use crate::settings;
-fn get_client(client: String) -> String {
-    let settings = settings::config();
-    let childs = settings.unwrap().childs;
-    for client_setting in childs {
-        if client_setting.id == client {
-            return client_setting.url;
-        }
-    }
-    return "".to_string();
-}
-
-use crate::api_structs::PlaylistControl;
-use std::fs::OpenOptions;
-use std::io::prelude::*;
 #[post("/add", data = "<request_content>")]
 pub fn event_add_to_playlist(request_content: Json<PlaylistControl>) -> content::Json<String> {
     let client = request_content.client.clone();
@@ -147,4 +126,25 @@ pub fn request_playlist() -> content::Json<String> {
     let playlist_response = mpv::mpv::event_play_from_list(String::from("/tmp/playlist")).unwrap();
     println!("{}", playlist_response);
     content::Json(playlist_response)
+}
+
+fn send_request(target: String, map: HashMap<String, String>) -> Result<String, reqwest::Error> {
+
+    let client = reqwest::Client::new();
+    client
+        .post(&target.clone().to_string())
+        .json(&map)
+        .send()?
+        .text()
+}
+
+fn get_client(client: String) -> String {
+    let settings = settings::config();
+    let childs = settings.unwrap().childs;
+    for client_setting in childs {
+        if client_setting.id == client {
+            return client_setting.url;
+        }
+    }
+    return "".to_string();
 }

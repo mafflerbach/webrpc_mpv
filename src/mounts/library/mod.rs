@@ -1,12 +1,22 @@
-pub mod movies;
+extern crate lazy_static;
+
 pub mod episodes;
 pub mod series;
-use crate::tmdb;
-use rocket::response::content;
-use tmdb::tmdb::SearchResult;
 
+use crate::settings;
+use crate::tmdb;
+use diesel::prelude::*;
+use glob::glob;
+use lazy_static::lazy_static;
+use mpv_webrpc::models::*;
+use regex::Regex;
+use rocket::response::content;
+use rocket_contrib::json::Json;
 use rocket_contrib::templates::Template;
 use std::path::Path;
+use std::{fs, io};
+use tmdb::tmdb::SearchResult;
+
 #[get("/scan")]
 pub fn request_scan() -> Template {
     let path_entries = get_first_level();
@@ -83,8 +93,6 @@ fn scan_movies(mut results: Vec<SearchResult>) -> Vec<SearchResult> {
     results
 }
 
-use crate::settings;
-use std::{fs, io};
 fn get_first_level() -> Vec<String> {
     let settings = settings::init();
     println!("SERRINGS SCANDIR{}", settings.scan_dir_series);
@@ -111,7 +119,6 @@ pub struct LibraryRequest {
     pub path: String,
 }
 
-use rocket_contrib::json::Json;
 #[post("/add", data = "<request_content>")]
 pub fn request_add_serie(request_content: Json<LibraryRequest>) -> content::Json<String> {
     fn first<T>(v: &Vec<T>) -> Option<&T> {
@@ -272,8 +279,6 @@ fn sync_episodes(path: String, tmdb_id: i32) {
     }
 }
 
-use diesel::prelude::*;
-use mpv_webrpc::models::*;
 fn check_tmdb_id(id_to_check: i32) -> bool {
     let ignored = NewIgnored {
         tmdb_id: &id_to_check.clone(),
@@ -327,11 +332,6 @@ pub fn request_ignore_serie(request_content: Json<LibraryRequest>) -> content::J
     content::Json(test.to_string())
 }
 
-use glob::glob;
-
-extern crate lazy_static;
-use lazy_static::lazy_static;
-use regex::Regex;
 fn parsing_season_and_episode(text: &str) -> Option<regex::Captures> {
     println!("{}", text);
     lazy_static! {

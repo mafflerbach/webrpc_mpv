@@ -1,4 +1,4 @@
-use crate::mounts::library::movies;
+use crate::library::movies;
 use rocket::response::content;
 use rocket_contrib::templates::Template;
 
