@@ -3,30 +3,25 @@ extern crate lazy_static;
 pub mod episodes;
 pub mod series;
 
+use crate::library;
 use crate::settings;
 use crate::tmdb;
 use diesel::prelude::*;
-use glob::glob;
-use lazy_static::lazy_static;
 use mpv_webrpc::models::*;
-use regex::Regex;
 use rocket::response::content;
 use rocket_contrib::json::Json;
 use rocket_contrib::templates::Template;
-use std::path::Path;
-use std::{fs, io};
-use tmdb::tmdb::SearchResult;
 
 #[get("/scan")]
 pub fn request_scan() -> Template {
-    let path_entries = get_first_level();
+    let path_entries = library::get_first_level();
     let settings = settings::init();
     let mut test = Vec::new();
     let mut tmdb_response;
     for entry in &path_entries {
         tmdb_response = tmdb::tmdb::search(entry.to_string());
         for mut result in tmdb_response.results {
-            if !check_tmdb_id(result.id) {
+            if !library::check_tmdb_id(result.id) {
                 let file_path: Option<String> =
                     Some(format!("{}{}", settings.scan_dir_series, entry));
                 result.file_path = file_path;
@@ -36,7 +31,7 @@ pub fn request_scan() -> Template {
         }
     }
 
-    let testdas = scan_movies(test).to_vec();
+    let testdas = library::scan_movies(test).to_vec();
 
     #[derive(Debug, Serialize, Deserialize)]
     struct TemplateContext {
@@ -47,72 +42,6 @@ pub fn request_scan() -> Template {
     Template::render("searchResult", &return_context)
 }
 
-
-fn scan_movies(mut results: Vec<SearchResult>) -> Vec<SearchResult> {
-    let settings = settings::init();
-    let path = settings.scan_dir_movies.clone();
-
-    let mkv_pattern = format!("{}/**/*.mkv", path);
-    let mp4_pattern = format!("{}/**/*.mp4", path);
-    let webm_pattern = format!("{}/**/*.webm", path);
-
-    for entry in glob(&mkv_pattern)
-        .unwrap()
-        .chain(glob(&mp4_pattern).unwrap())
-        .chain(glob(&webm_pattern).unwrap())
-    {
-        let file_path = entry.unwrap().into_os_string().into_string().unwrap();
-        let name_of_file = Path::new(&file_path).file_name();
-
-        let connection = mpv_webrpc::establish_connection();
-        use diesel::prelude::*;
-        use mpv_webrpc::schema::movie::dsl::*;
-
-        let movie_result = movie
-            .filter(path.eq(&file_path))
-            .load::<Movie>(&connection)
-            .expect("Error loading Movie Table");
-
-        if movie_result.len() > 0 {
-            continue;
-        }
-        let tjson = SearchResult {
-            name: name_of_file.unwrap().to_str().unwrap().to_string(),
-            id: 0,
-            poster_path: serde::export::Some("".to_string()),
-            file_path: serde::export::Some(file_path),
-            overview: serde::export::Some("overview".to_string()),
-            type_of: serde::export::Some("movie".to_string()),
-        };
-
-        let mut test = Vec::new();
-        test.push(tjson);
-        results.append(&mut test);
-    }
-
-    results
-}
-
-fn get_first_level() -> Vec<String> {
-    let settings = settings::init();
-    println!("SERRINGS SCANDIR{}", settings.scan_dir_series);
-    let base_path = settings.scan_dir_series.clone();
-    let mut entries = fs::read_dir(base_path)
-        .unwrap()
-        .map(|res| res.map(|e| e.path()))
-        .collect::<Result<Vec<_>, io::Error>>()
-        .unwrap();
-
-    entries.sort();
-    let path_part = settings.scan_dir_series.clone();
-    let mut stack = Vec::new();
-    for entry in &entries {
-        let foo = entry.display().to_string().replace(&path_part, "");
-        stack.push(foo)
-    }
-
-    return stack;
-}
 #[derive(Serialize, Deserialize)]
 pub struct LibraryRequest {
     pub tmdb_id: i32,
@@ -144,7 +73,7 @@ pub fn request_add_serie(request_content: Json<LibraryRequest>) -> content::Json
             .values(&serie_info)
             .execute(&connection);
 
-        sync_episodes(request_content.path.clone(), request_content.tmdb_id);
+        library::sync_episodes(request_content.path.clone(), request_content.tmdb_id);
     }
 
     let test = json!({
@@ -184,126 +113,6 @@ pub fn request_add_movie(request_content: Json<LibraryRequest>) -> content::Json
     content::Json(test.to_string())
 }
 
-fn sync_season(tmdb_id_to_insert: i32, season_id_to_insert: i32) {
-    use mpv_webrpc::schema::season;
-    let season_in = tmdb::tmdb::tv_season_get_details(tmdb_id_to_insert, season_id_to_insert);
-    let season_info = NewSeason {
-        season_id: &season_id_to_insert,
-        tmdb_id: &tmdb_id_to_insert,
-        title: &season_in.name,
-        imagepath: &season_in.poster_path,
-        description: &season_in.overview,
-    };
-
-    let connection = mpv_webrpc::establish_connection();
-    let _insert_result = diesel::insert_into(season::table)
-        .values(&season_info)
-        .execute(&connection);
-    println!("Insert done for season");
-}
-
-fn sync_episodes(path: String, tmdb_id: i32) {
-    let mkv_pattern = format!("{}/**/*.mkv", path);
-    let mp4_pattern = format!("{}/**/*.mp4", path);
-    let webm_pattern = format!("{}/**/*.webm", path);
-
-    use mpv_webrpc::schema::episode;
-    for entry in glob(&mkv_pattern)
-        .unwrap()
-        .chain(glob(&mp4_pattern).unwrap())
-        .chain(glob(&webm_pattern).unwrap())
-    {
-        match entry {
-            Ok(path) => {
-                println!("fetch for episodes and season in path: {:?}", path);
-                let file_name = &path.clone().into_os_string().into_string().unwrap();
-                let captures = parsing_season_and_episode(file_name);
-                //
-                if captures.is_none() {
-                    println!("Pattern not match");
-                    continue;
-                }
-
-                let unwrap_cap = captures.unwrap();
-                let s = unwrap_cap
-                    .get(1)
-                    .map_or("", |m| m.as_str())
-                    .replace("S", "");
-                let season: i32 = s.replace("s", "").parse::<i32>().unwrap();
-
-                let e = unwrap_cap
-                    .get(2)
-                    .map_or("", |m| m.as_str())
-                    .replace("E", "");
-                let episode: i32 = e.replace("e", "").parse::<i32>().unwrap();
-
-                let season_info = NewSeason {
-                    season_id: &season,
-                    tmdb_id: &tmdb_id,
-                    title: &"".to_string(),
-                    imagepath: &"".to_string(),
-                    description: &"".to_string(),
-                };
-
-                if !season_info.check_season() {
-                    println!("insert season information for {} {}", tmdb_id, season);
-                    sync_season(tmdb_id, season);
-                }
-
-                let mut epi_info = NewEpisode {
-                    path: file_name,
-                    serie_id: &tmdb_id,
-                    season_id: &season,
-                    episode_id: &episode,
-                    tmdb_id: &tmdb_id,
-                    title: &"".to_string(),
-                    description: &"".to_string(),
-                };
-                if !epi_info.check_episode() {
-                    println!("insert episode information for {} {}", tmdb_id, season);
-                    let episode_info =
-                        tmdb::tmdb::tv_episodes_get_details(tmdb_id, season, episode);
-
-                    epi_info.title = &episode_info.name;
-                    epi_info.description = &episode_info.overview;
-
-                    let connection = mpv_webrpc::establish_connection();
-                    let _insert_result = diesel::insert_into(episode::table)
-                        .values(&epi_info)
-                        .execute(&connection);
-                    println!("insert episode info {:?}", episode_info);
-                }
-            }
-            Err(e) => println!("{:?}", e),
-        }
-    }
-}
-
-fn check_tmdb_id(id_to_check: i32) -> bool {
-    let ignored = NewIgnored {
-        tmdb_id: &id_to_check.clone(),
-    };
-
-    let serie_info = NewSerie {
-        tmdb_id: &id_to_check.clone(),
-        description: &"".to_string(),
-        title: &"".to_string(),
-        imagepath: &"".to_string(),
-    };
-
-    let is_ignored = ignored.is_ignored();
-    let serie_exists = serie_info.check_serie();
-
-    if serie_exists || is_ignored {
-        return true;
-    }
-
-    return false;
-}
-#[derive(Serialize, Deserialize)]
-pub struct LibraryIgnoreRequest {
-    pub tmdb_id: i32,
-}
 
 #[post("/ignore", data = "<request_content>")]
 pub fn request_ignore_serie(request_content: Json<LibraryRequest>) -> content::Json<String> {
@@ -330,13 +139,4 @@ pub fn request_ignore_serie(request_content: Json<LibraryRequest>) -> content::J
         "request_id": 0
     });
     content::Json(test.to_string())
-}
-
-fn parsing_season_and_episode(text: &str) -> Option<regex::Captures> {
-    println!("{}", text);
-    lazy_static! {
-        static ref RE: Regex = Regex::new(r"(S\d{1,2}|s\d{1,2})(E\d{1,2}|e\d{1,2})").unwrap();
-    }
-
-    RE.captures(text)
 }
