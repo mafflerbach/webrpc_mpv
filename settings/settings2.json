@@ -17,11 +17,15 @@
     }],
     "stream_urls": [{
         "name": "ard",
-        "url": "https://mcdn.daserste.de/daserste/de/master.m3u8?arn=1",
+        "url": "https://mcdn.daserste.de/daserste/de/master.m3u8",
         "image": "https://pbs.twimg.com/profile_images/1242774031281029120/Dt6v_P4S_400x400.png"
     }, {
+        "name": "wdr",
+        "url": "https://wdrfsgeo-lh.akamaihd.net/i/wdrfs_geogeblockt@530016/master.m3u8",
+        "image": "https://de.wikipedia.org/wiki/Westdeutscher_Rundfunk_K%C3%B6ln#/media/Datei:WDR_Dachmarke.svg"
+    }, {
         "name": "zdf",
-        "url": "https://zdf-hls-01.akamaized.net/hls/live/2002460/de/high/master.m3u8",
+        "url": "https://zdf-hls-15.akamaized.net/hls/live/2016498/de/high/master.m3u8",
         "image": "https://upload.wikimedia.org/wikipedia/commons/c/c1/ZDF_logo.svg"
     }, {
         "name": "arte",
@@ -33,13 +37,59 @@
         "image": "https://upload.wikimedia.org/wikipedia/commons/e/ef/KIKA-Logo.svg"
     }, {
         "name": "3sat",
-        "url": "https://zdfhls18-i.akamaihd.net/hls/live/744751/dach/high/master.m3u8",
+        "url": "https://zdf-hls-18.akamaized.net/hls/live/2016501/dach/high/master.m3u8",
         "image": "https://upload.wikimedia.org/wikipedia/commons/f/f2/3sat-Logo.svg"
     }, {
         "name": "phoenix",
         "url": "https://zdfhls19-i.akamaihd.net/hls/live/744752/de/high/master.m3u8",
         "image": "https://upload.wikimedia.org/wikipedia/commons/1/17/Phoenix_Logo_2012.svg"
     }],
+    "favourites": [{
+            "image": "https://www.bavaria-studios.de/wp-content/uploads/bs/Events/Die-Anstalt-Bild.jpg?resolution=1920,1",
+            "name": "Die Anstalt",
+            "query": {
+                "queries": [{
+                    "fields": ["title", "topic"],
+                    "query": "Die Anstalt"
+                }, {
+                    "fields": ["channel"],
+                    "query": "3sat"
+                }],
+                "sortBy": "timestamp",
+                "sortOrder": "desc"
+            }
+        },
+        {
+            "image": "https://www.zdf.de/assets/terra-x-buehnem-100~1900x400?cb=1594967014141",
+            "name": "Terra X",
+            "query": {
+                "queries": [{
+                    "fields": ["title", "topic"],
+                    "query": "Terra X"
+                }, {
+                    "fields": ["channel"],
+                    "query": "3sat"
+                }],
+                "sortBy": "timestamp",
+                "sortOrder": "desc"
+            }
+        }, {
+            "image": "https://www.zdf.de/assets/doku-wissen-102~1900x200?cb=1580297058557",
+            "name": "Dokumentationen",
+            "query": {
+                "queries": [{
+                    "fields": ["title", "topic", "descption"],
+                    "query": "Dokumentation"
+                }, {
+                    "fields": ["channel"],
+                    "query": "zdf"
+                }],
+                "duration_min": 2000,
+                "sortBy": "timestamp",
+                "sortOrder": "desc"
+            }
+        }
+    ],
     "tmdb": {
         "find_by_external_id": "https://api.themoviedb.org/3/find/##1##?api_key=##2##&language=en-US&external_source=tvdb_id",
         "get_external_id": "https://api.themoviedb.org/3/tv/##1##/external_ids?api_key=##2##&language=en-US",

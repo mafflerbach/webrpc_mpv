@@ -33,8 +33,10 @@ pub fn request_scan() -> Template {
         results: Vec<tmdb::tmdb::SearchResult>,
     }
     let return_context = TemplateContext { results: testdas };
+
     Template::render("searchResult", &return_context)
 }
+
 
 fn scan_movies(mut results: Vec<SearchResult>) -> Vec<SearchResult> {
     let settings = settings::init();

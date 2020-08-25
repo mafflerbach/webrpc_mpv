@@ -11,14 +11,13 @@
       </div>
       <div class="modal-body" id="searchBoxModalContent">
 <input class="form-control form-control-lg movie-term" type="text" placeholder=".form-control-lg">
+
+        <button type="button" class="btn btn-secondary search-movie-term" >Search</button>
       </div>
 <div id="movie-search-result-box">
 
 
 </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary search-movie-term" >Search</button>
-      </div>
     </div>
   </div>
 </div>

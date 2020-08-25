@@ -26,7 +26,7 @@
                     <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Playlist</a>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Stream</a>
+                    <a class="nav-link" id="streams-tab" data-toggle="tab" href="#streams" role="tab" aria-controls="streams" aria-selected="false">Stream</a>
                 </li>
                 <li class="nav-item" role="presentation">
                     <a class="nav-link" id="tv-shows-tab" data-toggle="tab" href="#tv-shows" role="tab" aria-controls="tv-shows" aria-selected="false">TV Shows</a>
@@ -57,10 +57,12 @@
                 </form>
                 <button value="Start" id="start-playlist" class="btn btn-primary">Start</button>
             </div>
-            <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+            <div class="tab-pane fade" id="streams" role="tabpanel" aria-labelledby="streams-tab">
                 <ul class="list-group">
                     {% for streams in settings.stream_urls %}
-                    <li class="list-group-item"><a href="/player/play?target={{streams.url}}"><img src="{{streams.image}}" width="auto" height="100"></img></a></li>
+                    <li class="list-group-item"><a href="/player/play?target={{streams.url}}" data-target="{{streams.url}}">
+                            <span class="tv-channels" style="background-image: url({{streams.image}});"></span> 
+                            </a></li>
                     {% endfor %}
                 </ul>
 

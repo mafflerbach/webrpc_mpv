@@ -22,7 +22,7 @@ margin:0;
 .nav-item {
 display:inline-block;
 
-    margin:0.5em;
+    margin:1em 1em 1em 0em;
     padding:0.5em;
     box-shadow: 7px 7px 10px #0c1013, -5px -6px 10px #2e3b42;
 }
@@ -411,5 +411,39 @@ select {
         width: 1.3em;
         height: 1.3em;
     }
+}
+
+#streams ul li {
+    display: inline-block;
+    margin:1em 1em 1em 0em;
+    list-style: none;
+    background-color: rgba(32, 42, 48, 0.5);
+    box-shadow: 7px 7px 10px #0c1013, -5px -6px 10px #2e3b42;
+}
+
+#streams span.tv-channels {
+
+    height: 75px;
+    width: 200px;
+    display: inline-block;
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin: 1em;
+    background-position: center;
+}
+
+#streams ul {
+    padding:0;
+}
+
+span.badge {
+    border-radius: 10px;
+    background: linear-gradient(145deg, #1d262b, #222d33);
+    box-shadow: 7px 7px 10px #0c1013, -5px -6px 10px #2e3b42;
+    border: 0;
+    color: white;
+    padding: 0.5em;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
 
 }

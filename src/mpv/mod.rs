@@ -80,8 +80,10 @@ pub mod mpv {
 
     pub fn write_to_socket(content: String) -> std::io::Result<String> {
         let settings = settings::init();
-        let mut stream = match UnixStream::connect(settings.socket) {
-            Err(e) => panic!("could not connect to socket {}", e),
+        let socket = settings.socket;
+        let mut stream = match UnixStream::connect(&socket) {
+
+            Err(e) => panic!("could not connect to socket {} - {}", e, &socket),
             Ok(stream) => stream,
         };
 

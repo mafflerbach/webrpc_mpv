@@ -104,3 +104,9 @@ POST /library/add-movie
 http://localhost:9990
 GET /favourites
 
+http://localhost:9990
+POST /favourites/search
+{
+    "search_term" : "Terra X"
+}
+

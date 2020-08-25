@@ -40,7 +40,6 @@ $(function() {
   $(document).on("click", "button[data-dismiss='modal']",
                  function() { $.modal.close(); })
 
-
   $(document).on("click", ".play-video-link", function() {
     selectedClient = $("#clientSelection").val();
     value = $(this).data("file");
@@ -59,7 +58,11 @@ $(function() {
     path = $(this).data("path");
 
     $("#searchModal").attr("data-path", path);
+    let file_name_split = path.split("/");
+    file = file_name_split[file_name_split.length - 1];
 
+    file_name = file.split(".");
+    $(".movie-term").val(file_name[0]);
     $('#searchModal').modal();
   });
 
@@ -67,8 +70,8 @@ $(function() {
     console.log("click");
     var id = $(this).attr("data-target");
     console.log(id);
-    $(".card div[id='" + id + "'] .card-body").addClass("active");
     $(".card div[id!='" + id + "'] .card-body").removeClass("active");
+    $(".card div[id='" + id + "'] .card-body").addClass("active");
   });
 
   $(document).on("click", ".add-serie", function() {
@@ -92,27 +95,45 @@ $(function() {
     });
   });
 
-  $(document).on("click", ".ignore-serie", function() {
-    value = $(this).data("id");
-    path = $(this).data("path");
+  $(document).on("click",
+                 ".ignore-serie, .ignore-movie, .ignore-movie-information",
+                 function() {
+                   value = $(this).data("id");
+                   path = $(this).data("path");
+                   let _this = $(this);
+                   $.ajax({
+                     type : "POST",
+                     url : "/library/ignore",
+                     contenType : "application/json",
+                     data : JSON.stringify({
+                       "path" : "",
+                       "tmdb_id" : parseInt(value),
+                     }),
+                     success : function(data) {
+                       console.log(data);
+                       _this.parents(".card").hide();
+                       if (data.success == "success") {
+                         valueElement.val("");
+                       }
+                     },
+                     dataType : 'json'
+                   });
+                 });
+
+  $("#streams li a").click(function(e) {
+    e.preventDefault();
+
+    selectedClient = $("#clientSelection").val();
+    value = $(this).data("target");
     $.ajax({
-      type : "POST",
-      url : "/library/ignore",
+      type : "GET",
+      url : "/player/play",
       contenType : "application/json",
-      data : JSON.stringify({
-        "path" : "",
-        "tmdb_id" : parseInt(value),
-      }),
-      success : function(data) {
-        console.log(data);
-        if (data.success == "success") {
-          valueElement.val("");
-        }
-      },
+      data : {"target" : value, "client" : selectedClient},
+      success : function(data) { console.log(data); },
       dataType : 'json'
     });
   });
-
   $("#addPlaylist").submit(function(e) {
     //
     //  post to /add
@@ -143,6 +164,23 @@ $(function() {
       data : JSON.stringify({"value" : value, "client" : selectedClient}),
       success : function(data) { return data; },
       dataType : 'json'
+    });
+  })
+
+  $(document).on("click", ".mediathekviewweb-search", function() {
+    let search_term = $(".mediathekviewweb-search-input").val();
+
+    $.ajax({
+      type : "POST",
+      url : "/favourites/search",
+      contenType : "application/json",
+      data : JSON.stringify({"search_term" : search_term}),
+      success : function(data) {
+        $("#mediathekviewweb-result").empty();
+        $("#mediathekviewweb-result").append(data);
+        return data;
+      },
+      dataType : 'html'
     });
   })
 
@@ -183,8 +221,9 @@ $(function() {
 
   $(document).on("click", ".add-movie-information", function() {
     let id = $(this).data("id");
-    let path = $("#searchModal").data("path");
-
+    // because of a bug in $(elem).data(); we are using attr
+    let path = $("#searchModal").attr("data-path");
+    let _this = $(this);
     $.ajax({
       type : "POST",
       url : "/library/add-movie",
@@ -195,6 +234,7 @@ $(function() {
       }),
       success : function(data) {
         console.log(data);
+        _this.parents(".card").hide();
         if (data.success == "success") {
           valueElement.val("");
         }
@@ -246,7 +286,7 @@ function appendSeasonDetails() {
 
 function search_movie_term() {
 
-  $("#searchMovieContainer").on("click", ".search-movie-term", function() {
+  $(document).on("click", ".search-movie-term", function() {
     value = $(".movie-term").val();
     $.ajax({
       type : "POST",

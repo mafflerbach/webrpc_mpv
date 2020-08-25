@@ -1,6 +1,7 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
-#[cfg(test)] mod tests;
+#[cfg(test)]
+mod tests;
 
 #[macro_use]
 extern crate rocket;
@@ -83,11 +84,14 @@ fn rocket() -> rocket::Rocket {
         )
         .mount(
             "/favourites",
-            routes![mounts::favourites::index],
+            routes![mounts::favourites::index, mounts::favourites::search],
         )
         .mount(
             "/episodes",
-            routes![mounts::library::episodes::detail, mounts::library::episodes::index],
+            routes![
+                mounts::library::episodes::detail,
+                mounts::library::episodes::index
+            ],
         )
         .mount(
             "/",

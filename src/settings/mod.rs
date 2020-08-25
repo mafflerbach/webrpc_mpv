@@ -19,6 +19,26 @@ pub struct Streams {
     pub image: String,
 }
 #[derive(Serialize, Deserialize, Debug)]
+pub struct Favourite {
+    pub name: String,
+    pub query: Queries,
+    pub image: String,
+}
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Queries {
+    pub sortBy: String,
+    pub duration_max:Option<i32>,
+    pub duration_min:Option<i32>,
+    pub sortOrder: String,
+    pub queries: Vec<Fields>,
+}
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Fields {
+    pub fields: Vec<String>,
+    pub query: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Settings {
     pub childs: Vec<Childs>,
     pub db: String,
@@ -27,6 +47,7 @@ pub struct Settings {
     pub scan_dir_series: String,
     pub socket: String,
     pub stream_urls: Vec<Streams>,
+    pub favourites: Vec<Favourite>,
     pub tmdb: HashMap<String, String>,
     pub tmdb_key: String,
 }
@@ -52,4 +73,3 @@ fn read_settings_file<P: AsRef<Path>>(path: P) -> Result<Settings, Box<dyn Error
 
     Ok(u)
 }
-
