@@ -8,8 +8,8 @@ extern crate rocket;
 #[macro_use]
 extern crate serde_derive;
 extern crate rocket_contrib;
-
 extern crate serde;
+
 #[macro_use]
 extern crate serde_json;
 extern crate execute;
@@ -30,6 +30,15 @@ use std::vec::Vec;
 #[derive(Serialize, Deserialize)]
 struct TemplateContext {
     settings: Settings,
+}
+
+#[get("/test")]
+fn test() -> Template {
+    let links_context = settings::init();
+    let template_context = TemplateContext {
+        settings: links_context,
+    };
+    Template::render("test", &template_context)
 }
 
 #[get("/")]
@@ -96,6 +105,7 @@ fn rocket() -> rocket::Rocket {
         .mount(
             "/",
             routes![
+                test,
                 index,
                 mounts::volume::request_change_volume,
                 mounts::volume::request_volume,

@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Jaldi:wght@400;700&family=Poppins:wght@400;700;900&display=swap');
 
+.swiper-slide {
+    background-color: #202a30;
+
+}
 body {
     font-family: 'Poppins', sans-serif;
     padding: 70px 0px;
