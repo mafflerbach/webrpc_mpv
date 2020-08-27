@@ -1,4 +1,4 @@
-<div>
+<div class="box">
     <input class="form-control form-control-lg mediathekviewweb-search-input" type="text">
     <button type="button" class="btn btn-secondary mediathekviewweb-search">Search</button>
     <div id="mediathekviewweb-result">

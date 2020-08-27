@@ -2,34 +2,42 @@
 
 .swiper-slide {
     background-color: #202a30;
-
+    padding: 1em 0em;
 }
+
 body {
     font-family: 'Poppins', sans-serif;
-    padding: 70px 0px;
     background-color: #202a30 !important;
     margin: 0;
     color: white;
     font-size: 14px;
-    padding: 0px 2em;
 }
-.nav {
-padding:0;
-margin:0;
-}
-.nav-item a {
-    text-decoration:none;
-    margin:1em;
-    padding:1em;
-    color:white;
-}
-.nav-item {
-display:inline-block;
 
-    margin:1em 1em 1em 0em;
-    padding:0.5em;
+.fade {
+    margin: 1em;
+
+}
+
+.nav {
+    padding: 0;
+    margin: 0;
+}
+
+.nav-item a {
+    text-decoration: none;
+    margin: 1em;
+    padding: 1em;
+    color: white;
+}
+
+.nav-item {
+    display: inline-block;
+
+    margin: 1em 1em 1em 0em;
+    padding: 0.5em;
     box-shadow: 7px 7px 10px #0c1013, -5px -6px 10px #2e3b42;
 }
+
 input[type="range"] {
     -webkit-appearance: none;
     width: 100%;
@@ -268,16 +276,19 @@ button {
     margin: 1em 0;
     box-shadow: 7px 7px 10px #0c1013, -5px -6px 10px #2e3b42;
 }
-.modal-footer  {
+
+.modal-footer {
     margin: 1.5em;
 }
+
 .card-header h5 {
     margin: 0 1em;
 }
 
 h5 {
-margin:0.5em 0;
+    margin: 0.5em 0;
 }
+
 .card-header {
     padding: 1em 0em;
 }
@@ -406,12 +417,16 @@ select {
         width: 100%;
     }
 
-    .player-bar {
-        position: fixed;
-        bottom: 0;
+    .card {
+        width: 23%;
+        display: inline-block;
+        margin: 0.5em;
+        box-shadow: 7px 7px 10px #0c1013, -5px -6px 10px #2e3b42;
     }
 
     .btn svg {
+        position: relative;
+        top: 0.2em;
         width: 1.3em;
         height: 1.3em;
     }
@@ -419,7 +434,7 @@ select {
 
 #streams ul li {
     display: inline-block;
-    margin:1em 1em 1em 0em;
+    margin: 1em 1em 1em 0em;
     list-style: none;
     background-color: rgba(32, 42, 48, 0.5);
     box-shadow: 7px 7px 10px #0c1013, -5px -6px 10px #2e3b42;
@@ -437,17 +452,22 @@ select {
 }
 
 #streams ul {
-    padding:0;
+    padding: 0 1em;
 }
 
 span.badge {
     border-radius: 10px;
-    background: linear-gradient(145deg, #1d262b, #222d33);
+    background: linear-gradient(245deg, #1d262b, #222d33);
     box-shadow: 7px 7px 10px #0c1013, -5px -6px 10px #2e3b42;
     border: 0;
     color: white;
-    padding: 0.5em;
+    padding: 0 0.5em;
     font-weight: 700;
     font-family: 'Poppins', sans-serif;
+    margin: 0 0.5em 0 0;
 
+}
+
+.box {
+    padding: 1em 0;
 }
