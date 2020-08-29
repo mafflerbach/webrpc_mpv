@@ -39,7 +39,33 @@ pub mod mpv {
         write_to_socket(tjson.to_string() + "\n")
     }
 
+    fn update_video_status() {
+        use mpv_webrpc::models::NewVideoStatus;
+        let path = event_get_property("path".to_string());
+
+        if path.is_ok() {
+            let time_json: Value =
+                serde_json::from_str(event_get_property("time-pos".to_string()).unwrap().as_str())
+                    .expect("cannot read propery");
+
+            let path_json: Value =
+                serde_json::from_str(path.unwrap().as_str()).expect("cannot handle path");
+
+            // serde json supports only f64 - diesel supports only f32 for fields - *sigh*
+            let time = time_json.get("data").unwrap().as_f64().unwrap();
+            let convert = time as f32;
+            if !path_json.get("data").is_none() {
+                let video_status = NewVideoStatus {
+                    path: &path_json.get("data").unwrap().to_string().replace("\"", ""),
+                    time: &convert,
+                };
+                video_status.upsert();
+            }
+        }
+    }
+    use serde_json::Value;
     pub fn event_stop() -> std::io::Result<String> {
+        update_video_status();
         let tjson = json!({ "command": ["stop"] });
         write_to_socket(tjson.to_string() + "\n")
     }
@@ -53,12 +79,12 @@ pub mod mpv {
         write_to_socket(tjson.to_string() + "\n")
     }
 
-    pub fn event_set_property(propery : String, value: String) -> std::io::Result<String> {
+    pub fn event_set_property(propery: String, value: String) -> std::io::Result<String> {
         let tjson = json!({ "command": ["set_property", propery, value] });
         write_to_socket(tjson.to_string() + "\n")
     }
 
-    pub fn event_get_property(propery : String) -> std::io::Result<String> {
+    pub fn event_get_property(propery: String) -> std::io::Result<String> {
         let tjson = json!({ "command": ["get_property", propery] });
         write_to_socket(tjson.to_string() + "\n")
     }
@@ -82,7 +108,6 @@ pub mod mpv {
         let settings = settings::init();
         let socket = settings.socket;
         let mut stream = match UnixStream::connect(&socket) {
-
             Err(e) => panic!("could not connect to socket {} - {}", e, &socket),
             Ok(stream) => stream,
         };

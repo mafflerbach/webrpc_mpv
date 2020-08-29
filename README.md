@@ -13,11 +13,15 @@ LICENSE - WTFPL
 
 overhaul frontend
 refactoring 
- - fix config
  - documentation
 
 - write tests
 - configuration for testing/overwriting 
+shutdown
+volume keys
+
+
+
 Save video status per file
 forwarding current video to different client
 Plugin Interface

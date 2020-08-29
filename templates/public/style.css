@@ -15,7 +15,6 @@ body {
 
 .fade {
     margin: 1em;
-
 }
 
 .nav {
@@ -415,6 +414,11 @@ select {
 
     .col-sm-12 {
         width: 100%;
+    }
+    .player-card {
+        display: inline-block;
+        margin: 0.5em;
+        box-shadow: 7px 7px 10px #0c1013, -5px -6px 10px #2e3b42;
     }
 
     .card {

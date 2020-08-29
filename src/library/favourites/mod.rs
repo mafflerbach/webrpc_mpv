@@ -8,7 +8,6 @@ pub fn get_favourites(query: serde_json::Value) -> MediathekViewWeb {
         headers.insert(CONTENT_TYPE, HeaderValue::from_static("text/plain"));
         headers
     }
-println!("{:#?}", query);
     let res = client
         .post("https://mediathekviewweb.de/api/query")
         .body(query.to_string())

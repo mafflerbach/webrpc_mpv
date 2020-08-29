@@ -1,12 +1,13 @@
-use crate::settings;
 use crate::api_structs::PlaylistControl;
 use crate::api_structs::UrlForm;
 use crate::mpv;
+use crate::settings;
 use rocket::response::content;
 use rocket_contrib::json::Json;
 use std::collections::HashMap;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
+use std::process::Command;
 use url::form_urlencoded::parse;
 
 #[get("/pause")]
@@ -33,7 +34,11 @@ pub fn request_resume() -> content::Json<String> {
 use crate::api_structs::Property;
 #[post("/propery", data = "<request_content>")]
 pub fn request_set_property(request_content: Json<Property>) -> content::Json<String> {
-    let load_response = mpv::mpv::event_set_property(request_content.propery.clone(), request_content.value.clone()).unwrap();
+    let load_response = mpv::mpv::event_set_property(
+        request_content.propery.clone(),
+        request_content.value.clone(),
+    )
+    .unwrap();
     println!("{}", load_response);
     content::Json(load_response)
 }
@@ -45,11 +50,29 @@ pub fn request_get_property(target: String) -> content::Json<String> {
     content::Json(load_response)
 }
 
+#[get("/shutdown")]
+pub fn request_shutdown() {
+        let mut mpv = Command::new("shutdown");
+        mpv.arg("-h")
+            .arg("now")
+            .spawn()
+            .expect("OK");
+}
+
 #[get("/play?<target>")]
 pub fn request_start_video(target: String) -> content::Json<String> {
     let load_response = mpv::mpv::event_load(target).unwrap();
     println!("{}", load_response);
     content::Json(load_response)
+}
+
+use crate::api_structs::Status;
+use crate::library;
+#[post("/status", data = "<path>")]
+pub fn request_video_status(path: Json<Status>) -> content::Json<String> {
+    let video_status = library::get_video_status(path);
+
+    content::Json(video_status)
 }
 
 #[post("/", data = "<url>")]
@@ -83,7 +106,6 @@ pub fn request_play_from_url(url: Json<UrlForm>) -> content::Json<String> {
 
     content::Json(play_response)
 }
-
 
 #[post("/add", data = "<request_content>")]
 pub fn event_add_to_playlist(request_content: Json<PlaylistControl>) -> content::Json<String> {
@@ -129,7 +151,6 @@ pub fn request_playlist() -> content::Json<String> {
 }
 
 fn send_request(target: String, map: HashMap<String, String>) -> Result<String, reqwest::Error> {
-
     let client = reqwest::Client::new();
     client
         .post(&target.clone().to_string())

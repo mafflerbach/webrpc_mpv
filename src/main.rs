@@ -32,14 +32,6 @@ struct TemplateContext {
     settings: Settings,
 }
 
-#[get("/test")]
-fn test() -> Template {
-    let links_context = settings::init();
-    let template_context = TemplateContext {
-        settings: links_context,
-    };
-    Template::render("test", &template_context)
-}
 
 #[get("/")]
 fn index() -> Template {
@@ -60,6 +52,7 @@ fn rocket() -> rocket::Rocket {
             "/player",
             routes![
                 mounts::player::event_add_to_playlist,
+                mounts::player::request_video_status,
                 mounts::player::request_stop,
                 mounts::player::request_pause,
                 mounts::player::request_play_from_url,
@@ -68,6 +61,7 @@ fn rocket() -> rocket::Rocket {
                 mounts::player::request_get_property,
                 mounts::player::request_set_property,
                 mounts::player::request_start_video,
+                mounts::player::request_shutdown
             ],
         )
         .mount(
@@ -105,7 +99,6 @@ fn rocket() -> rocket::Rocket {
         .mount(
             "/",
             routes![
-                test,
                 index,
                 mounts::volume::request_change_volume,
                 mounts::volume::request_volume,

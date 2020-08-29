@@ -1,0 +1,58 @@
+
+{% block player %}
+<div class="fade ">
+                    <div class="card mb-3">
+
+                        <div class="row justify-content-between">
+                            <div class="col">
+                                <button type="button" class="btn btn-primary" id="play_button">
+                                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-play-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z" />
+                                    </svg>
+                                </button>
+                                <button type="button" class="btn btn-primary" id="pause_button">
+                                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pause-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z" />
+                                    </svg>
+                                </button>
+                                <button type="button" class="btn btn-primary" id="stop_button">
+                                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-stop-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5z" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="col col-sm-5">
+                                <div class="range" id="video-length">
+                                    <input type="range" name="range" min="1" max="100" value="0" onchange="range.value=value">
+                                    <output id="video-length-output">00:00</output>
+                                </div>
+                            </div>
+
+                            <div class="col col-sm-2">
+                                <div class="range" id="video-volume">
+                                    <input type="range" name="range" min="1" max="100" value="50" onchange="range.value=value">
+                                    <output id="video-volume-output">100</output>
+                                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-volume-off-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M10.717 3.55A.5.5 0 0 1 11 4v8a.5.5 0 0 1-.812.39L7.825 10.5H5.5A.5.5 0 0 1 5 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06z" />
+                                    </svg>
+                                </div>
+                            </div>
+
+
+                            <div class="col col-sm-2">
+                                <select class="form-select" id="clientSelection" aria-label="Default select example">
+                                    <option selected value="null">Select Client</option>
+                                    {% for clients in settings.childs %}
+                                    <option value="{{clients.url}}"><a href="play?target={{ clients.url  }}">{{ clients.name }}</a></option>
+                                    {% endfor %}
+
+                                </select>
+                            </div>
+
+                            <div class="col col-sm-1">
+                                <button type="button" id="scan" class="btn btn-primary">Scan</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+{% endblock player %}

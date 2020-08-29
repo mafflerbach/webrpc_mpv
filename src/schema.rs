@@ -50,10 +50,19 @@ table! {
     }
 }
 
+table! {
+    video_status (id) {
+        id -> Integer,
+        path -> Text,
+        time -> Float,
+    }
+}
+
 allow_tables_to_appear_in_same_query!(
     episode,
     ignored,
     movie,
     season,
     serie,
+    video_status,
 );

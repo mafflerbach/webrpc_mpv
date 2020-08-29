@@ -45,6 +45,32 @@ POST /player/propery
 http://localhost:9990
 GET /library/scan
 
+http://localhost:9990
+POST /player/status
+{
+"path" : "\"https://www.youtube.com/watch?v=dQw4w9WgXcQ\""
+}
+
+
+http://localhost:9990
+POST /player/status
+{
+"path" : "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+}
+
+http://localhost:9990
+POST /player/status
+{
+"path" : "/assdas/asd"
+}
+
+
+http://localhost:9990
+POST /player/status
+{
+"path" : "/asdas/asd"
+}
+
 
 # Ignore serie
 http://localhost:9990

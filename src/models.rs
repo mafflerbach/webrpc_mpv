@@ -105,6 +105,51 @@ impl NewSeason<'_> {
     }
 }
 
+use crate::schema::video_status;
+#[derive(Debug, Insertable)]
+#[table_name = "video_status"]
+pub struct NewVideoStatus<'a> {
+    pub path: &'a String,
+    pub time: &'a f32,
+}
+
+#[derive(Debug, Queryable, Serialize, Deserialize)]
+pub struct VideoStatus {
+    pub id: i32,
+    pub path: String,
+    pub time: f32,
+}
+
+impl NewVideoStatus<'_> {
+    pub fn upsert(&self) {
+        use crate::schema::video_status::dsl::*;
+        use diesel::prelude::*;
+        let connection = establish_connection();
+
+        let results = video_status
+            .filter(path.eq(&self.path))
+            .load::<VideoStatus>(&connection)
+            .expect("Error loading video_status Table");
+
+        let status = NewVideoStatus {
+            path: &self.path,
+            time: &self.time,
+        };
+
+        if results.len() >= 1 {
+            let _updated_video_status = diesel::update(video_status.filter(path.eq(&self.path)))
+                .set(time.eq(&self.time))
+                .execute(&connection)
+                .expect("cannot update");
+        } else {
+            diesel::insert_into(video_status)
+                .values(&status)
+                .execute(&connection)
+                .expect("Error while inserting intop video_status");
+        }
+    }
+}
+
 use crate::schema::ignored;
 #[derive(Insertable)]
 #[table_name = "ignored"]

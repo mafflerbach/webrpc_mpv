@@ -3,13 +3,14 @@ pub mod movies;
 use std::{fs, io};
 
 use crate::settings;
-use crate::tmdb::tmdb::SearchResult;
 use crate::tmdb;
+use crate::tmdb::tmdb::SearchResult;
 use diesel::prelude::*;
 use glob::glob;
 use lazy_static::lazy_static;
 use mpv_webrpc::models::*;
 use regex::Regex;
+use rocket_contrib::json::Json;
 use std::path::Path;
 
 pub fn scan_movies(mut results: Vec<SearchResult>) -> Vec<SearchResult> {
@@ -55,6 +56,27 @@ pub fn scan_movies(mut results: Vec<SearchResult>) -> Vec<SearchResult> {
     }
 
     results
+}
+
+use crate::api_structs::Status;
+pub fn get_video_status(path_to_check: Json<Status>) -> String {
+    let connection = mpv_webrpc::establish_connection();
+    use diesel::prelude::*;
+    use mpv_webrpc::schema::video_status::dsl::*;
+
+    println!("dfasd: {:?}", path_to_check);
+    let status = video_status
+        .filter(path.eq(&path_to_check.path))
+        .load::<VideoStatus>(&connection)
+        .expect("Error loading video_status  Table");
+    println!("dfasd: {:?}", status);
+    let mut video_time_status = 0.0;
+    if status.len() >= 1 {
+        for res in status {
+            video_time_status = res.time;
+        }
+    }
+    json!({ "time": video_time_status }).to_string()
 }
 
 pub fn get_first_level() -> Vec<String> {

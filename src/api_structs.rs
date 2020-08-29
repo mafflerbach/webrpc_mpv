@@ -1,5 +1,15 @@
 use std::collections::HashMap;
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Time {
+    pub time: f32,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Status {
+    pub path: String,
+}
+
 #[derive(Serialize)]
 pub struct TemplateContext {
     pub items: HashMap<String, String>,
