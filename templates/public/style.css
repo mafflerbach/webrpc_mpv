@@ -275,7 +275,7 @@ button {
     margin: 1em 0;
     box-shadow: 7px 7px 10px #0c1013, -5px -6px 10px #2e3b42;
 }
-
+.modal-body,
 .modal-footer {
     margin: 1.5em;
 }

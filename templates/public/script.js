@@ -1,13 +1,13 @@
 var playerStatusInterval;
 $(function() {
   get_video_status();
-  tabbing();
-  get_volume();
   init_series();
   init_movies();
   init_favourites();
   search_movie_term();
   get_pos_property();
+
+  // start playlist
   $("#start-playlist").click(function() {
     $.ajax({
       type : "GET",
@@ -16,43 +16,78 @@ $(function() {
     });
   });
 
-  $("#startVideo").submit(function(e) {
-    // post to /
-    e.preventDefault(e);
-    selectedClient = $("#clientSelection").val();
-    valueElement = $(this).find("input[name='target']");
-    value = $(this).find("input[name='target']").val();
+  $(document).on("click", "button[data-dismiss='modal']",
+                 function() { $.modal.close(); })
+
+  $("#dialog-video-start button[data-dismiss='modal'").click(function() {
     $.ajax({
       type : "POST",
-      url : "/player",
+      url : "/player/propery",
       contenType : "application/json",
-      data : JSON.stringify({"target" : value, "client" : selectedClient}),
+      data : JSON.stringify({"propery" : "time-pos", "value" : "0"}),
       success : function(data) {
         console.log(data);
         if (data.success == "success") {
           valueElement.val("");
-          playerStatusInterval = setInterval(get_video_status, 500);
         }
       },
       dataType : 'json'
     });
   });
-  $(document).on("click", "button[data-dismiss='modal']",
-                 function() { $.modal.close(); })
 
-  $(document).on("click", ".play-video-link", function() {
-    selectedClient = $("#clientSelection").val();
-    value = $(this).data("file");
+  $("#dialog-video-start button[data-confirm='modal'").click(function() {
     $.ajax({
       type : "POST",
-      url : "/player",
+      url : "/player/status",
       contenType : "application/json",
-      data : JSON.stringify({"target" : value, "client" : selectedClient}),
-      success : function(data) { console.log(data); },
+      data : JSON.stringify({"path" : value, "client" : selectedClient}),
+      success : function(data) {
+        console.log(data);
+        let time = data.time;
+        $.ajax({
+          type : "POST",
+          url : "/player/propery",
+          contenType : "application/json",
+          data : JSON.stringify(
+              {"propery" : "time-pos", "value" : time.toString()}),
+          success : function(data) {},
+          dataType : 'json'
+        });
+      },
       dataType : 'json'
     });
   });
 
+  $(document).on("click", ".play-video-link", function() {
+    selectedClient = $("#clientSelection").val();
+    value = $(this).data("file");
+
+    $.ajax({
+      type : "POST",
+      url : "/player/status",
+      contenType : "application/json",
+      data : JSON.stringify({"path" : value, "client" : selectedClient}),
+      success : function(data) {
+        if (data.time > 0) {
+          $('#dialog-video-start span.time').text(fancyTimeFormat(data.time));
+          $('#dialog-video-start').modal();
+        } else {
+          $.ajax({
+            type : "POST",
+            url : "/player",
+            contenType : "application/json",
+            data :
+                JSON.stringify({"target" : value, "client" : selectedClient}),
+            success : function(data) { console.log(data); },
+            dataType : 'json'
+          });
+        }
+      },
+      dataType : 'json'
+    });
+  });
+
+    // opens movie search for adding a movie with details
   $(document).on("click", ".add-movie", function() {
     value = $(this).data("id");
     path = $(this).data("path");
@@ -66,14 +101,40 @@ $(function() {
     $('#searchModal').modal();
   });
 
+    //add movie with movie details
+  $(document).on("click", ".add-movie-information", function() {
+    let id = $(this).data("id");
+    // because of a bug in $(elem).data(); we are using attr
+    let path = $("#searchModal").attr("data-path");
+    let _this = $(this);
+    $.ajax({
+      type : "POST",
+      url : "/library/add-movie",
+      contenType : "application/json",
+      data : JSON.stringify({
+        "path" : path,
+        "tmdb_id" : parseInt(id),
+      }),
+      success : function(data) {
+        console.log(data);
+        _this.parents(".card").hide();
+        if (data.success == "success") {
+          valueElement.val("");
+        }
+      },
+      dataType : 'json'
+    });
+  })
+
+
+  // handle arccordeons in episode list
   $(document).on("click", ".card .btn-link", function() {
-    console.log("click");
     var id = $(this).attr("data-target");
-    console.log(id);
     $(".card div[id!='" + id + "'] .card-body").removeClass("active");
     $(".card div[id='" + id + "'] .card-body").addClass("active");
   });
 
+    //add serie
   $(document).on("click", ".add-serie", function() {
     value = $(this).data("id");
     path = $(this).data("path");
@@ -95,6 +156,7 @@ $(function() {
     });
   });
 
+  // add to ignore list
   $(document).on("click",
                  ".ignore-serie, .ignore-movie, .ignore-movie-information",
                  function() {
@@ -120,6 +182,7 @@ $(function() {
                    });
                  });
 
+  // Open live streams in mediathekview
   $("#streams li a").click(function(e) {
     e.preventDefault();
 
@@ -134,10 +197,8 @@ $(function() {
       dataType : 'json'
     });
   });
+  // add file to playlist
   $("#addPlaylist").submit(function(e) {
-    //
-    //  post to /add
-
     e.preventDefault(e);
 
     selectedClient = $("#clientSelection").val();
@@ -153,85 +214,7 @@ $(function() {
     });
   });
 
-  $("#volume-unmute").click(function() {
-    $("#volume-unmute").hide();
-    $("#volume-mute").show();
-    selectedClient = $("#clientSelection").val();
-    let value = $("#video-volume input[name='range']").data("before");
-    $.ajax({
-      type : "POST",
-      url : "/volume",
-      contenType : "application/json",
-      data : JSON.stringify({"value" : value, "client" : selectedClient}),
-      success : function(data) {
-        $("#video-volume-output").html(value);
-        $("#video-volume input[name='range']").val(value);
-      },
-      dataType : 'json'
-    });
-  });
-
-  $("#volume-mute").click(function() {
-    selectedClient = $("#clientSelection").val();
-    $("#volume-unmute").show();
-    $("#volume-mute").hide();
-    $.ajax({
-      type : "POST",
-      url : "/volume",
-      contenType : "application/json",
-      data : JSON.stringify({"value" : "0", "client" : selectedClient}),
-      success : function(data) {
-        let value = $("#video-volume input[name='range']").val();
-        $("#video-volume input[name='range']").data("before", value);
-        $("#video-volume-output").html(value);
-        $("#video-volume input[name='range']").val(0);
-      },
-      dataType : 'json'
-    });
-  });
-
-  var myInterval = setInterval(function() { clearInterval(myInterval); }, 2000);
-
-  document.addEventListener('keydown', (e) => {
-    console.log("Key down: " + e.code)
-    if (e.code == "VolumeDown") {
-      volume_change(-5);
-    }
-    else if (e.code == "VolumeUp") {
-      volume_change(5);
-    }
-  })
-
-  var i = 0, timeOut = 0;
-  $("#volume-down")
-      .on('mousedown touchstart',
-          function(
-              e) { timeOut = setInterval(function() { volume_change(-5); }, 100); })
-      .bind('mouseup mouseleave touchend',
-            function() { clearInterval(timeOut); });
-
-  $("#volume-up")
-      .on('mousedown touchstart',
-          function(
-              e) { timeOut = setInterval(function() { volume_change(5); }, 100); })
-      .bind('mouseup mouseleave touchend',
-            function() { clearInterval(timeOut); });
-
-  $("#video-volume input").change(function() {
-    selectedClient = $("#clientSelection").val();
-    var value = $(this).val();
-    $("#video-volume-output").html(value);
-    $.ajax({
-      type : "POST",
-      url : "/volume",
-      contenType : "application/json",
-      data : JSON.stringify({"value" : value, "client" : selectedClient}),
-      success : function(
-          data) { $("#video-volume input[name='range']").val(value); },
-      dataType : 'json'
-    });
-  })
-
+  // search for videos in mediathekview
   $(document).on("click", ".mediathekviewweb-search", function() {
     let search_term = $(".mediathekviewweb-search-input").val();
 
@@ -249,18 +232,20 @@ $(function() {
     });
   })
 
+  // sync video position with bar
   $("#play_button").click(function(e) {
     e.preventDefault();
+    $("#play_button").hide();
+    $("#pause_button").show();
     playerStatusInterval = setInterval(get_video_status, 500);
     $.ajax({
       type : "GET",
       url : "/player/resume",
       success : function() { return '{"fooo":"baaa"}' },
     });
-    $("#play_button").hide();
-    $("#pause_button").show();
   })
 
+  // skip 1 min forward and backward
   $("#skip_forward_button").click(function() { skip_time_position(60); });
   $("#skip_back_button").click(function() { skip_time_position(-60); });
 
@@ -287,30 +272,7 @@ $(function() {
     $("#play_button").show();
   })
 
-  $(document).on("click", ".add-movie-information", function() {
-    let id = $(this).data("id");
-    // because of a bug in $(elem).data(); we are using attr
-    let path = $("#searchModal").attr("data-path");
-    let _this = $(this);
-    $.ajax({
-      type : "POST",
-      url : "/library/add-movie",
-      contenType : "application/json",
-      data : JSON.stringify({
-        "path" : path,
-        "tmdb_id" : parseInt(id),
-      }),
-      success : function(data) {
-        console.log(data);
-        _this.parents(".card").hide();
-        if (data.success == "success") {
-          valueElement.val("");
-        }
-      },
-      dataType : 'json'
-    });
-  })
-
+  // set time position in video based on bar
   $(document).on('input', "#video-length input", function() {
     let value = $(this).val();
     $.ajax({
@@ -327,33 +289,12 @@ $(function() {
       dataType : 'json'
     });
   });
-
-  scan();
+  // attach scan event
+  attach_scan();
 });
 
-function appendSeasonDetails() {
-
-  $(".season-detail").click(function() {
-    tmdb_id = $(this).data("serie");
-    season_id = $(this).data("season");
-    url = "/episodes/" + tmdb_id + "/" + season_id;
-    $.ajax({
-      type : "GET",
-      url : url,
-      dataType : "html",
-      success : function(data) {
-        console.log(data);
-        $("#EpisodeBoxModalContent").empty();
-        $("#EpisodeBoxModalContent").append(data);
-
-        $('#episodeModal').modal();
-      },
-    });
-  });
-}
-
+// search for movie detail while adding a video
 function search_movie_term() {
-
   $(document).on("click", ".search-movie-term", function() {
     value = $(".movie-term").val();
     $.ajax({
@@ -369,8 +310,8 @@ function search_movie_term() {
     });
   });
 }
-
-function scan() {
+// start scan of the library for new videos and series
+function attach_scan() {
   $("#scan").click(function() {
     $.ajax({
       type : "GET",
@@ -381,39 +322,30 @@ function scan() {
         $("#SearchBoxModalContent").append(data);
         $('#exampleModal').modal();
       }
-
     });
   })
 }
 
+// append all favourites
 function init_favourites() {
-
   $.ajax({
     type : "GET",
     url : "/favourites",
     dataType : "html",
-    success : function(data) {
-      $("#favourites").append(data);
-      appendSeasonDetails();
-    },
+    success : function(data) { $("#favourites").append(data); },
   });
 }
-
+// append all videos
 function init_movies() {
-
   $.ajax({
     type : "GET",
     url : "/movies",
     dataType : "html",
-    success : function(data) {
-      $("#movies").append(data);
-      appendSeasonDetails();
-    },
+    success : function(data) { $("#movies").append(data); },
   });
 }
-
+// append all series
 function init_series() {
-
   $.ajax({
     type : "GET",
     url : "/series",
@@ -425,19 +357,26 @@ function init_series() {
   });
 }
 
-function get_volume() {
-  $("#volume-unmute").hide();
-  $("#volume-mute").show();
-  $.ajax({
-    type : "GET",
-    url : "/volume",
-    success : function(data) {
-      console.log(data);
-      $("#video-volume input").val(data.data);
-      $("#video-volume-output").html(data.data);
-    },
+// append episode Details when click on season button
+function appendSeasonDetails() {
+  $(".season-detail").click(function() {
+    tmdb_id = $(this).data("serie");
+    season_id = $(this).data("season");
+    url = "/episodes/" + tmdb_id + "/" + season_id;
+    $.ajax({
+      type : "GET",
+      url : url,
+      dataType : "html",
+      success : function(data) {
+        console.log(data);
+        $("#EpisodeBoxModalContent").empty();
+        $("#EpisodeBoxModalContent").append(data);
+        $('#episodeModal').modal();
+      },
+    });
   });
 }
+
 function get_pos_property() {
   $.ajax({
     type : "GET",
@@ -454,21 +393,21 @@ function get_pos_property() {
   });
 }
 
-function get_video_status() {
-
-  function fancyTimeFormat(duration) {
-    // Hours, minutes and seconds
-    var hrs = ~~(duration / 3600);
-    var mins = ~~((duration % 3600) / 60);
-    var secs = ~~duration % 60;
-    var ret = "";
-    if (hrs > 0) {
-      ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
-    }
-    ret += "" + mins + ":" + (secs < 10 ? "0" : "");
-    ret += "" + secs;
-    return ret;
+function fancyTimeFormat(duration) {
+  // Hours, minutes and seconds
+  var hrs = ~~(duration / 3600);
+  var mins = ~~((duration % 3600) / 60);
+  var secs = ~~duration % 60;
+  var ret = "";
+  if (hrs > 0) {
+    ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
   }
+  ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+  ret += "" + secs;
+  return ret;
+}
+
+function get_video_status() {
 
   let test = $.ajax({
                 type : "GET",
@@ -487,23 +426,6 @@ function get_video_status() {
       });
     }
   });
-}
-function cards() {
-  $(".btn-link").click(function() {
-    var id = $(this).attr("aria-controls");
-    $(".card div[aria-labelledby='" + id + "']").addClass("active");
-    $(".card div[aria-labelledby!='" + id + "']").removeClass("active");
-    ;
-  })
-}
-
-function tabbing() {
-  $(".nav-link").click(function() {
-    var id = $(this).attr("id");
-    $(".tab-content div[aria-labelledby='" + id + "']").addClass("active");
-    $(".tab-content div[aria-labelledby!='" + id + "']").removeClass("active");
-    ;
-  })
 }
 
 function skip_time_position(time_in_second) {
@@ -528,25 +450,3 @@ function skip_time_position(time_in_second) {
     },
   });
 }
-
-function volume_change(param) {
-
-  $("#volume-unmute").hide();
-  $("#volume-mute").show();
-  selectedClient = $("#clientSelection").val();
-  let value = $("#video-volume input[name='range']").val();
-    value = parseInt(value) + param;
-  $.ajax({
-    type : "POST",
-    url : "/volume",
-    contenType : "application/json",
-    data :
-        JSON.stringify({"value" : value.toString(), "client" : selectedClient}),
-    success : function(data) {
-      $("#video-volume-output").html(value);
-      $("#video-volume input[name='range']").val(value);
-    },
-    dataType : 'json'
-  });
-}
-
