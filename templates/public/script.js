@@ -36,6 +36,7 @@ $(function() {
   });
 
   $("#dialog-video-start button[data-confirm='modal'").click(function() {
+    selectedClient = $("#clientSelection").val();
     $.ajax({
       type : "POST",
       url : "/player/status",
@@ -46,11 +47,20 @@ $(function() {
         let time = data.time;
         $.ajax({
           type : "POST",
-          url : "/player/propery",
+          url : "/player",
           contenType : "application/json",
-          data : JSON.stringify(
-              {"propery" : "time-pos", "value" : time.toString()}),
-          success : function(data) {},
+          data : JSON.stringify({"target" : value, "client" : selectedClient}),
+          success : function(data) {
+            $.ajax({
+              type : "POST",
+              url : "/player/propery",
+              contenType : "application/json",
+              data : JSON.stringify(
+                  {"propery" : "time-pos", "value" : time.toString()}),
+              success : function(data) {},
+              dataType : 'json'
+            });
+          },
           dataType : 'json'
         });
       },
@@ -87,7 +97,7 @@ $(function() {
     });
   });
 
-    // opens movie search for adding a movie with details
+  // opens movie search for adding a movie with details
   $(document).on("click", ".add-movie", function() {
     value = $(this).data("id");
     path = $(this).data("path");
@@ -101,7 +111,7 @@ $(function() {
     $('#searchModal').modal();
   });
 
-    //add movie with movie details
+  // add movie with movie details
   $(document).on("click", ".add-movie-information", function() {
     let id = $(this).data("id");
     // because of a bug in $(elem).data(); we are using attr
@@ -126,7 +136,6 @@ $(function() {
     });
   })
 
-
   // handle arccordeons in episode list
   $(document).on("click", ".card .btn-link", function() {
     var id = $(this).attr("data-target");
@@ -134,7 +143,7 @@ $(function() {
     $(".card div[id='" + id + "'] .card-body").addClass("active");
   });
 
-    //add serie
+  // add serie
   $(document).on("click", ".add-serie", function() {
     value = $(this).data("id");
     path = $(this).data("path");

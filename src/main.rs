@@ -32,7 +32,6 @@ struct TemplateContext {
     settings: Settings,
 }
 
-
 #[get("/")]
 fn index() -> Template {
     let links_context = settings::init();
