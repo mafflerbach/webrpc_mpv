@@ -22,14 +22,29 @@ $(function() {
   $("#dialog-video-start button[data-dismiss='modal'").click(function() {
     $.ajax({
       type : "POST",
-      url : "/player/propery",
+      url : "/player/status",
       contenType : "application/json",
-      data : JSON.stringify({"propery" : "time-pos", "value" : "0"}),
+      data : JSON.stringify({"path" : value, "client" : selectedClient}),
       success : function(data) {
         console.log(data);
-        if (data.success == "success") {
-          valueElement.val("");
-        }
+        let time = data.time;
+        $.ajax({
+          type : "POST",
+          url : "/player",
+          contenType : "application/json",
+          data : JSON.stringify({"target" : value, "client" : selectedClient}),
+          success : function(data) {
+            $.ajax({
+              type : "POST",
+              url : "/player/propery",
+              contenType : "application/json",
+              data : JSON.stringify({"propery" : "time-pos", "value" : "0"}),
+              success : function(data) {},
+              dataType : 'json'
+            });
+          },
+          dataType : 'json'
+        });
       },
       dataType : 'json'
     });
@@ -51,15 +66,17 @@ $(function() {
           contenType : "application/json",
           data : JSON.stringify({"target" : value, "client" : selectedClient}),
           success : function(data) {
-            $.ajax({
-              type : "POST",
-              url : "/player/propery",
-              contenType : "application/json",
-              data : JSON.stringify(
-                  {"propery" : "time-pos", "value" : time.toString()}),
-              success : function(data) {},
-              dataType : 'json'
-            });
+            setTimeout(() => {
+              $.ajax({
+                type : "POST",
+                url : "/player/propery",
+                contenType : "application/json",
+                data : JSON.stringify(
+                    {"propery" : "time-pos", "value" : time.toString()}),
+                success : function(data) {},
+                dataType : 'json'
+              });
+            }, 200);
           },
           dataType : 'json'
         });

@@ -155,8 +155,6 @@ pub mod tmdb {
 
         let response = send_request(get_external_id);
 
-        //let response =
-        //stubs::read_fixture_file("/home/maren/development/rust/mpv/test/get_external_id.json");
         let p: GetExternalIdResponse = serde_json::from_str(response.as_str()).unwrap();
         return p;
     }

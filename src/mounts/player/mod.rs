@@ -1,5 +1,4 @@
 use crate::api_structs::PlaylistControl;
-use crate::api_structs::UrlForm;
 use crate::mpv;
 use crate::settings;
 use rocket::response::content;
@@ -75,6 +74,11 @@ pub fn request_video_status(path: Json<Status>) -> content::Json<String> {
     content::Json(video_status)
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct UrlForm {
+    pub target: String,
+    pub client: String,
+}
 #[post("/", data = "<url>")]
 pub fn request_play_from_url(url: Json<UrlForm>) -> content::Json<String> {
     let target = url.target.to_string();

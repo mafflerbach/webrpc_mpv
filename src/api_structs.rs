@@ -40,15 +40,4 @@ struct Response {
     request_id: i32,
 }
 
-#[derive(Serialize, Deserialize)]
-struct VolumResponse {
-    data: String,
-    error: String,
-    request_id: i32,
-}
 
-#[derive(Serialize, Deserialize)]
-pub struct UrlForm {
-    pub target: String,
-    pub client: String,
-}

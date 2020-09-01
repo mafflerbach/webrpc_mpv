@@ -6,6 +6,7 @@ use crate::mounts::episodes;
 struct TemplateContext {
     episodes: Vec<mpv_webrpc::models::Episode>,
 }
+
 #[get("/<series_id>/<season_id>")]
 pub fn index(series_id: i32, season_id: i32) -> Template {
     let episodes = episodes::get_episodes(series_id, season_id);

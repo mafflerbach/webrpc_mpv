@@ -118,6 +118,8 @@ fn sync_season(tmdb_id_to_insert: i32, season_id_to_insert: i32) {
     println!("Insert done for season");
 }
 
+
+
 pub fn sync_episodes(path: String, tmdb_id: i32) {
     let mkv_pattern = format!("{}/**/*.mkv", path);
     let mp4_pattern = format!("{}/**/*.mp4", path);
@@ -218,7 +220,6 @@ pub fn check_tmdb_id(id_to_check: i32) -> bool {
 }
 
 fn parsing_season_and_episode(text: &str) -> Option<regex::Captures> {
-    println!("{}", text);
     lazy_static! {
         static ref RE: Regex = Regex::new(r"(S\d{1,2}|s\d{1,2})(E\d{1,2}|e\d{1,2})").unwrap();
     }
