@@ -99,6 +99,7 @@ fn rocket() -> rocket::Rocket {
             "/",
             routes![
                 index,
+                
                 mounts::volume::request_change_volume,
                 mounts::volume::request_volume,
             ],

@@ -297,8 +297,8 @@ h5 {
 }
 
 .btn svg {
-    width: 1em;
-    height: 1em;
+    width: 3em;
+    height: 3em;
 }
 
 textarea:focus,
@@ -474,4 +474,13 @@ span.badge {
 
 .box {
     padding: 1em 0;
+}
+
+
+.fav-btn {
+margin: 1em;
+
+}
+.range {
+margin:1em;
 }

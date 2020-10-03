@@ -1,15 +1,17 @@
 <div class="box">
-    <input class="form-control form-control-lg mediathekviewweb-search-input" type="text">
-    <button type="button" class="btn btn-secondary mediathekviewweb-search">Search</button>
-    <div id="mediathekviewweb-result">
+    <div>
+        <input class="form-control form-control-lg mediathekviewweb-search-input" type="text">
+        <button type="button" class="btn btn-secondary mediathekviewweb-search">Search</button>
+        <div id="mediathekviewweb-result">
     
+    </div>
     </div>
 </div>
 {% for favouriteList in context %}
 
 <div class="card mb-3 ">
     <div class="cardContent" style="background-image:url('{{favouriteList.image}}')">
-        <button class="btn btn-link" data-toggle="collapse" rel="modal:close" data-target="collapse{{favouriteList.id}}" aria-expanded="true" aria-controls="collapseOne">{{favouriteList.name}}</button> </h5>
+        <button class="btn btn-link fav-btn" data-toggle="collapse" rel="modal:close" data-target="collapse{{favouriteList.id}}" aria-expanded="true" aria-controls="collapseOne">{{favouriteList.name}}</button> </h5>
 
         <div class="searchResultThumbnail">
         </div>

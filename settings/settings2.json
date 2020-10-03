@@ -88,6 +88,22 @@
                 "sortBy": "timestamp",
                 "sortOrder": "desc"
             }
+        },{
+            "image": "https://www.br.de/br-fernsehen/sendungen/quer/quer-fotos-christoph-suess-106~_v-img__16__9__l_-1dc0e8f74459dd04c91a0d45af4972b9069f1135.jpg?version=38c97",
+            "name": "Quer",
+            "query": {
+                "queries": [{
+                    "fields": ["title", "topic", "descption"],
+                    "query": "quer mit Christoph Süß"
+                }, {
+                    "fields": ["channel"],
+                    "query": "br"
+                }],
+                
+                "duration_min": 2000,
+                "sortBy": "timestamp",
+                "sortOrder": "desc"
+            }
         }
     ],
     "tmdb": {

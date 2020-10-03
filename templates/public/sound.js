@@ -1,8 +1,7 @@
 $(function() {
-
   get_volume();
 
-    //unmute sound
+  // unmute sound
   $("#volume-unmute").click(function() {
     $("#volume-unmute").hide();
     $("#volume-mute").show();
@@ -21,7 +20,7 @@ $(function() {
     });
   });
 
-    // mute sound
+  // mute sound
   $("#volume-mute").click(function() {
     selectedClient = $("#clientSelection").val();
     $("#volume-unmute").show();
@@ -44,11 +43,9 @@ $(function() {
   var myInterval = setInterval(function() { clearInterval(myInterval); }, 2000);
 
   document.addEventListener('keydown', (e) => {
-    console.log("Key down: " + e.code)
     if (e.code == "VolumeDown") {
       volume_change(-5);
-    }
-    else if (e.code == "VolumeUp") {
+    } else if (e.code == "VolumeUp") {
       volume_change(5);
     }
   })
@@ -57,6 +54,7 @@ $(function() {
   $("#volume-down")
       .on('mousedown touchstart',
           function(e) {
+            e.preventDefault();
             timeOut = setInterval(function() { volume_change(-5); }, 100);
           })
       .bind('mouseup mouseleave touchend',
@@ -65,6 +63,7 @@ $(function() {
   $("#volume-up")
       .on('mousedown touchstart',
           function(e) {
+            e.preventDefault();
             timeOut = setInterval(function() { volume_change(5); }, 100);
           })
       .bind('mouseup mouseleave touchend',
@@ -84,8 +83,6 @@ $(function() {
       dataType : 'json'
     });
   })
-
-
 })
 
 function get_volume() {

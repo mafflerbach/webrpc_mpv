@@ -49,7 +49,27 @@ $(function() {
       dataType : 'json'
     });
   });
-
+  $("#startVideo").submit(function(e) {
+    // post to /
+    e.preventDefault(e);
+    selectedClient = $("#clientSelection").val();
+    valueElement = $(this).find("input[name='target']");
+    value = $(this).find("input[name='target']").val();
+    $.ajax({
+      type : "POST",
+      url : "/player",
+      contenType : "application/json",
+      data : JSON.stringify({"target" : value, "client" : selectedClient}),
+      success : function(data) {
+        console.log(data);
+        if (data.success == "success") {
+          valueElement.val("");
+          playerStatusInterval = setInterval(get_video_status, 500);
+        }
+      },
+      dataType : 'json'
+    });
+  });
   $("#dialog-video-start button[data-confirm='modal'").click(function() {
     selectedClient = $("#clientSelection").val();
     $.ajax({
@@ -226,9 +246,7 @@ $(function() {
   // add file to playlist
   $("#addPlaylist").submit(function(e) {
     e.preventDefault(e);
-
     selectedClient = $("#clientSelection").val();
-
     value = $(this).find("input[name='target']").val()
     $.ajax({
       type : "POST",
