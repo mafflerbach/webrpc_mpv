@@ -133,8 +133,7 @@ input[type="range"]::before {
 }
 
 .card-title {
-    font-size: 180%;
-
+    font-size: 150%;
 }
 
 .container {
@@ -143,7 +142,20 @@ input[type="range"]::before {
 }
 
 .cardContent {
-    background-position: center;
+
+}
+
+.teaser {
+	border-radius: 10px;
+	height: 300px;
+    background-position: center center;
+	background-size: auto 300px; /* contain */
+	background-repeat: no-repeat;
+	text-align: center;
+	font-size: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .searchResultThumbnail img {
@@ -350,9 +362,6 @@ select {
     padding: 2em 0em;
 }
 
-
-
-
 [class*="col-"] {
     width: 100%;
 }
@@ -446,8 +455,8 @@ select {
 
 #streams span.tv-channels {
 
-    height: 75px;
-    width: 200px;
+    height: 60px;
+    width: 120px;
     display: inline-block;
     background-size: contain;
     background-repeat: no-repeat;
