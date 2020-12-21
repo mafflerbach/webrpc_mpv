@@ -33,12 +33,12 @@ http://localhost:9990
 POST /volume
 {"client": "null" , "value":"100"}
 
-# get propery
+# get property
 http://localhost:9990
-GET /player/propery?target=time-pos
+GET /player/property?target=time-pos
 
 http://localhost:9990
-POST /player/propery
+POST /player/property
 {"client": "null" , "value":"100"}
 
 # get scan result
@@ -88,7 +88,6 @@ POST /library/add
 }
 
 
-# add to library
 http://localhost:9990
 GET /series/detail/85948
 
@@ -135,4 +134,98 @@ POST /favourites/search
 {
     "search_term" : "Terra X"
 }
+
+# happy path
+http://localhost:8080
+POST /player
+{
+    "command" : "pause",
+    "value" : "null"
+}
+
+http://localhost:8080
+POST /player
+{
+    "command" : "pause"
+}
+
+# happy path
+http://localhost:8080
+POST /player
+{
+    "command" : "resume"
+}
+
+http://localhost:8080
+POST /player
+{
+    "command" : "stop"
+}
+
+# Error case 
+http://localhost:8080
+POST /player
+{
+    "command" : "something",
+    "value" : "null"
+}
+
+# returns 400
+http://localhost:8080
+POST /player
+{
+    "command" : "play"
+}
+
+# plays target
+http://localhost:8080
+POST /player
+{
+    "command" : "play",
+    "value" : "https://www.youtube.com/watch?v=MbVON7Oa0qI"
+}
+
+# VOLUME TESTS
+http://localhost:8080
+GET /volume
+
+
+# set volume
+http://localhost:8080
+POST /volume
+{"value":"0"}
+
+
+# set property
+http://localhost:8080
+POST /player/property
+{"property": "time-pos" , "value":"70.267"}
+
+
+# get property
+http://localhost:8080
+POST /player/property
+{"property": "time-pos" }
+
+# get property
+http://localhost:8080
+POST /player/property
+{"property": "duration" }
+
+
+http://localhost:8080
+GET /favourites
+
+http://localhost:8080
+POST /favourites/search
+{
+    "search_term" : "Terra X",
+    "offset" : 0
+}
+
+http://localhost:8080
+GET /series/detail/85948
+
+http://localhost:8080
+GET /series
 

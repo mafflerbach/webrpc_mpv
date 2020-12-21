@@ -4,6 +4,7 @@ use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
 use std::path::Path;
+use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Childs {
@@ -43,8 +44,8 @@ pub struct Settings {
     pub childs: Vec<Childs>,
     pub db: String,
     pub debug: bool,
-    pub scan_dir_movies: String,
-    pub scan_dir_series: String,
+    pub scan_dir_movies: Vec<String>,
+    pub scan_dir_series: Vec<String>,
     pub socket: String,
     pub stream_urls: Vec<Streams>,
     pub favourites: Vec<Favourite>,
