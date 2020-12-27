@@ -6,7 +6,7 @@ use std::path::Path;
 pub fn read_fixture_file<P: AsRef<Path>>(path: P) -> String {
     println!("{:?}", path.as_ref());
     let mut file = match File::open(path) {
-        Err(e) => panic!("Caninot open file:{}  ", e),
+        Err(e) => panic!("Can not open file:{}  ", e),
         Ok(file) => file,
     };
 

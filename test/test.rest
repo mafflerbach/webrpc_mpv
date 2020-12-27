@@ -79,17 +79,9 @@ POST /library/ignore
 "path" : ""
 }
 
-# add to library
-http://localhost:9990
-POST /library/add
-{
-    "tmdb_id":1403,
-    "path" : "/home/maren/Downloads/complete/Marvel's Agents of S.H.I.E.L.D"
-}
-
 
 http://localhost:9990
-GET /series/detail/85948
+GET /series/detail/67198
 
 http://localhost:9990
 GET /series
@@ -118,6 +110,17 @@ POST /movies/search-movie
 }
 
 
+
+
+# add to library
+http://localhost:9990
+POST /library/add
+{
+    "tmdb_id":1403,
+    "path" : "/home/maren/Downloads/complete/Marvel's Agents of S.H.I.E.L.D"
+}
+
+
 http://localhost:9990
 POST /library/add-movie
 {
@@ -135,6 +138,9 @@ POST /favourites/search
     "search_term" : "Terra X"
 }
 
+
+
+#################################################################################################
 # happy path
 http://localhost:8080
 POST /player
@@ -185,6 +191,13 @@ POST /player
     "value" : "https://www.youtube.com/watch?v=MbVON7Oa0qI"
 }
 
+http://localhost:8080
+POST /player
+{
+    "command" : "status",
+    "value" : "https://www.youtube.com/watch?v=MbVON7Oa0qI"
+}
+
 # VOLUME TESTS
 http://localhost:8080
 GET /volume
@@ -224,8 +237,66 @@ POST /favourites/search
 }
 
 http://localhost:8080
-GET /series/detail/85948
+GET /series/detail/67198
 
 http://localhost:8080
 GET /series
+
+http://localhost:8080
+GET /episodes
+
+http://localhost:8080
+GET /episodes/1412/6
+
+http://localhost:8080
+GET /episodes/1412/6/1
+
+http://localhost:8080
+GET /movies
+
+http://localhost:8080
+GET /movies/1234
+
+
+http://localhost:8080
+POST /movies/search-movie
+{
+    "term" : "Spione undercover eine wilde"
+}
+
+http://localhost:8080
+GET /library/scan
+
+http://localhost:8080
+POST /library/ignore
+{"tmdb_id":69088,
+"path" : ""
+}
+
+# bad path
+http://localhost:8080
+POST /library/add
+{
+    "tmdb_id":1403,
+    "path" : "/home/maren/Downloads/complete/Marvel's Agents of S.H.I.E.L.D",
+    "schema" : "serie"
+}
+
+# happy path
+http://localhost:8080
+POST /library/add
+{
+    "tmdb_id":1403,
+    "path" : "/home/maren/Downloads/complete/Marvel's Agents of S.H.I.E.L.D",
+    "schema" : "serie"
+}
+
+
+http://localhost:8080
+POST /library/add
+{
+    "tmdb_id":431693,
+    "path" : "/home/maren/Downloads/complete/movies/Black Panther.mkv",
+    "schema" : "movie"
+}
 

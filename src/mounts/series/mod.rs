@@ -14,11 +14,11 @@ pub async fn index(
 }
 
 pub async fn detail(
-    tmpl: web::Data<tera::Tera>,
     req: HttpRequest
     ) -> HttpResponse {
     let id = req.match_info().get("id").unwrap();
-    let serie_detail : i32 = id.parse().unwrap();
+    let serie_detail_id : i32 = id.parse().unwrap();
+    let serie_detail = series::get_detail(serie_detail_id);
     let j = match serde_json::to_string(&serie_detail) {
         Ok(j) => j,
         Err(_) => panic!("could not connect to socket"),

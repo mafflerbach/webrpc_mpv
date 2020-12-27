@@ -16,6 +16,7 @@ mod library;
 mod settings;
 mod api_structs;
 mod stubs;
+mod tmdb;
 
 // store tera template in application state
 async fn index(
@@ -44,8 +45,6 @@ async fn main() -> std::io::Result<()> {
             .data(tera)
             .wrap(middleware::Logger::default()) // enable logger
             .service(web::resource("/").route(web::get().to(index)))
-            // handles play, pause, resume, stop
-            .service(web::resource("/player").route(web::post().to(mounts::player::request_player)))
             // provide volume get and set
             .service(
                 web::resource("/volume")
@@ -59,14 +58,36 @@ async fn main() -> std::io::Result<()> {
                     .service(web::resource("").route(web::get().to(mounts::favourites::index)))
                     .service(web::resource("/search").route(web::post().to(mounts::favourites::search)))
             )
+            // handles scan, ignore, add ,add-movie
+            .service(
+                web::scope("/library")
+                    .service(web::resource("/ignore").route(web::post().to(mounts::library::request_ignore_serie)))
+                    .service(web::resource("/scan").route(web::get().to(mounts::library::request_scan,)))
+                    .service(web::resource("/add").route(web::post().to(mounts::library::request_add)))
+            )
+            // provide series informations
             .service(
                 web::scope("/series")
                     .service(web::resource("").route(web::get().to(mounts::series::index)))
                     .service(web::resource("/detail/{id}").route(web::get().to(mounts::series::detail)))
             )
+            // provide episode informations
+            .service(
+                web::scope("/episodes")
+                    .service(web::resource("/{series_id}/{season_id}").route(web::get().to(mounts::library::episodes::index)))
+                    .service(web::resource("/{series_id}/{season_id}/{episode_id}").route(web::get().to(mounts::library::episodes::detail)))
+            )
+            // provide movies informations
+            .service(
+                web::scope("/movies")
+                    .service(web::resource("").route(web::get().to(mounts::movies::index)))
+                    .service(web::resource("/search-movie").route(web::post().to(mounts::movies::search_movie_term)))
+                    .service(web::resource("/{tmdb_id}").route(web::get().to(mounts::movies::detail)))
+            )
+            // handles play, pause, resume, stop
             .service(
                 web::scope("/player")
-                    .service(web::resource("/").route(web::post().to(mounts::player::request_player)))
+                    .service(web::resource("").route(web::post().to(mounts::player::request_player)))
                     .service(web::resource("/property").route(web::post().to(mounts::player::request_property)))
             )
             .service(web::scope("").wrap(error_handlers()))

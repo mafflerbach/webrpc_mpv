@@ -64,24 +64,6 @@ pub struct Info {
     pub target: String,
 }
 
-pub async fn request_start_video(info: Query<Info>) -> HttpResponse {
-    let target = info.target.to_string();
-    let load_response = mpv::mpv::event_load(target);
-    HttpResponse::Ok().json(load_response) // <- send response
-}
-
-//use crate::api_structs::Status;
-//use crate::library;
-// #[post("/status", data = "<path>")]
-//pub async fn request_video_status(body: web::Bytes) -> HttpResponse {
-//let result : Status = serde_json::from_str(std::str::from_utf8(&body).unwrap()).unwrap();
-//println!("{:?}",result);
-//let video_status = library::get_video_status(result);
-
-//let response = format!("{{\"stauts\": \"{}\"}}",video_status);
-//HttpResponse::Ok().json(response) // <- send response
-//}
-
 
 #[derive( Debug, Serialize, Deserialize)]
 pub struct PropertyComand {
@@ -123,21 +105,30 @@ pub async fn request_property(body: web::Bytes) -> HttpResponse {
 }
 
 
-
 #[derive( Debug, Serialize, Deserialize)]
 pub struct PlayerComand {
     pub command : String,
     pub value : Option<String> 
 }
 use crate::mpv;
+use crate::library;
 pub async fn request_player(body: web::Bytes) -> HttpResponse {
     let result : PlayerComand = serde_json::from_str(std::str::from_utf8(&body).unwrap()).unwrap();
-    println!("{:?}",result);
-    let error = false;
     let command = &result.command;
     let mpv_response :mpv::mpv::Property;
     match command.as_ref() {
         "pause" => mpv_response = mpv::mpv::event_pause(),
+        "status" => {
+            let target = match result.value {
+                Some(v) => v ,
+                None => {
+                    let tjson = json!({ "error": "target undefined" });
+                    return HttpResponse::BadRequest().json(tjson.to_string())
+                },
+            };
+
+            mpv_response = library::get_video_status(target);
+        },
         "stop" => mpv_response = mpv::mpv::event_stop(),
         "play" => {
             let target = match result.value {

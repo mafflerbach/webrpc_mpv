@@ -1,4 +1,5 @@
 pub mod tmdb {
+use serde::{Serialize, Deserialize};
     use std::vec::Vec;
     /// {
     ///   "page": 1,
