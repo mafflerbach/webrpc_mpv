@@ -9,22 +9,6 @@ pub mod mpv {
     use serde_json::json;
     use serde::{Serialize, Deserialize};
 
-    pub fn event_play_from_list(target: String) -> std::io::Result<String> {
-        let tjson = json!({ "command": ["loadlist", format!("{}",target)] });
-        write_to_socket(tjson.to_string() + "\n")
-
-
-
-    }
-
-    pub fn event_play(target: String) -> &'static str {
-        let mut mpv = Command::new("mpv");
-        let settings = settings::init();
-        let ipc_param = format!("--input-ipc-server={}", settings.socket);
-        mpv.arg(target).arg(ipc_param).spawn().expect("OK");
-        "Hello, world!"
-    }
-
     pub fn event_resume() -> Property {
         let command = json!({ "command": ["set_property", String::from("pause"), false] });
         let result :Value= serde_json::from_str(write_to_socket(command.to_string() + "\n").unwrap().as_str()).unwrap();
@@ -41,7 +25,7 @@ pub mod mpv {
         let command = json!({ "command": ["loadfile", format!("{}",target)] });
         let result :Value= serde_json::from_str(write_to_socket(command.to_string() + "\n").unwrap().as_str()).unwrap();
         let me = Property {
-            error : String::from(""),
+            error : String::from("success"),
             data : result["event"].to_string()
         };
         return me;
@@ -56,10 +40,6 @@ pub mod mpv {
         };
 
         return me;
-    }
-    pub fn event_quit() -> std::io::Result<String> {
-        let tjson = json!({ "command": ["quit"] });
-        write_to_socket(tjson.to_string() + "\n")
     }
 
     fn update_video_status() {
@@ -104,13 +84,13 @@ pub mod mpv {
 
     }
 
-    pub fn event_property(propery: String, value:Option<String>) -> Property {
+    pub fn event_property(property: String, value:Option<String>) -> Property {
         let command: Value = match value {
             None => {
-                json!({ "command": ["get_property", propery] })
+                json!({ "command": ["get_property", property] })
             }, 
             Some(value) => {
-                json!({ "command": ["set_property", propery, value] })
+                json!({ "command": ["set_property", property, value] })
             },
         };
         let result :Value= serde_json::from_str(write_to_socket(command.to_string() + "\n").unwrap().as_str()).unwrap();
@@ -129,21 +109,6 @@ pub mod mpv {
         pub data : String
     }
 
-    pub fn event_get_property(propery: String) -> Property {
-        let tjson = json!({ "command": ["get_property", propery] });
-        let result :Value= serde_json::from_str(write_to_socket(tjson.to_string() + "\n").unwrap().as_str()).unwrap();
-
-        let me = Property {
-            error : result["error"].to_string().replace("\"", ""),
-            data : result["data"].to_string()
-        };
-
-        return me;
-    }
-
-    fn print_type_of<T>(_: &T) {
-        println!("{}", std::any::type_name::<T>())
-    }
     pub fn init() {
         let settings = settings::init();
 

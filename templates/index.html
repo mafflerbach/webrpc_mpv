@@ -58,7 +58,7 @@
                                 </div>
                                 <div class="col col-sm-5">
                                     <div class="range" id="video-length">
-                                        <input type="range" name="range" min="1" max="100" value="0" onchange="range.value=value">
+                                        <input type="range" name="range" min="1" max="100" >
                                         <output id="video-length-output">00:00</output>
                                     </div>
                                 </div>
@@ -98,17 +98,6 @@
                                     </button>
                                 </div>
 
-
-                                <div class="col col-sm-2">
-                                    <select class="form-select" id="clientSelection" aria-label="Default select example">
-                                        <option selected value="null">Select Client</option>
-                                        {% for clients in settings.childs %}
-                                        <option value="{{clients.url}}"><a href="play?target={{ clients.url  }}">{{ clients.name }}</a></option>
-                                        {% endfor %}
-
-                                    </select>
-                                </div>
-
                                 <div class="col col-sm-1">
                                     <button type="button" id="scan" class="btn btn-primary">Scan</button>
                                 </div>
@@ -124,15 +113,6 @@
                                 <input type="hidden" name="action" value="video" />
                                 <input type="submit" value="Start" id="startBtn" class="btn btn-primary" />
                             </form>
-                        </div>
-
-                        <div class="player-card mb-3">
-                            <form action="/add" method="post" accept-charset="utf-8" id="addPlaylist">
-                                Add to Playlist:<input type="text" name="target" class="form-control">
-                                <input type="hidden" name="action" value="playlist" />
-                                <input type="submit" value="Add" class="btn btn-primary" />
-                            </form>
-                            <button value="Start" id="start-playlist" class="btn btn-primary">Start</button>
                         </div>
                     </div>
 

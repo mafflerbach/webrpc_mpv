@@ -51,7 +51,7 @@ fn send_request(target: String, query: serde_json::Value) -> String {
         .unwrap()
         .text()
     {
-        Ok(r) => return r,
+        Ok(r) => {return r},
         Err(_) => return "".to_string(),
     }
 }

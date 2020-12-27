@@ -125,10 +125,9 @@ pub fn sync_episodes(path: String, tmdb_id: i32) {
     let mkv_pattern = format!("{}/**/*.mkv", path);
     let mp4_pattern = format!("{}/**/*.mp4", path);
     let webm_pattern = format!("{}/**/*.webm", path);
-
     use mpv_webrpc::schema::episode;
-    for entry in glob(&mkv_pattern)
-        .unwrap()
+
+    for entry in glob(&mkv_pattern).unwrap()
             .chain(glob(&mp4_pattern).unwrap())
             .chain(glob(&webm_pattern).unwrap())
             {
@@ -193,7 +192,7 @@ pub fn sync_episodes(path: String, tmdb_id: i32) {
                             println!("insert episode info {:?}", episode_info);
                         }
                     }
-                    Err(e) => println!("{:?}", e),
+                    Err(e) => println!("_________{:?}", e),
                 }
             }
 }

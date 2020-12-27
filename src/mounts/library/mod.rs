@@ -1,6 +1,6 @@
 extern crate lazy_static;
 
-use actix_web::{error, web, Error,HttpRequest, HttpResponse};
+use actix_web::{error, web, Error, HttpResponse};
 
 use serde::{Serialize, Deserialize};
 pub mod episodes;
@@ -29,7 +29,7 @@ pub async fn request_scan(
         for mut result in tmdb_response.results {
             if !library::check_tmdb_id(result.id) {
                 let file_path: Option<String> =
-                    Some(format!("{:?}{:?}", settings.scan_dir_series, entry));
+                    Some(format!("{}{}", settings.scan_dir_series, entry));
                 result.file_path = file_path;
                 result.type_of = serde::export::Some("tv".to_string());
                 test.push(result);

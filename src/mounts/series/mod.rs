@@ -24,6 +24,6 @@ pub async fn detail(
         Err(_) => panic!("could not connect to socket"),
     };
 
-    HttpResponse::Ok().json(serde_json::to_string(&j).unwrap()) // <- send response
+    HttpResponse::Ok().json(j)
 }
 

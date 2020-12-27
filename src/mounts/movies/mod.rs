@@ -1,8 +1,8 @@
 use crate::library::movies;
-use serde_json::json;
 use actix_web::{error, web, Error,HttpRequest, HttpResponse};
 use serde::{Serialize, Deserialize};
 use crate::tmdb;
+
 pub async fn index(
     tmpl: web::Data<tera::Tera>,
     ) -> Result<HttpResponse, Error> {
@@ -27,7 +27,7 @@ pub async fn detail(
         Err(_) => panic!("could not connect to socket"),
     };
 
-    HttpResponse::Ok().json(serde_json::to_string(&j).unwrap()) // <- send response
+    HttpResponse::Ok().json(j)
 }
 
 
@@ -53,16 +53,3 @@ pub async fn search_movie_term (
     Ok(HttpResponse::Ok().content_type("text/html").body(output))
 
 }
-//use rocket_contrib::json::Json;
-//#[post("/search-movie", data = "<request_content>")]
-//pub fn request_search_movie_post(request_content: Json<TmdbSearchTerm>) -> Template {
-//let term = &request_content.term;
-//let tmdb_response = tmdb::tmdb::search_movie(term.to_string());
-
-//#[derive(Serialize, Deserialize)]
-//struct TemplateContext {
-//results: tmdb::tmdb::SearchMovieResultResponse,
-//}
-////let return_context = TemplateContext { results: tmdb_response };
-//Template::render("searchMovieResult", &tmdb_response)
-//}

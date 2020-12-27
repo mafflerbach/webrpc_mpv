@@ -1,121 +1,117 @@
 $(function() {
-  get_volume();
+    get_volume();
 
-  // unmute sound
-  $("#volume-unmute").click(function() {
-    $("#volume-unmute").hide();
-    $("#volume-mute").show();
-    selectedClient = $("#clientSelection").val();
-    let value = $("#video-volume input[name='range']").data("before");
-    $.ajax({
-      type : "POST",
-      url : "/volume",
-      contenType : "application/json",
-      data : JSON.stringify({"value" : value, "client" : selectedClient}),
-      success : function(data) {
-        $("#video-volume-output").html(value);
-        $("#video-volume input[name='range']").val(value);
-      },
-      dataType : 'json'
-    });
-  });
+    // unmute sound
+    $("#volume-unmute").click(function() {
+        $("#volume-unmute").hide();
+        $("#volume-mute").show();
+        selectedClient = $("#clientSelection").val();
+        let value = $("#video-volume input[name='range']").data("before");
+        postVolume (
+            JSON.stringify({"value" : value),
+            function(data) { 
+                let value = $("#video-volume input[name='range']").val();
+                $("#video-volume-output").html(value);
+                $("#video-volume input[name='range']").val(value);
+            });
+            });
 
-  // mute sound
-  $("#volume-mute").click(function() {
-    selectedClient = $("#clientSelection").val();
-    $("#volume-unmute").show();
-    $("#volume-mute").hide();
-    $.ajax({
-      type : "POST",
-      url : "/volume",
-      contenType : "application/json",
-      data : JSON.stringify({"value" : "0", "client" : selectedClient}),
-      success : function(data) {
-        let value = $("#video-volume input[name='range']").val();
-        $("#video-volume input[name='range']").data("before", value);
-        $("#video-volume-output").html(value);
-        $("#video-volume input[name='range']").val(0);
-      },
-      dataType : 'json'
-    });
-  });
+    // mute sound
+    $("#volume-mute").click(function() {
+        selectedClient = $("#clientSelection").val();
+        $("#volume-unmute").show();
+        $("#volume-mute").hide();
 
-  var myInterval = setInterval(function() { clearInterval(myInterval); }, 2000);
+        postVolume (
+            JSON.stringify({"value" : "0"),
+            function(data) { 
+                let value = $("#video-volume input[name='range']").val();
+                $("#video-volume input[name='range']").data("before", value);
+                $("#video-volume-output").html(value);
+                $("#video-volume input[name='range']").val(0);
+            });
+            });
 
-  document.addEventListener('keydown', (e) => {
-    if (e.code == "VolumeDown") {
-      volume_change(-5);
-    } else if (e.code == "VolumeUp") {
-      volume_change(5);
-    }
-  })
+    var myInterval = setInterval(function() { clearInterval(myInterval); }, 2000);
 
-  var i = 0, timeOut = 0;
-  $("#volume-down")
-      .on('mousedown touchstart',
-          function(e) {
-            e.preventDefault();
-            timeOut = setInterval(function() { volume_change(-5); }, 100);
-          })
-      .bind('mouseup mouseleave touchend',
-            function() { clearInterval(timeOut); });
+    document.addEventListener('keydown', (e) => {
+        if (e.code == "VolumeDown") {
+            volume_change(-5);
+        } else if (e.code == "VolumeUp") {
+            volume_change(5);
+        }
+    })
 
-  $("#volume-up")
-      .on('mousedown touchstart',
-          function(e) {
-            e.preventDefault();
-            timeOut = setInterval(function() { volume_change(5); }, 100);
-          })
-      .bind('mouseup mouseleave touchend',
-            function() { clearInterval(timeOut); });
+        var i = 0, timeOut = 0;
+        $("#volume-down")
+            .on('mousedown touchstart',
+                function(e) {
+                    e.preventDefault();
+                    timeOut = setInterval(function() { volume_change(-5); }, 100);
+                })
+            .bind('mouseup mouseleave touchend',
+                function() { clearInterval(timeOut); });
 
-  $("#video-volume input").change(function() {
-    selectedClient = $("#clientSelection").val();
-    var value = $(this).val();
-    $("#video-volume-output").html(value);
-    $.ajax({
-      type : "POST",
-      url : "/volume",
-      contenType : "application/json",
-      data : JSON.stringify({"value" : value, "client" : selectedClient}),
-      success : function(
-          data) { $("#video-volume input[name='range']").val(value); },
-      dataType : 'json'
-    });
-  })
-})
+        $("#volume-up")
+            .on('mousedown touchstart',
+                function(e) {
+                    e.preventDefault();
+                    timeOut = setInterval(function() { volume_change(5); }, 100);
+                })
+            .bind('mouseup mouseleave touchend',
+                function() { clearInterval(timeOut); });
+
+        $("#video-volume input").change(function() {
+            selectedClient = $("#clientSelection").val();
+            var value = $(this).val();
+            $("#video-volume-output").html(value);
+
+            postVolume (
+                JSON.stringify({"value" : value),
+                function(data) { 
+                    $("#video-volume input[name='range']").val(value);
+                });
+                })
+        })
 
 function get_volume() {
-  $("#volume-unmute").hide();
-  $("#volume-mute").show();
-  $.ajax({
-    type : "GET",
-    url : "/volume",
-    success : function(data) {
-      console.log(data);
-      $("#video-volume input").val(data.data);
-      $("#video-volume-output").html(data.data);
-    },
-  });
+    $("#volume-unmute").hide();
+    $("#volume-mute").show();
+    $.ajax({
+        type : "GET",
+        url : "/volume",
+        success : function(data) {
+            $("#video-volume input").val(data.data);
+            $("#video-volume-output").html(data.data);
+        },
+    });
+}
+
+function postVolume(data, cb){
+
+    $.ajax({
+        type : "POST",
+        url : "/volume",
+        contenType : "application/json",
+        data : data,
+        success : cb,
+        dataType : 'json'
+    });
+
 }
 
 function volume_change(param) {
 
-  $("#volume-unmute").hide();
-  $("#volume-mute").show();
-  selectedClient = $("#clientSelection").val();
-  let value = $("#video-volume input[name='range']").val();
-  value = parseInt(value) + param;
-  $.ajax({
-    type : "POST",
-    url : "/volume",
-    contenType : "application/json",
-    data :
-        JSON.stringify({"value" : value.toString(), "client" : selectedClient}),
-    success : function(data) {
-      $("#video-volume-output").html(value);
-      $("#video-volume input[name='range']").val(value);
-    },
-    dataType : 'json'
-  });
-}
+    console.log("change volume");
+    $("#volume-unmute").hide();
+    $("#volume-mute").show();
+    selectedClient = $("#clientSelection").val();
+    let value = $("#video-volume input[name='range']").val();
+    value = parseInt(value) + param;
+    postVolume (
+        JSON.stringify({"value" : value),
+        function(data) { 
+            $("#video-volume-output").html(value);
+            $("#video-volume input[name='range']").val(value);
+        });
+        }

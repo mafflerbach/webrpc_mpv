@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 
 #[macro_use]
 extern crate serde_json;
