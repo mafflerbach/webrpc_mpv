@@ -4,6 +4,7 @@ use std::collections::HashMap;
 extern crate serde_json;
 extern crate execute;
 
+use actix_files::Files;  // Taken from the guide
 use actix_http::{body::Body, Response};
 use actix_web::dev::ServiceResponse;
 use actix_web::http::StatusCode;
@@ -90,6 +91,7 @@ async fn main() -> std::io::Result<()> {
                     .service(web::resource("").route(web::post().to(mounts::player::request_player)))
                     .service(web::resource("/property").route(web::post().to(mounts::player::request_property)))
             )
+            .service(Files::new("/public", std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("templates/public")))
             .service(web::scope("").wrap(error_handlers()))
     })
     .bind("127.0.0.1:8080")?
