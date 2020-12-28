@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Time {
@@ -23,13 +24,12 @@ pub struct PlaylistControl {
 
 #[derive(Serialize, Deserialize)]
 pub struct Property {
-    pub propery: String,
+    pub property: String,
     pub value: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct VolumeControl {
-    pub client: String,
     pub value: String,
 }
 

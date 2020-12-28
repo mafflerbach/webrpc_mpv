@@ -1,22 +1,14 @@
 use reqwest::header::{HeaderMap, HeaderValue, CONTENT_TYPE};
 extern crate reqwest;
+use crate::settings;
+use serde::{Serialize, Deserialize};
 
 pub fn get_favourites(query: serde_json::Value) -> MediathekViewWeb {
-    let client = reqwest::Client::new();
-    fn construct_headers() -> HeaderMap {
-        let mut headers = HeaderMap::new();
-        headers.insert(CONTENT_TYPE, HeaderValue::from_static("text/plain"));
-        headers
-    }
-    let res = client
-        .post("https://mediathekviewweb.de/api/query")
-        .body(query.to_string())
-        .headers(construct_headers())
-        .send()
-        .unwrap()
-        .text();
-
-    let mut results: MediathekViewWeb = serde_json::from_str(&res.unwrap()).unwrap();
+    let settings2 = &settings::config();
+    let mediathekviewweb_query_url: String =
+        settings2.as_ref().unwrap().tmdb["mediathekviewweb_query_url"].to_string();
+    let res = send_request(mediathekviewweb_query_url, query);
+    let mut results: MediathekViewWeb = serde_json::from_str(&res).unwrap();
     let mut obj_vec = Vec::new();
     for obj in results.result.results {
         let new_obj = Object {
@@ -37,6 +29,32 @@ pub fn get_favourites(query: serde_json::Value) -> MediathekViewWeb {
     results
 }
 
+use crate::stubs;
+fn send_request(target: String, query: serde_json::Value) -> String {
+    let settings2 = &settings::config();
+    let debug = settings2.as_ref().unwrap().debug.to_string();
+    if debug == "true" {
+        let response = stubs::read_fixture_file(&target.clone().to_string());
+        return response;
+    }
+    let client = reqwest::Client::new();
+    fn construct_headers() -> HeaderMap {
+        let mut headers = HeaderMap::new();
+        headers.insert(CONTENT_TYPE, HeaderValue::from_static("text/plain"));
+        headers
+    }
+    match client
+        .post("https://mediathekviewweb.de/api/query")
+        .body(query.to_string())
+        .headers(construct_headers())
+        .send()
+        .unwrap()
+        .text()
+    {
+        Ok(r) => {return r},
+        Err(_) => return "".to_string(),
+    }
+}
 use humantime::format_duration;
 use std::time::Duration;
 fn human_duration(duration: u64) -> String {

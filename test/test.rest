@@ -1,138 +1,159 @@
-http://localhost:9990
-GET /
-
-# addd item to playlist 
-http://localhost:9990
-POST /player/add 
-{"value":"asdfasdf","client":"null"}
-
-# Resume
-http://localhost:9990
-GET /player/resume
-
-# Pause
-http://localhost:9990
-GET /player/pause
-
-# Pause
-http://localhost:9990
-GET /player/stop
-
-# Start a video 
-http://localhost:9990
+# happy path
+http://localhost:8080
 POST /player
-{"target":"https://www.youtube.com/watch?v=dQw4w9WgXcQ","client":"null"}
+{
+    "command" : "pause",
+    "value" : "null"
+}
 
-# get volume
-http://localhost:9990
+http://localhost:8080
+POST /player
+{
+    "command" : "pause"
+}
+
+# happy path
+http://localhost:8080
+POST /player
+{
+    "command" : "resume"
+}
+
+http://localhost:8080
+POST /player
+{
+    "command" : "stop"
+}
+
+# Error case 
+http://localhost:8080
+POST /player
+{
+    "command" : "something",
+    "value" : "null"
+}
+
+# returns 400
+http://localhost:8080
+POST /player
+{
+    "command" : "play"
+}
+
+# plays target
+http://localhost:8080
+POST /player
+{
+    "command" : "play",
+    "value" : "https://www.youtube.com/watch?v=MbVON7Oa0qI"
+}
+
+http://localhost:8080
+POST /player
+{
+    "command" : "status",
+    "value" : "https://www.youtube.com/watch?v=MbVON7Oa0qI"
+}
+
+# VOLUME TESTS
+http://localhost:8080
 GET /volume
 
 
 # set volume
-http://localhost:9990
+http://localhost:8080
 POST /volume
-{"client": "null" , "value":"100"}
+{"value":"0"}
 
-# get propery
-http://localhost:9990
-GET /player/propery?target=time-pos
 
-http://localhost:9990
-POST /player/propery
-{"client": "null" , "value":"100"}
+# set property
+http://localhost:8080
+POST /player/property
+{"property": "time-pos" , "value":"70.267"}
 
-# get scan result
-http://localhost:9990
-GET /library/scan
 
-http://localhost:9990
-POST /player/status
+# get property
+http://localhost:8080
+POST /player/property
+{"property": "time-pos" }
+
+# get property
+http://localhost:8080
+POST /player/property
+{"property": "duration" }
+
+
+http://localhost:8080
+GET /favourites
+
+http://localhost:8080
+POST /favourites/search
 {
-"path" : "\"https://www.youtube.com/watch?v=dQw4w9WgXcQ\""
+    "search_term" : "Terra X",
+    "offset" : 0
 }
 
+http://localhost:8080
+GET /series/detail/67198
 
-http://localhost:9990
-POST /player/status
-{
-"path" : "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-}
-
-http://localhost:9990
-POST /player/status
-{
-"path" : "/assdas/asd"
-}
-
-
-http://localhost:9990
-POST /player/status
-{
-"path" : "/asdas/asd"
-}
-
-
-# Ignore serie
-http://localhost:9990
-POST /library/ignore
-{"tmdb_id":69088,
-"path" : ""
-}
-
-# add to library
-http://localhost:9990
-POST /library/add
-{
-    "tmdb_id":1403,
-    "path" : "/home/maren/Downloads/complete/Marvel's Agents of S.H.I.E.L.D"
-}
-
-
-# add to library
-http://localhost:9990
-GET /series/detail/85948
-
-http://localhost:9990
+http://localhost:8080
 GET /series
 
-http://localhost:9990
+http://localhost:8080
 GET /episodes
 
-http://localhost:9990
-GET /episodes/1403/7
+http://localhost:8080
+GET /episodes/1412/6
 
-http://localhost:9990
+http://localhost:8080
 GET /episodes/1412/6/1
 
-
-http://localhost:9990
+http://localhost:8080
 GET /movies
 
-http://localhost:9990
-GET /movies/431693
+http://localhost:8080
+GET /movies/1234
 
 
-http://localhost:9990
+http://localhost:8080
 POST /movies/search-movie
 {
     "term" : "Spione undercover eine wilde"
 }
 
+http://localhost:8080
+GET /library/scan
 
-http://localhost:9990
-POST /library/add-movie
+http://localhost:8080
+POST /library/ignore
+{"tmdb_id":69088,
+"path" : ""
+}
+
+# bad path
+http://localhost:8080
+POST /library/add
 {
-    "tmdb_id":431693,
-    "path" : "/home/maren/Downloads/complete/movies/Spione.undercover.Eine.wilde.Verwandlung.2019.German.720p.BluRay.x264/spione.undercover.eine.wilde.verwandlung.2019.german.720p.bluray.x264-details.mkv"
+    "tmdb_id":1403,
+    "path" : "/home/maren/Downloads/complete/Marvel's Agents of S.H.I.E.L.D",
+    "schema" : "serie"
+}
+
+# happy path
+http://localhost:8080
+POST /library/add
+{
+    "tmdb_id":1403,
+    "path" : "/home/maren/Downloads/complete/Marvel's Agents of S.H.I.E.L.D",
+    "schema" : "serie"
 }
 
 
-http://localhost:9990
-GET /favourites
-
-http://localhost:9990
-POST /favourites/search
+http://localhost:8080
+POST /library/add
 {
-    "search_term" : "Terra X"
+    "tmdb_id":431693,
+    "path" : "/home/maren/Downloads/complete/movies/Black Panther.mkv",
+    "schema" : "movie"
 }
 

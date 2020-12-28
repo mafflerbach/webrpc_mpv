@@ -1,0 +1,194 @@
+
+{
+    "tmdb_key": "924375ec86dee2a9a78b5033367f4fe1",
+    "debug": true,
+    "socket": "/tmp/mpvsocket1",
+    "db": "/home/maren/development/rust/mpv/db/restmpv.db",
+    "scan_dir_series": "/home/maren/Downloads/complete/series",
+    "scan_dir_movies": "/home/maren/Downloads/complete/movies",
+    "childs": [{
+        "id": "1",
+        "name": "client 1",
+        "url": "http://localhost:9999"
+    }, {
+
+        "id": "2",
+        "name": "client 2",
+        "url": "http://localhost:9990"
+    }],
+    "stream_urls": [{
+        "name": "ard",
+        "url": "https://mcdn.daserste.de/daserste/de/master.m3u8",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/1/19/ARD_Logo_2019.svg"
+    }, {
+        "name": "zdf",
+        "url": "https://zdf-hls-15.akamaized.net/hls/live/2016498/de/high/master.m3u8",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/c/c1/ZDF_logo.svg"
+    }, {
+        "name": "arte",
+        "url": "https://artelive-lh.akamaihd.net/i/artelive_de@393591/index_1_av-p.m3u8",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Logo-arte-schief.svg"
+    }, {
+        "name": "kika",
+        "url": "https://kikageohls-i.akamaihd.net/hls/live/1006268/livetvkika_de/master.m3u8",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/e/ef/KIKA-Logo.svg"
+    }, {
+        "name": "3sat",
+        "url": "https://zdf-hls-18.akamaized.net/hls/live/2016501/dach/high/master.m3u8",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/f/f2/3sat-Logo.svg"
+    }, {
+        "name": "phoenix",
+        "url": "https://zdfhls19-i.akamaihd.net/hls/live/744752/de/high/master.m3u8",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/1/17/Phoenix_Logo_2012.svg"
+    },
+      {
+        "name": "br",
+        "url": "https://brcdn.vo.llnwd.net/bfs_sued/de/master.m3u8",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/9/98/BR_Dachmarke.svg"
+      },
+      {
+        "name": "wdr",
+        "url": "https://wdrfsgeo-lh.akamaihd.net/i/wdrfs_geogeblockt@530016/master.m3u8",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/9/9b/WDR_Dachmarke.svg"
+      },
+      {
+        "name": "alpha",
+        "url": "https://brlive-lh.akamaihd.net/i/bralpha_germany@119899/master.m3u8",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/4/4b/ARD_alpha.svg"
+      },
+      {
+        "name": "one",
+        "url": "https://onelivestream-lh.akamaihd.net/i/one_livestream@568814/master.m3u8",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/One_TV_Logo.svg/1280px-One_TV_Logo.svg.png"
+      },
+      {
+        "name": "ServusTV",
+        "url": "https://rbmn-live.akamaized.net/hls/live/2002830/geoSTVDEweb/master.m3u8",
+        "image": "https://upload.wikimedia.org/wikipedia/de/b/be/ServusTV.svg"
+      }
+    ],
+    "favourites": [{
+            "image": "https://www.bavaria-studios.de/wp-content/uploads/bs/Events/Die-Anstalt-Bild.jpg?resolution=1920,1",
+            "name": "Die Anstalt",
+            "query": {
+                "queries": [{
+                    "fields": ["title", "topic"],
+                    "query": "Die Anstalt"
+                }, {
+                    "fields": ["channel"],
+                    "query": "zdf"
+                }],
+                "duration_min": 1800,
+                "sortBy": "timestamp",
+                "sortOrder": "desc"
+            }
+        },
+        {
+            "image": "https://www.zdf.de/assets/terra-x-buehnem-100~1900x400?cb=1594967014141",
+            "name": "Terra X",
+            "query": {
+                "queries": [{
+                    "fields": ["title", "topic"],
+                    "query": "Terra X"
+                }, {
+                    "fields": ["channel"],
+                    "query": "zdf"
+                }],
+                "duration_min": 1200,
+                "sortBy": "timestamp",
+                "sortOrder": "desc"
+            }
+        }, {
+            "image": "https://www.zdf.de/assets/doku-wissen-102~1900x200?cb=1580297058557",
+            "name": "Dokumentationen",
+            "query": {
+                "queries": [{
+                    "fields": ["title", "topic"],
+                    "query": "Dokumentation"
+                }, {
+                    "fields": ["channel"],
+                    "query": "zdf"
+                }],
+                "duration_min": 1800,
+                "sortBy": "timestamp",
+                "sortOrder": "desc"
+            }
+        },{
+            "image": "https://www.br.de/br-fernsehen/sendungen/quer/quer-fotos-christoph-suess-106~_v-img__16__9__l_-1dc0e8f74459dd04c91a0d45af4972b9069f1135.jpg?version=38c97",
+            "name": "quer",
+            "query": {
+                "queries": [{
+                    "fields": ["title", "topic"],
+                    "query": "quer mit Christoph Süß"
+                }, {
+                    "fields": ["channel"],
+                    "query": "br"
+                }],
+                "duration_min": 1800,
+                "sortBy": "timestamp",
+                "sortOrder": "desc"
+            }
+        },{
+            "image": "https://assets.cdn.moviepilot.de/files/ce8bf97873e6bd329c41ff9251466bc97da3eb09bdcf15dca13e576feb9b/limit/984/492/o-ZDF-HEUTE-SHOW-facebook.jpg",
+            "name": "heute-show",
+            "query": {
+                "queries": [{
+                    "fields": ["title", "topic"],
+                    "query": "heute-show"
+                },
+                {
+                    "fields": ["channel"],
+                    "query": "zdf"
+                }
+                ],
+                "duration_min": 1200,
+                "sortBy": "timestamp",
+                "sortOrder": "desc"
+            }
+        },
+        {
+            "image": "https://p3.storage.canalblog.com/39/77/666287/100546500.jpg",
+            "name": "",
+            "query": {
+                "queries": [{
+                    "fields": ["title", "topic"],
+                    "query": "Perspektivwechsel Karambolage"
+                },
+                {
+                    "fields": ["channel"],
+                    "query": "arte"
+                }
+                ],
+                "duration_min": 600,
+                "sortBy": "timestamp",
+                "sortOrder": "desc"
+            }
+        },{
+            "image": "https://assets.cdn.moviepilot.de/files/ce8bf97873e6bd329c41ff9251466bc97da3eb09bdcf15dca13e576feb9b/limit/984/492/o-ZDF-HEUTE-SHOW-facebook.jpg",
+            "name": "Heute Show",
+            "query": {
+                "queries": [{
+                    "fields": ["title", "topic", "descption"],
+                    "query": "Heute show"
+                }],
+                
+                "duration_min": 2000,
+                "sortBy": "timestamp",
+                "sortOrder": "desc"
+            }
+        }
+    ],
+    "tmdb": {
+        "find_by_external_id": "https://api.themoviedb.org/3/find/##1##?api_key=##2##&language=en-US&external_source=tvdb_id",
+        "get_external_id": "https://api.themoviedb.org/3/tv/##1##/external_ids?api_key=##2##&language=en-US",
+        "search_movie": "https://api.themoviedb.org/3/search/movie?api_key=##1##&language=en-US&page=1&query=##2##&include_adult=false",
+        "search_movie_by_id": "https://api.themoviedb.org/3/search/movie/{}?api_key={}&language=en-US&page=1",
+        "search_tv": "https://api.themoviedb.org/3/search/tv?api_key=##1##&language=en-US&page=1&query=##2##&include_adult=false",
+        "tv_episodes_get_details": "https://api.themoviedb.org/3/tv/##1##/season/##2##/episode/##3##?api_key=##4##&language=en-US&external_source=tvdb_id",
+        "tv_season_get_details": "https://api.themoviedb.org/3/tv/##1##/season/##2##?api_key=##3##&language=en-US&external_source=tvdb_id",
+        "movie_get_detail_by_id": "https://api.themoviedb.org/3/movie/##1##?api_key=##2##&language=en-US",
+        "tv_season_get_details": "https://api.themoviedb.org/3/tv/##1##/season/##2##?api_key=##3##&language=en-US&external_source=tvdb_id",
+        "mediathekviewweb_query_url" : "https://mediathekviewweb.de/api/query"
+    }
+}
+

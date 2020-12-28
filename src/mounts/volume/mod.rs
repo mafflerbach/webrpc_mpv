@@ -1,21 +1,18 @@
-use crate::api_structs::VolumeControl;
+use actix_web::{
+     HttpResponse, web
+};
 use crate::mpv;
-use rocket::response::content;
-use rocket_contrib::json::Json;
+use crate::api_structs::VolumeControl;
 
-#[post("/volume", data = "<request_content>")]
-pub fn request_change_volume(request_content: Json<VolumeControl>) -> content::Json<String> {
-    let volume_response = mpv::mpv::event_volume_change(request_content).unwrap();
-    println!("{}", volume_response);
-    content::Json(volume_response)
+// get
+pub async fn request_volumen() -> HttpResponse {
+    let volume_response = mpv::mpv::event_volume();
+    HttpResponse::Ok().json(volume_response) // <- send response
 }
 
-#[get("/volume")]
-pub fn request_volume() -> content::Json<String> {
-    let volume_response = mpv::mpv::event_volume().unwrap();
-    println!("{}", volume_response);
-    content::Json(volume_response)
+// post 
+pub async fn request_change_volume(body: web::Bytes) -> HttpResponse {
+    let result : VolumeControl = serde_json::from_str(std::str::from_utf8(&body).unwrap()).unwrap();
+    let volume_response = mpv::mpv::event_volume_change(result);
+    HttpResponse::Ok().json(volume_response) // <- send response
 }
-
-
-
