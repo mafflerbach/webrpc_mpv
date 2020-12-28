@@ -45,6 +45,7 @@ async fn main() -> std::io::Result<()> {
             .data(tera)
             .wrap(middleware::Logger::default()) // enable logger
             .service(web::resource("/").route(web::get().to(index)))
+            .service(web::resource("/heartbeat").route(web::get().to(mounts::misc::heartbeat)))
             // provide volume get and set
             .service(
                 web::resource("/volume")
