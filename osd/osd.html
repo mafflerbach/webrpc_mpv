@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    html {
+      height: 100%;
+      background: #000 url(testcard.png);
+      background-size: contain;
+      background-position: 50%;
+    }
+
+    body {
+      color: white;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font: 40px Roboto, sans-serif;
+      position: relative;
+      background-color: black;
+    }
+
+    body.transparent {
+      background-color: transparent;
+    }
+
+    #time {
+      position: absolute;
+      width: 100%;
+      top: 50%;
+      left: 0;
+      text-align: center;
+      background-color: rgba(255, 0, 0, 0.3);
+      display: none
+    }
+
+    #time.visible {
+      display: block;
+    }
+    </style>
+</head>
+<body>
+	<div id="time"></div>
+</body>
+<script>
+const time = document.getElementById("time")
+setInterval(() => {
+	time.innerHTML = new Date().toLocaleString()
+},100)
+
+document.onkeypress = (event) => {
+    //console.log(event.code)
+    switch (event.code) {
+        case "KeyT": // Time
+          time.classList.toggle("visible")
+          break;
+        case "KeyP": // play
+          document.body.classList.toggle("transparent")
+          break
+    }
+    return false
+}
+</script>
+</html>
