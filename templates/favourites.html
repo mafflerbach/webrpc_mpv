@@ -2,10 +2,9 @@
 
     <div>
         <input class="form-control form-control-lg mediathekviewweb-search-input" type="text">
-        <button type="button" class="btn btn-secondary mediathekviewweb-search">Search</button>
+        <button type="button" class="btn btn-secondary mediathekviewweb-search">Suche</button>
         <div id="mediathekviewweb-result">
-
-        </div>
+	</div>
 
 <div class="fade" id="mediathekviewweb-result-navigation">
 
@@ -34,27 +33,26 @@
 {% for favouriteList in context %}
 
 <div class="card mb-3 ">
-    <div class="cardContent" style="background-image:url('{{favouriteList.image}}')">
-        <button class="btn btn-link fav-btn" data-toggle="collapse" rel="modal:close" data-target="collapse{{favouriteList.id}}" aria-expanded="true" aria-controls="collapseOne">{{favouriteList.name}}</button> </h5>
+    <div class="cardContent">
+        <div class="teaser btn-link" data-toggle="collapse" rel="modal:close" data-target="collapse{{favouriteList.id}}" aria-expanded="true" aria-controls="collapseOne" style="background-image: url('{{favouriteList.image}}');">{{favouriteList.name}}</div>
 
-    <div class="searchResultThumbnail">
-    </div>
-    <div id="collapse{{favouriteList.id}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
-        <div class="card-body">
-            {% for result in favouriteList.favourite.result.results %}
+        <!--<div class="searchResultThumbnail"></div>-->
+        <div id="collapse{{favouriteList.id}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                {% for result in favouriteList.favourite.result.results %}
 
-            <h5 class="card-title">{{result.title}}</h5>
-            <p class="card-text">{{result.description}}</p>
-            <button type="button" class="btn btn-primary play-video-link" data-file="{{result.url_video_low}}">
-                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-play-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z" />
-                </svg>
-            </button>
+                <h5 class="card-title">{{result.title}}</h5>
+                <p class="card-text">{{result.description}}</p>
+                <button type="button" class="btn btn-primary play-video-link" data-file="{{result.url_video_low}}">
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-play-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z" />
+                    </svg>
+                </button>
 
-            <span class="badge bg-primary">{{result.human_duration}}</span>
-            {% endfor %}
+                <span class="badge bg-primary">{{result.human_duration}}</span>
+                {% endfor %}
+            </div>
         </div>
-    </div>
     </div>
 </div>
 
