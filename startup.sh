@@ -1,5 +1,5 @@
 #!/bin/bash
 killall mpv_webrpc 
 export DISPLAY=:0
-./mpv_webrpc settings2.json &
+SETTINGS=settings/settings2.json bin/mpv_webrpc &
 
