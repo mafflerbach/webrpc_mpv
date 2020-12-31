@@ -1,3 +1,5 @@
+#![allow(non_snake_case)]
+
 use std::collections::HashMap;
 use std::env;
 use std::error::Error;
@@ -5,13 +7,6 @@ use std::fs::File;
 use std::io::BufReader;
 use std::path::Path;
 use serde::{Serialize, Deserialize};
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Childs {
-    pub id: String,
-    pub name: String,
-    pub url: String,
-}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Streams {
@@ -41,7 +36,6 @@ pub struct Fields {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Settings {
-    pub childs: Vec<Childs>,
     pub db: String,
     pub debug: bool,
     pub scan_dir_movies: String,

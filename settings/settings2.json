@@ -5,16 +5,6 @@
     "db": "/home/maren/development/rust/mpv/db/restmpv.db",
     "scan_dir_series": "/home/maren/Downloads/complete/series",
     "scan_dir_movies": "/home/maren/Downloads/complete/movies",
-    "childs": [{
-        "id": "1",
-        "name": "client 1",
-        "url": "http://localhost:9999"
-    }, {
-
-        "id": "2",
-        "name": "client 2",
-        "url": "http://localhost:9990"
-    }],
     "stream_urls": [{
         "name": "ard",
         "url": "https://mcdn.daserste.de/daserste/de/master.m3u8",
@@ -68,7 +58,7 @@
     ],
     "favourites": [{
             "image": "https://www.bavaria-studios.de/wp-content/uploads/bs/Events/Die-Anstalt-Bild.jpg?resolution=1920,1",
-            "name": "Die Anstalt",
+            "name": "",
             "query": {
                 "queries": [{
                     "fields": ["title", "topic"],
@@ -84,7 +74,7 @@
         },
         {
             "image": "https://www.zdf.de/assets/terra-x-buehnem-100~1900x400?cb=1594967014141",
-            "name": "Terra X",
+            "name": "",
             "query": {
                 "queries": [{
                     "fields": ["title", "topic"],
@@ -129,7 +119,7 @@
             }
         },{
             "image": "https://assets.cdn.moviepilot.de/files/ce8bf97873e6bd329c41ff9251466bc97da3eb09bdcf15dca13e576feb9b/limit/984/492/o-ZDF-HEUTE-SHOW-facebook.jpg",
-            "name": "heute-show",
+            "name": "",
             "query": {
                 "queries": [{
                     "fields": ["title", "topic"],

@@ -183,7 +183,7 @@ function mediathekview_search(search_term, offset) {
 }
 
 function postPlayerCommand(command, value, cb){
-    if (value == null || value == undefined) {
+    if (value === null || value === undefined) {
         $.ajax({
             type : "POST",
             url : "/player",
