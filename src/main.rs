@@ -39,7 +39,7 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(|| {
         let tera =
-            Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/**/*")).unwrap();
+            Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/**/*.html")).unwrap();
 
         App::new()
             .data(tera)
