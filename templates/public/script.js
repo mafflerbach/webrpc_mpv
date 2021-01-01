@@ -68,9 +68,14 @@ $(function() {
         function() { $.modal.close(); })
 
     $(document).on("click", ".card .btn-link", function() {
+        const activeBody = document.querySelector(".card .card-body.active")
+
         var id = $(this).attr("data-target");
-        $(".card div[id!='" + id + "'] .card-body").removeClass("active");
-        $(".card div[id='" + id + "'] .card-body").addClass("active");
+        $(".card div .card-body").removeClass("active");
+
+        if (!activeBody || id !== activeBody.parentNode.id) {
+            $(".card #" + id + " .card-body").addClass("active");
+        }
 
         $(this).get(0).scrollIntoView()
     });
