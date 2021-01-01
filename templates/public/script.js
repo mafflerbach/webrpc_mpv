@@ -71,6 +71,8 @@ $(function() {
         var id = $(this).attr("data-target");
         $(".card div[id!='" + id + "'] .card-body").removeClass("active");
         $(".card div[id='" + id + "'] .card-body").addClass("active");
+
+        $(this).get(0).scrollIntoView()
     });
 
     $(document).on("click", ".play-video-link", function() {
