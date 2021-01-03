@@ -39,7 +39,7 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(|| {
         let tera =
-            Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/**/*.html")).unwrap();
+            Tera::new("templates/**/*.html").unwrap();
 
         App::new()
             .data(tera)
@@ -91,7 +91,7 @@ async fn main() -> std::io::Result<()> {
                     .service(web::resource("").route(web::post().to(mounts::player::request_player)))
                     .service(web::resource("/property").route(web::post().to(mounts::player::request_property)))
             )
-            .service(Files::new("/public", std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("templates/public")))
+            .service(Files::new("/public", "templates/public"))
             .service(web::scope("").wrap(error_handlers()))
     })
     .bind("127.0.0.1:8080")?
