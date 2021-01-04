@@ -25,8 +25,8 @@ pub mod mpv {
         return me;
     }
 
-    pub fn event_load(target: String) -> Property {
-        let command = json!({ "command": ["loadfile", format!("{}",target)] });
+    pub fn event_load(target: &str, mode: &str) -> Property {
+        let command = json!({ "command": ["loadfile", format!("{}",target), mode] });
         let result = send_command(command);
         let me = Property {
             error : String::from("success"),
@@ -68,7 +68,8 @@ pub mod mpv {
 
     pub fn event_stop() -> Property {
         update_video_status();
-        let command = json!({ "command": ["stop"] });
+        // Show the next playlist item (the backdrop image) instead of stopping
+        let command = json!({ "command": ["playlist-next"] });
         let result = send_command(command);
         let me = Property {
             error : String::from("success"),
@@ -112,15 +113,19 @@ pub mod mpv {
 
     pub fn init() {
         let settings = settings::init();
+        let title = std::env::var("TITLE").unwrap_or("MediaMate Player".to_string());
 
         let mut mpv = Command::new("mpv");
         let ipc_param = format!("--input-ipc-server={}", settings.socket);
         println!("Starting parameter for mpv: {}", ipc_param);
         mpv.arg("--idle=yes")
+            .arg("--title=".to_owned() + &title)
             .arg(ipc_param)
             .arg("--hwdec=mmal-copy")
-            .arg("--fs=yes")
+            .arg("--fullscreen")
             .arg("--vo=gpu")
+            .arg("--keep-open")
+            .arg("--image-display-duration=inf")
             .spawn()
             .expect("OK");
     }

@@ -4,9 +4,6 @@
   <style>
     html {
       height: 100%;
-      background: #000 url(testcard.png);
-      background-size: contain;
-      background-position: 50%;
     }
 
     body {
@@ -45,15 +42,18 @@
 const time = document.getElementById("time")
 setInterval(() => {
 	time.innerHTML = new Date().toLocaleString()
-},100)
+}, 100)
+
+// Start options
+document.body.classList.toggle("transparent")
+time.classList.toggle("visible")
 
 document.onkeypress = (event) => {
-    //console.log(event.code)
     switch (event.code) {
         case "KeyT": // Time
           time.classList.toggle("visible")
           break;
-        case "KeyP": // play
+        case "KeyP": // Pause
           document.body.classList.toggle("transparent")
           break
     }

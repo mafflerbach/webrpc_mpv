@@ -67,7 +67,10 @@ pub async fn request_player(body: web::Bytes) -> HttpResponse {
                     return HttpResponse::BadRequest().json(tjson)
                 },
             };
-            mpv_response = mpv::mpv::event_load(target)
+            mpv_response = mpv::mpv::event_load(&target, "replace");
+            // Append backdrop to playlist
+            mpv::mpv::event_load("osd/black.png", "append");
+
         },
         "resume" => mpv_response = mpv::mpv::event_resume(),
         _ => {
