@@ -8,13 +8,13 @@ $(function() {
         selectedClient = $("#clientSelection").val();
         let value = $("#video-volume input[name='range']").data("before");
         postVolume (
-            JSON.stringify({"value" : value),
+            {"value" : value},
             function(data) { 
                 let value = $("#video-volume input[name='range']").val();
                 $("#video-volume-output").html(value);
                 $("#video-volume input[name='range']").val(value);
             });
-            });
+	});
 
     // mute sound
     $("#volume-mute").click(function() {
@@ -23,14 +23,14 @@ $(function() {
         $("#volume-mute").hide();
 
         postVolume (
-            JSON.stringify({"value" : "0"),
+            {"value" : "0"},
             function(data) { 
                 let value = $("#video-volume input[name='range']").val();
                 $("#video-volume input[name='range']").data("before", value);
                 $("#video-volume-output").html(value);
                 $("#video-volume input[name='range']").val(0);
             });
-            });
+	});
 
     var myInterval = setInterval(function() { clearInterval(myInterval); }, 2000);
 
@@ -67,12 +67,12 @@ $(function() {
             $("#video-volume-output").html(value);
 
             postVolume (
-                JSON.stringify({"value" : value),
+                {"value" : value},
                 function(data) { 
                     $("#video-volume input[name='range']").val(value);
                 });
                 })
-        })
+})
 
 function get_volume() {
     $("#volume-unmute").hide();
@@ -83,25 +83,23 @@ function get_volume() {
         success : function(data) {
             $("#video-volume input").val(data.data);
             $("#video-volume-output").html(data.data);
-        },
+        }
     });
 }
 
-function postVolume(data, cb){
+function postVolume(data, cb) {
 
     $.ajax({
         type : "POST",
         url : "/volume",
         contenType : "application/json",
-        data : data,
+        data : JSON.stringify(data),
         success : cb,
         dataType : 'json'
     });
-
 }
 
 function volume_change(param) {
-
     console.log("change volume");
     $("#volume-unmute").hide();
     $("#volume-mute").show();
@@ -109,9 +107,9 @@ function volume_change(param) {
     let value = $("#video-volume input[name='range']").val();
     value = parseInt(value) + param;
     postVolume (
-        JSON.stringify({"value" : value),
+		{"value" : value},
         function(data) { 
             $("#video-volume-output").html(value);
             $("#video-volume input[name='range']").val(value);
-        });
-        }
+	});
+}

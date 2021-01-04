@@ -1,8 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Jaldi:wght@400;700&family=Poppins:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
 
 .swiper-slide {
     background-color: #202a30;
     padding: 1em 0em;
+    overflow: scroll;
+}
+
+.swiper-container > .swiper-pagination {
+    position: fixed;
+    height: 40px;
+    bottom: 0;
+    background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.5));
+}
+
+html, body, .swiper-container, .swiper-wrapper {
+    height: 100%
 }
 
 body {
@@ -11,6 +23,18 @@ body {
     margin: 0;
     color: white;
     font-size: 14px;
+    height: 100%;
+}
+
+.swiper-pagination-bullet {
+    opacity: 0.8;
+    width: 12px;
+    height: 12px;
+    box-shadow:  0px 0px 10px #fff;
+}
+
+.swiper-pagination-bullet-active {
+    background: #fff
 }
 
 .fade {
@@ -122,6 +146,7 @@ input[type="range"]::before {
 .card-body {
     background-color: rgba(32, 42, 48, 0.8);
     padding: 1em;
+    border-radius: 0 0 20px 20px;
 }
 
 .collapse .card-body {
@@ -133,36 +158,36 @@ input[type="range"]::before {
 }
 
 .card-title {
-    font-size: 150%;
+    font-size: 120%;
 }
 
 .container {
-
     padding: 0.5em;
 }
 
 .cardContent {
-
+    box-shadow: 7px 7px 10px #0c1013, -5px -6px 10px #2e3b42;
+    border-radius: 20px;
 }
 
 .teaser {
-	border-radius: 10px;
-	height: 300px;
+    border-radius: 20px;
+    height: 300px;
+    width: 400px;
     background-position: center center;
-	background-size: auto 300px; /* contain */
-	background-repeat: no-repeat;
-	text-align: center;
-	font-size: 40px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+    background-size: auto 300px;
+    background-repeat: no-repeat;
+    text-align: center;
+    font-size: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .searchResultThumbnail img {
     position: absolute;
     top: -150px;
 }
-
 
 .range input[type="range"] {
     width: 77%;
@@ -254,6 +279,10 @@ button {
     list-style: none;
 }
 
+.btn-link {
+    cursor: pointer;
+}
+
 button.close {
     position: absolute;
     right: 1em;
@@ -270,7 +299,6 @@ button.close {
     position: relative;
 }
 
-
 .btn,
 button {
     border-radius: 10px;
@@ -281,12 +309,13 @@ button {
     padding: 0.5em;
     font-weight: 700;
     font-family: 'Poppins', sans-serif;
+    cursor: pointer;
 }
 
 .card {
     margin: 1em 0;
-    box-shadow: 7px 7px 10px #0c1013, -5px -6px 10px #2e3b42;
 }
+
 .modal-body,
 .modal-footer {
     margin: 1.5em;
@@ -454,7 +483,6 @@ select {
 }
 
 #streams span.tv-channels {
-
     height: 60px;
     width: 120px;
     display: inline-block;
@@ -478,13 +506,11 @@ span.badge {
     font-weight: 700;
     font-family: 'Poppins', sans-serif;
     margin: 0 0.5em 0 0;
-
 }
 
 .box {
     padding: 1em 0;
 }
-
 
 .fav-btn {
 margin: 1em;

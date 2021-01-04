@@ -5,70 +5,70 @@
     "db": "/home/maren/development/rust/mpv/db/restmpv.db",
     "scan_dir_series": "/home/maren/Downloads/complete/series",
     "scan_dir_movies": "/home/maren/Downloads/complete/movies",
-    "childs": [{
-        "id": "1",
-        "name": "client 1",
-        "url": "http://localhost:9999"
-    }, {
-
-        "id": "2",
-        "name": "client 2",
-        "url": "http://localhost:9990"
-    }],
     "stream_urls": [{
         "name": "ard",
         "url": "https://mcdn.daserste.de/daserste/de/master.m3u8",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/1/19/ARD_Logo_2019.svg"
+        "image": "/public/img/channels/ARD.svg"
     }, {
         "name": "zdf",
         "url": "https://zdf-hls-15.akamaized.net/hls/live/2016498/de/high/master.m3u8",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/c/c1/ZDF_logo.svg"
+        "image": "/public/img/channels/ZDF.svg"
     }, {
         "name": "arte",
         "url": "https://artelive-lh.akamaihd.net/i/artelive_de@393591/index_1_av-p.m3u8",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Logo-arte-schief.svg"
+        "image": "/public/img/channels/arte.svg"
     }, {
         "name": "kika",
         "url": "https://kikageohls-i.akamaihd.net/hls/live/1006268/livetvkika_de/master.m3u8",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/e/ef/KIKA-Logo.svg"
+        "image": "/public/img/channels/KiKA.svg"
     }, {
         "name": "3sat",
         "url": "https://zdf-hls-18.akamaized.net/hls/live/2016501/dach/high/master.m3u8",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/f/f2/3sat-Logo.svg"
+        "image": "/public/img/channels/3sat.svg"
     }, {
         "name": "phoenix",
         "url": "https://zdfhls19-i.akamaihd.net/hls/live/744752/de/high/master.m3u8",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/1/17/Phoenix_Logo_2012.svg"
+        "image": "/public/img/channels/phoenix.svg"
     },
       {
         "name": "br",
         "url": "https://brcdn.vo.llnwd.net/bfs_sued/de/master.m3u8",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/9/98/BR_Dachmarke.svg"
+        "image": "/public/img/channels/BR.svg"
       },
       {
         "name": "wdr",
         "url": "https://wdrfsgeo-lh.akamaihd.net/i/wdrfs_geogeblockt@530016/master.m3u8",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/9/9b/WDR_Dachmarke.svg"
+        "image": "/public/img/channels/WDR.svg"
       },
       {
         "name": "alpha",
         "url": "https://brlive-lh.akamaihd.net/i/bralpha_germany@119899/master.m3u8",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/4/4b/ARD_alpha.svg"
+        "image": "/public/img/channels/alpha.svg"
       },
       {
         "name": "one",
         "url": "https://onelivestream-lh.akamaihd.net/i/one_livestream@568814/master.m3u8",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/One_TV_Logo.svg/1280px-One_TV_Logo.svg.png"
+        "image": "/public/img/channels/one.svg"
+      },
+      {
+        "name": "ZDFinfo",
+        "url": "https://zdf-hls-17.akamaized.net/hls/live/2016500/de/high/master.m3u8",
+        "image": "/public/img/channels/ZDFinfo.svg"
+      },
+      {
+        "name": "ZDFneo",
+        "url": "https://zdf-hls-16.akamaized.net/hls/live/2016499/de/high/master.m3u8",
+        "image": "/public/img/channels/ZDFneo.svg"
       },
       {
         "name": "ServusTV",
         "url": "https://rbmn-live.akamaized.net/hls/live/2002830/geoSTVDEweb/master.m3u8",
-        "image": "https://upload.wikimedia.org/wikipedia/de/b/be/ServusTV.svg"
+        "image": "/public/img/channels/ServusTV.svg"
       }
     ],
     "favourites": [{
-            "image": "https://www.bavaria-studios.de/wp-content/uploads/bs/Events/Die-Anstalt-Bild.jpg?resolution=1920,1",
-            "name": "Die Anstalt",
+            "image": "/public/img/shows/Die-Anstalt.jpg",
+            "name": "",
             "query": {
                 "queries": [{
                     "fields": ["title", "topic"],
@@ -83,8 +83,8 @@
             }
         },
         {
-            "image": "https://www.zdf.de/assets/terra-x-buehnem-100~1900x400?cb=1594967014141",
-            "name": "Terra X",
+            "image": "/public/img/shows/Terra-X.jpg",
+            "name": "",
             "query": {
                 "queries": [{
                     "fields": ["title", "topic"],
@@ -98,7 +98,22 @@
                 "sortOrder": "desc"
             }
         }, {
-            "image": "https://www.zdf.de/assets/doku-wissen-102~1900x200?cb=1580297058557",
+            "image": "/public/img/shows/Expeditionen-ins-Tierreich.jpg",
+            "name": "",
+            "query": {
+                "queries": [{
+                    "fields": ["title", "topic"],
+                    "query": "Expeditionen ins Tierreich"
+                }, {
+                    "fields": ["channel"],
+                    "query": "ard"
+                }],
+                "duration_min": 1800,
+                "sortBy": "timestamp",
+                "sortOrder": "desc"
+            }
+        },{
+            "image": "/public/img/shows/Dokumentationen.jpg",
             "name": "Dokumentationen",
             "query": {
                 "queries": [{
@@ -112,9 +127,10 @@
                 "sortBy": "timestamp",
                 "sortOrder": "desc"
             }
-        },{
-            "image": "https://www.br.de/br-fernsehen/sendungen/quer/quer-fotos-christoph-suess-106~_v-img__16__9__l_-1dc0e8f74459dd04c91a0d45af4972b9069f1135.jpg?version=38c97",
-            "name": "quer",
+        },
+        {
+            "image": "/public/img/shows/quer.jpg",
+            "name": "",
             "query": {
                 "queries": [{
                     "fields": ["title", "topic"],
@@ -128,8 +144,8 @@
                 "sortOrder": "desc"
             }
         },{
-            "image": "https://assets.cdn.moviepilot.de/files/ce8bf97873e6bd329c41ff9251466bc97da3eb09bdcf15dca13e576feb9b/limit/984/492/o-ZDF-HEUTE-SHOW-facebook.jpg",
-            "name": "heute-show",
+            "image": "/public/img/shows/heute-show.jpg",
+            "name": "",
             "query": {
                 "queries": [{
                     "fields": ["title", "topic"],
@@ -146,7 +162,7 @@
             }
         },
         {
-            "image": "https://p3.storage.canalblog.com/39/77/666287/100546500.jpg",
+            "image": "/public/img/shows/Karambolage.png",
             "name": "",
             "query": {
                 "queries": [{
