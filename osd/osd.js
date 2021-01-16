@@ -5,7 +5,7 @@ const { app, BrowserWindow } = require('electron');
 
 const createWindow = () => {
 	let window = new BrowserWindow({
-		title: "MediaMate On Screen Display",
+		title: process.env.TITLE || "MediaMate On Screen Display",
 		transparent: true,
 		show: false // Avoid flickering (Pt. 1)
 	})
