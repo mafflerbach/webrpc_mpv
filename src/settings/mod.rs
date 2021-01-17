@@ -47,16 +47,24 @@ pub struct Settings {
     pub tmdb_key: String,
 }
 
+fn get_settings_filename() -> String {
+    let filename = env::var("SETTINGS");
+
+    match filename {
+        Ok(filename) => { filename }
+        Err(_) => {
+            env::var("HOME").unwrap() + "/.config/mediamate/settings.json"
+        }
+    }
+}
+
 pub fn config() -> Result<Settings, Box<dyn Error>> {
-    let setting_file = env::var("SETTINGS");
-    read_settings_file(setting_file.unwrap())
+    let setting_file = get_settings_filename();
+    read_settings_file(setting_file)
 }
 
 pub fn init() -> Settings {
-    let setting_file = env::var("SETTINGS");
-    let res = read_settings_file(setting_file.unwrap());
-
-    return res.unwrap();
+    return config().unwrap();
 }
 
 fn read_settings_file<P: AsRef<Path>>(path: P) -> Result<Settings, Box<dyn Error>> {
