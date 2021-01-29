@@ -15,7 +15,7 @@ build: $(BINARY)
 run: stop build start
 
 start:
-	SETTINGS=settings/settings2.json $(BINARY)
+	MEDIAMATE_SETTINGS=settings/settings2.json $(BINARY)
 
 stop:
 	- killall $(NAME)

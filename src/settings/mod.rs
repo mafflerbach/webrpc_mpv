@@ -49,7 +49,7 @@ pub struct Settings {
 
 fn get_settings_filename() -> String {
     // FIXME Use dotenv here, too?
-    let filename = env::var("SETTINGS");
+    let filename = env::var("MEDIAMATE_SETTINGS");
 
     match filename {
         Ok(filename) => { filename }
