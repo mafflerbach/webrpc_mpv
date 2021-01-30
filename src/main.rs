@@ -34,12 +34,17 @@ async fn index(
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     mpv::mpv::init();
+    // FIXME wait until socket exists
+    std::thread::sleep(std::time::Duration::from_millis(1500));
+
+    mpv::mpv::event_load("osd/black.png", "replace");
+
     std::env::set_var("RUST_LOG", "actix_web=info");
     env_logger::init();
 
     HttpServer::new(|| {
         let tera =
-            Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/**/*.html")).unwrap();
+            Tera::new("templates/**/*.html").unwrap();
 
         App::new()
             .data(tera)
@@ -92,10 +97,10 @@ async fn main() -> std::io::Result<()> {
                     .service(web::resource("").route(web::post().to(mounts::player::request_player)))
                     .service(web::resource("/property").route(web::post().to(mounts::player::request_property)))
             )
-            .service(Files::new("/public", std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("templates/public")))
+            .service(Files::new("/public", "templates/public"))
             .service(web::scope("").wrap(error_handlers()))
     })
-    .bind("127.0.0.1:8080")?
+    .bind("0.0.0.0:8080")?
     .run()
     .await
 }
