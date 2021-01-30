@@ -9,10 +9,14 @@ pub mod mpv {
     use serde_json::json;
     use serde::{Serialize, Deserialize};
 
+    fn send_command(command: serde_json::Value) -> serde_json::Value {
+        return serde_json::from_str(write_to_socket(command.to_string() + "\n").unwrap().as_str()).unwrap();
+    }
+
     pub fn event_resume() -> Property {
         let command = json!({ "command": ["set_property", String::from("pause"), false] });
-        let result :Value= serde_json::from_str(write_to_socket(command.to_string() + "\n").unwrap().as_str()).unwrap();
 
+        let result = send_command(command);
         let me = Property {
             error : result["error"].to_string().replace("\"", ""),
             data : result["data"].to_string()
@@ -21,18 +25,19 @@ pub mod mpv {
         return me;
     }
 
-    pub fn event_load(target: String) -> Property {
-        let command = json!({ "command": ["loadfile", format!("{}",target)] });
-        let result :Value= serde_json::from_str(write_to_socket(command.to_string() + "\n").unwrap().as_str()).unwrap();
+    pub fn event_load(target: &str, mode: &str) -> Property {
+        let command = json!({ "command": ["loadfile", format!("{}",target), mode] });
+        let result = send_command(command);
         let me = Property {
             error : String::from("success"),
             data : result["event"].to_string()
         };
         return me;
     }
+
     pub fn event_pause() -> Property {
         let command = json!({ "command": ["set_property", String::from("pause"), true] });
-        let result :Value= serde_json::from_str(write_to_socket(command.to_string() + "\n").unwrap().as_str()).unwrap();
+        let result = send_command(command);
 
         let me = Property {
             error : result["error"].to_string().replace("\"", ""),
@@ -47,7 +52,6 @@ pub mod mpv {
         let path = event_property("path".to_string(), None);
 
         if path.error == String::from("success") {
-
             let time_json:String = event_property("time-pos".to_string(), None).data;
             let path_json:String = event_property("path".to_string(), None).data;
 
@@ -62,30 +66,28 @@ pub mod mpv {
         }
     }
 
-    use serde_json::Value;
     pub fn event_stop() -> Property {
         update_video_status();
-        let command = json!({ "command": ["stop"] });
-        let result :Value= serde_json::from_str(write_to_socket(command.to_string() + "\n").unwrap().as_str()).unwrap();
+        // Show the next playlist item (the backdrop image) instead of stopping
+        let command = json!({ "command": ["playlist-next"] });
+        let result = send_command(command);
         let me = Property {
             error : String::from("success"),
             data : result["event"].to_string()
         };
         return me;
     }
+
     pub fn event_volume() -> Property {
         event_property(String::from("volume"), None)
     }
 
     pub fn event_volume_change(volume_control: VolumeControl) -> Property {
         event_property(String::from("volume"), Some(volume_control.value))
-
-
-
     }
 
     pub fn event_property(property: String, value:Option<String>) -> Property {
-        let command: Value = match value {
+        let command = match value {
             None => {
                 json!({ "command": ["get_property", property] })
             }, 
@@ -93,7 +95,7 @@ pub mod mpv {
                 json!({ "command": ["set_property", property, value] })
             },
         };
-        let result :Value= serde_json::from_str(write_to_socket(command.to_string() + "\n").unwrap().as_str()).unwrap();
+        let result = send_command(command);
 
         let me = Property {
             error : result["error"].to_string().replace("\"", ""),
@@ -111,15 +113,19 @@ pub mod mpv {
 
     pub fn init() {
         let settings = settings::init();
+        let title = std::env::var("TITLE").unwrap_or("MediaMate Player".to_string());
 
         let mut mpv = Command::new("mpv");
         let ipc_param = format!("--input-ipc-server={}", settings.socket);
         println!("Starting parameter for mpv: {}", ipc_param);
         mpv.arg("--idle=yes")
+            .arg("--title=".to_owned() + &title)
             .arg(ipc_param)
             .arg("--hwdec=mmal-copy")
-            .arg("--fs=yes")
+            .arg("--fullscreen")
             .arg("--vo=gpu")
+            .arg("--keep-open")
+            .arg("--image-display-duration=inf")
             .spawn()
             .expect("OK");
     }
