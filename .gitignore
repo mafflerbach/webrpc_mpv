@@ -16,3 +16,5 @@ Cargo.lock
 bin/mpv_webrpc
 
 templates/public/img
+
+dist/
