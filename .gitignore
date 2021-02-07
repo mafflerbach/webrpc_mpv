@@ -19,3 +19,5 @@ osd/electron
 templates/public/img
 
 dist/
+sample/
+aarch64/.image
