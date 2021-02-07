@@ -14,4 +14,5 @@ wait_for_osd &
 
 dir=$(dirname $(readlink -f $0))
 
-TITLE="$title" "$dir/electron" "$dir/../osd/osd.js"
+export DISPLAY=:0
+TITLE="$title" "$dir/../osd/electron/electron" "$dir/../osd/osd.js"

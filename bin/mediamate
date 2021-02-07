@@ -4,9 +4,15 @@
 #
 trap cleanup EXIT
 
+bin=$(dirname $(readlink -f $0))
+
+stop() {
+	killall mpv_webrpc mpv electron 2> /dev/null
+}
+
 cleanup() {
+	stop
 	reset
-	killall mpv_webrpc mpv 2> /dev/null
 }
 
 wait_for_player_window() {
@@ -15,14 +21,15 @@ wait_for_player_window() {
 	done
 }
 
-killall mpv_webrpc mpv 2> /dev/null
+stop
 export DISPLAY=:0
+cd $bin/..
 
 TITLE='MediaMate Player' \
 	SETTINGS=settings/settings2.json \
 	DATABASE_URL=db/restmpv.db \
-	bin/mpv_webrpc &
+	$bin/mpv_webrpc &
 
 wait_for_player_window
 
-bin/osd.sh
+$bin/osd.sh

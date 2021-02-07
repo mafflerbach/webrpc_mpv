@@ -1,9 +1,12 @@
 .PHONY: all debug run clean test stop start release
 
-NAME      := mpv_webrpc
-SOURCES   := $(shell find src -name '*.rs')
-ASSETS := $(shell find templates osd)
-CROSS  := $(HOME)/.cargo/bin/cross
+NAME    := mpv_webrpc
+SOURCES := $(shell find src -name '*.rs')
+ASSETS  := $(shell find templates osd)
+CROSS   := $(HOME)/.cargo/bin/cross
+
+MKDIR = @mkdir -p $(@D)
+COPY  =	cp $< $@
 
 # x64, arm64
 ARCH      := x64
@@ -11,16 +14,18 @@ ELECTRON_VERSION := 4.2.12
 ELECTRON_ARCHIVE := electron-v$(ELECTRON_VERSION)-linux-$(ARCH).zip
 ELECTRON_URL := https://github.com/electron/electron/releases/download/v$(ELECTRON_VERSION)/$(ELECTRON_ARCHIVE)
 CACHE_DIR := $(HOME)/.cache
-ELECTRON  := osd/node_modules/.bin/electron
 
 #############################################################################
 
 all: debug
 
-debug: bin/$(NAME) bin/electron
+debug: bin/$(NAME) electron
 
-release: dist/$(ARCH)/bin/$(NAME) dist/$(ARCH)/bin/mediamate dist/$(ARCH)/bin/electron
-	cp -r --parents $(ASSETS) dist/$(ARCH)
+release: dist/$(ARCH)/bin/$(NAME) \
+	dist/$(ARCH)/bin/mediamate \
+	electron \
+	dist/$(ARCH)/bin/osd.sh \
+	$(addprefix dist/$(ARCH)/,$(ASSETS))
 
 run: stop build start
 
@@ -31,9 +36,9 @@ stop:
 	- killall $(NAME)
 
 clean:
+	rm -rf dist/$(ARCH)
 
 bin/$(NAME): target/debug/$(NAME)
-	@mkdir -p bin
 	@cp -v $< $@
 
 #############################################################################
@@ -43,52 +48,73 @@ target/debug/$(NAME): $(SOURCES)
 
 target/x64/release/$(NAME): $(SOURCES)
 	CARGO_TARGET_DIR=target/x64 cargo build --release
-	mv $(dir $@)/mpv_webrpc $@
+	- @mv $(@D)/mpv_webrpc $@
 
 target/arm64/release/$(NAME): $(CROSS) aarch64/.image $(SOURCES)
 	cd target && mkdir -p aarch64-unknown-linux-gnu && ln -sf aarch64-unknown-linux-gnu arm64
 	PATH=$(dir $(CROSS)):$(PATH) $(CROSS) build --release --target=aarch64-unknown-linux-gnu
+	- @mv $(@D)/mpv_webrpc $@
 
 #############################################################################
 
 dist/$(ARCH)/bin/$(NAME): target/$(ARCH)/release/$(NAME)
-	@mkdir -p $(dir $@)
-	cp $< $@
+	$(MKDIR)
+	$(COPY)
 
 dist/$(ARCH)/bin/osd.sh: bin/osd.sh
-	@mkdir -p $(dir $@)
-	cp $< $@
-
-dist/$(ARCH)/templates:
-	cp -r templates $@
+	$(MKDIR)
+	$(COPY)
 
 dist/$(ARCH)/osd:
-	cp -r osd $@
+	$(MKDIR)
+	$(COPY)
 
 #############################################################################
 
-dist/$(ARCH)/bin/mediamate:
-	@mkdir -p $(dir $@)
-	cp startup.sh $@
+dist/$(ARCH)/bin/mediamate: bin/mediamate
+	$(MKDIR)
+	$(COPY)
+
+dist/$(ARCH)/osd/%.js: osd/%.js
+	$(MKDIR)
+	$(COPY)
+
+dist/$(ARCH)/osd/%.html: osd/%.html
+	$(MKDIR)
+	$(COPY)
+
+dist/$(ARCH)/osd/%.png: osd/%.png
+	$(MKDIR)
+	$(COPY)
+
+dist/$(ARCH)/templates/%.html: templates/%.html
+	$(MKDIR)
+	$(COPY)
+
+dist/$(ARCH)/templates/public/%.css: templates/public/%.css
+	$(MKDIR)
+	$(COPY)
+
+dist/$(ARCH)/templates/public/%.js: templates/public/%.js
+	$(MKDIR)
+	$(COPY)
+
+dist/$(ARCH)/templates/public/img: templates/public/img/
+	$(MKDIR)
+	cp -r $< $@
 
 #############################################################################
 
 .PHONY: electron
 
-electron: bin/electron
-
-bin/electron: dist/x64/bin/electron
-
-dist/$(ARCH)/bin/electron: dist/$(ARCH)/osd/electron/electron
-	@mkdir -p $(dir $@)
-	@ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
+electron: dist/x64/osd/electron/electron
 
 dist/$(ARCH)/osd/electron/electron: $(CACHE_DIR)/$(ELECTRON_ARCHIVE)
 	@echo "Unpacking Electron for $(ARCH)..."
 	@mkdir -p $(dir $@)
 	@unzip -qo -d $(dir $@) $<
 	@cd $(dir $@) && mkdir -p locales2 && \
-	@mv locales/en-US.pak locales/de.pak locales2 && rm -rf locales && mv locales2 locales
+	mv locales/en-US.pak locales/de.pak locales2 && rm -rf locales && mv locales2 locales
 	@touch $@
 
 $(CACHE_DIR)/$(ELECTRON_ARCHIVE):
@@ -107,10 +133,6 @@ aarch64/.image: aarch64/Dockerfile
 	touch $@
 
 #############################################################################
-
-$(ELECTRON):
-	npm install electron --prefix osd
-	npm audit fix --prefix osd
 
 test:
 	runTest.sh
