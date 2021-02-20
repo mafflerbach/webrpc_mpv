@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8">
   <style>
     html {
       height: 100%;
@@ -14,6 +15,7 @@
       font: 40px Roboto, sans-serif;
       position: relative;
       background-color: black;
+      cursor: none
     }
 
     body.transparent {
@@ -39,19 +41,42 @@
 	<div id="time"></div>
 </body>
 <script>
+
+Locale = {
+	default: "en"
+}
+
 const time = document.getElementById("time")
-setInterval(() => {
-	time.innerHTML = new Date().toLocaleString()
-}, 2000)
+let timeLoop = null
+
+function updateTime() {
+    time.innerHTML = new Date().toLocaleDateString(Locale.default, {
+        day:    "numeric",
+        month:  "long",
+        year:   "numeric",
+        hour:   "numeric",
+        minute: "2-digit"
+    })
+}
+
+function toggleTime() {
+	if (time.classList.contains("visible")) {
+		clearInterval(timeLoop)
+	} else {
+		updateTime()
+		timeLoop = setInterval(updateTime, 2000)
+	}
+
+	time.classList.toggle("visible")
+}
 
 // Start options
 document.body.classList.toggle("transparent")
-time.classList.toggle("visible")
 
 document.onkeypress = (event) => {
     switch (event.code) {
         case "KeyT": // Time
-          time.classList.toggle("visible")
+          toggleTime()
           break;
         case "KeyP": // Pause
           document.body.classList.toggle("transparent")
