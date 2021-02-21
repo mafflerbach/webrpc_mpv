@@ -18,4 +18,4 @@ const createWindow = () => {
 	})
 }
 
-app.on('ready', () => setTimeout(createWindow, 100));
+app.on('ready', () => setTimeout(createWindow, 500));

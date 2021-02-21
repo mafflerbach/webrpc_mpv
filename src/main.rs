@@ -35,7 +35,7 @@ async fn index(
 async fn main() -> std::io::Result<()> {
     mpv::mpv::init();
     // FIXME wait until socket exists
-    std::thread::sleep(std::time::Duration::from_millis(1500));
+    std::thread::sleep(std::time::Duration::from_millis(3000));
 
     mpv::mpv::event_load("osd/black.png", "replace");
 
