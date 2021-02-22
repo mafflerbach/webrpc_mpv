@@ -1,15 +1,14 @@
-use actix_web::{ HttpResponse};
+use actix_web::{HttpResponse};
 use std::process::Command;
 
 pub async fn heartbeat() -> HttpResponse {
-    let tjson = json!({ "alive": "true" });
+    let tjson = json!({ "alive": true });
     return HttpResponse::Ok().json(tjson)
 }
 
-
 pub async fn shutdown() -> HttpResponse {
-    let mut mpv = Command::new("shutdown");
-    mpv.arg("-h")
+    let mut command = Command::new("shutdown");
+    command.arg("-h")
         .arg("now")
         .spawn()
         .expect("OK");
