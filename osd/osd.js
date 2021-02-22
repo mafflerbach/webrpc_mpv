@@ -5,7 +5,7 @@ const { app, BrowserWindow } = require('electron');
 
 const createWindow = () => {
 	let window = new BrowserWindow({
-		title: process.env.TITLE || "MediaMate On Screen Display",
+		title: process.env.TITLE || "Media Mate On Screen Display",
 		transparent: true,
 		show: false
 	})

@@ -19,9 +19,7 @@ mod stubs;
 mod tmdb;
 
 // store tera template in application state
-async fn index(
-    tmpl: web::Data<tera::Tera>,
-) -> Result<HttpResponse, Error> {
+async fn index(tmpl: web::Data<tera::Tera>,) -> Result<HttpResponse, Error> {
         let links_context = settings::init();
         // submitted form
         let mut ctx = tera::Context::new();
@@ -34,7 +32,6 @@ async fn index(
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     mpv::mpv::init();
-
     mpv::mpv::event_load("osd/black.png", "replace");
 
     std::env::set_var("RUST_LOG", "actix_web=info");

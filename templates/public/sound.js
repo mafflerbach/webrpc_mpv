@@ -32,8 +32,6 @@ $(function() {
             });
 	});
 
-    var myInterval = setInterval(function() { clearInterval(myInterval); }, 2000);
-
     document.addEventListener('keydown', (e) => {
         if (e.code == "VolumeDown") {
             volume_change(-5);

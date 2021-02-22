@@ -199,7 +199,6 @@ function postPlayerCommand(command, value, cb){
             success : cb,
             dataType : 'json'
         })
-
     } else {
         $.ajax({
             type : "POST",
@@ -211,7 +210,6 @@ function postPlayerCommand(command, value, cb){
         })
     }
 }
-
 
 function handlePlayerTrigger() {
     $("#skip_forward_button").click(function() { skip_time_position(30); });
@@ -297,13 +295,11 @@ function appendSeasonDetails() {
 }
 
 function skip_time_position(time_in_second) {
-
     propertyCall("time-pos", null,function (data) {
         $("#video-length input").attr("value", data.data);
         let value = parseInt(data.data) + time_in_second;
         propertyCall("time-pos", value.toString(),function (data) {})
     })
-
 }
 
 function get_video_status() {

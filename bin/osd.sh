@@ -1,6 +1,6 @@
 #!/bin/sh
 
-title='MediaMate On Screen Display'
+title='Media Mate On Screen Display'
 
 wait_for_osd() {
 	while ! wmctrl -a "$title"; do
@@ -12,7 +12,7 @@ wait_for_osd() {
 
 wait_for_osd &
 
-dir=$(dirname $(readlink -f $0))
+dir=$(dirname $(readlink -f $0))/../osd
 
 export DISPLAY=:0
-TITLE="$title" "$dir/../osd/electron/electron" "$dir/../osd/osd.js"
+TITLE="$title" "$dir/electron/electron" "$dir/osd.js"

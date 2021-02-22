@@ -86,7 +86,7 @@ pub mod mpv {
         event_property(String::from("volume"), Some(volume_control.value.to_string()))
     }
 
-    pub fn event_property(property: String, value:Option<String>) -> Property {
+    pub fn event_property(property: String, value: Option<String>) -> Property {
         let command = match value {
             None => {
                 json!({ "command": ["get_property", property] })
@@ -105,7 +105,7 @@ pub mod mpv {
         return me;
     }
 
-    #[derive( Debug, Serialize, Deserialize)]
+    #[derive(Debug, Serialize, Deserialize)]
     pub struct Property {
         pub error : String,
         pub data : String
@@ -113,7 +113,7 @@ pub mod mpv {
 
     pub fn init() {
         let settings = settings::init();
-        let title = std::env::var("TITLE").unwrap_or("MediaMate Player".to_string());
+        let title = std::env::var("TITLE").unwrap_or("Media Mate Player".to_string());
 
         let mut mpv = Command::new("mpv");
         let ipc_param = format!("--input-ipc-server={}", settings.socket);

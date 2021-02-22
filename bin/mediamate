@@ -16,7 +16,7 @@ cleanup() {
 }
 
 wait_for_player_window() {
-	while ! wmctrl -a 'MediaMate Player'; do
+	while ! wmctrl -a 'Media Mate Player'; do
 		sleep 0.1
 	done
 }
@@ -25,7 +25,7 @@ stop
 export DISPLAY=:0
 cd $bin/..
 
-TITLE='MediaMate Player' \
+TITLE='Media Mate Player' \
 	SETTINGS=settings/settings2.json \
 	DATABASE_URL=db/restmpv.db \
 	$bin/mpv_webrpc &
