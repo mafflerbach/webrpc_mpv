@@ -8,7 +8,7 @@ $(function() {
         selectedClient = $("#clientSelection").val();
         let value = $("#video-volume input[name='range']").data("before");
         postVolume (
-            {"value" : value},
+            {"value" : parseInt(value)},
             function(data) { 
                 let value = $("#video-volume input[name='range']").val();
                 $("#video-volume-output").html(value);
@@ -23,7 +23,7 @@ $(function() {
         $("#volume-mute").hide();
 
         postVolume (
-            {"value" : "0"},
+            {"value" : 0},
             function(data) { 
                 let value = $("#video-volume input[name='range']").val();
                 $("#video-volume input[name='range']").data("before", value);
@@ -67,11 +67,11 @@ $(function() {
             $("#video-volume-output").html(value);
 
             postVolume (
-                {"value" : value},
+                {"value" : parseInt(value)},
                 function(data) { 
                     $("#video-volume input[name='range']").val(value);
                 });
-                })
+        })
 })
 
 function get_volume() {
@@ -106,10 +106,15 @@ function volume_change(param) {
     selectedClient = $("#clientSelection").val();
     let value = $("#video-volume input[name='range']").val();
     value = parseInt(value) + param;
+    if (value < 0) {
+        value = 0
+    } else if (value > 100) {
+        value = 100
+    }
     postVolume (
-		{"value" : value},
+        {"value" : value},
         function(data) { 
             $("#video-volume-output").html(value);
             $("#video-volume input[name='range']").val(value);
-	});
+    });
 }

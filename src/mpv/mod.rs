@@ -83,7 +83,7 @@ pub mod mpv {
     }
 
     pub fn event_volume_change(volume_control: VolumeControl) -> Property {
-        event_property(String::from("volume"), Some(volume_control.value))
+        event_property(String::from("volume"), Some(volume_control.value.to_string()))
     }
 
     pub fn event_property(property: String, value:Option<String>) -> Property {

@@ -56,7 +56,7 @@ async fn main() -> std::io::Result<()> {
             .service(
                 web::resource("/volume")
                     .route(web::post().to(mounts::volume::request_change_volume))
-                    .route(web::get().to(mounts::volume::request_volumen)),
+                    .route(web::get().to(mounts::volume::request_volume)),
 
             )
             // append the favourites and search results

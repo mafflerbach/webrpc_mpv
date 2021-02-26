@@ -30,7 +30,7 @@ pub struct Property {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct VolumeControl {
-    pub value: String,
+    pub value: i32,
 }
 
 #[derive(Serialize, Deserialize)]
