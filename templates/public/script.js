@@ -214,8 +214,8 @@ function postPlayerCommand(command, value, cb){
 
 
 function handlePlayerTrigger() {
-    $("#skip_forward_button").click(function() { skip_time_position(60); });
-    $("#skip_back_button").click(function() { skip_time_position(-60); });
+    $("#skip_forward_button").click(function() { skip_time_position(30); });
+    $("#skip_back_button").click(function() { skip_time_position(-30); });
 
     $("#play_button").click(function(e) {
         e.preventDefault();
