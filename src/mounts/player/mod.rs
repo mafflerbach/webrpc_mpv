@@ -10,14 +10,14 @@ pub async fn request_property(body: web::Bytes) -> HttpResponse {
     match command.as_ref() {
         "time-pos" => {
             match result.value {
-                None => mpv_response = mpv::mpv::event_property("time-pos".to_string(), None),
+                None => mpv_response = mpv::mpv::event_property("time-pos", None),
                 Some(value) => {
-                    mpv_response = mpv::mpv::event_property("time-pos".to_string(), Some(value))
+                    mpv_response = mpv::mpv::event_property("time-pos", Some(value))
                 },
             };
         },
         "duration" => {
-            mpv_response = mpv::mpv::event_property("duration".to_string(), None)
+            mpv_response = mpv::mpv::event_property("duration", None)
         }
         _ => {
             let tjson = json!({ "error": "property not allowed" });
