@@ -34,8 +34,6 @@ async fn index(
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     mpv::mpv::init();
-    // FIXME wait until socket exists
-    std::thread::sleep(std::time::Duration::from_millis(3000));
 
     mpv::mpv::event_load("osd/black.png", "replace");
 

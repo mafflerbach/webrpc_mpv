@@ -128,6 +128,14 @@ pub mod mpv {
             .arg("--image-display-duration=inf")
             .spawn()
             .expect("OK");
+
+        loop {
+            match UnixStream::connect(&settings.socket) {
+                Ok(_) => break,
+                Err(_) => {},
+            };
+            std::thread::sleep(std::time::Duration::from_millis(100));
+        }
     }
 
     pub fn write_to_socket(content: String) -> std::io::Result<String> {
