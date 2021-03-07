@@ -9,6 +9,7 @@
     background-color: #202a30;
     padding: 1em 0em;
     overflow: scroll;
+    margin: 1em;
 }
 
 .swiper-container > .swiper-pagination {
@@ -40,10 +41,6 @@ body {
 
 .swiper-pagination-bullet-active {
     background: #fff
-}
-
-.fade {
-    margin: 1em;
 }
 
 .nav {
@@ -294,6 +291,10 @@ button.close {
     top: 0.7em;
 }
 
+.modal {
+    margin: 1em;
+}
+
 .modal-title {
     position: absolute;
     left: 1.3em;
@@ -387,7 +388,6 @@ select {
     display: block;
 }
 
-
 .player-bar {
     bottom: 0;
     width: 100%;
@@ -457,11 +457,6 @@ select {
 
     .col-sm-12 {
         width: 100%;
-    }
-    .player-card {
-        display: inline-block;
-        margin: 0.5em;
-        box-shadow: 7px 7px 10px #0c1013, -5px -6px 10px #2e3b42;
     }
 
     .card {
