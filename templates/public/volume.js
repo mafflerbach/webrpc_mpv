@@ -9,12 +9,11 @@ $(function() {
         let value = $("#video-volume input[name='range']").data("before");
         postVolume (
             {"value" : parseInt(value)},
-            function(data) { 
-                let value = $("#video-volume input[name='range']").val();
+            function(data) {
                 $("#video-volume-output").html(value);
                 $("#video-volume input[name='range']").val(value);
             });
-	});
+    });
 
     // mute sound
     $("#volume-mute").click(function() {
@@ -24,13 +23,13 @@ $(function() {
 
         postVolume (
             {"value" : 0},
-            function(data) { 
+            function(data) {
                 let value = $("#video-volume input[name='range']").val();
                 $("#video-volume input[name='range']").data("before", value);
                 $("#video-volume-output").html(value);
                 $("#video-volume input[name='range']").val(0);
             });
-	});
+    });
 
     document.addEventListener('keydown', (e) => {
         if (e.code == "VolumeDown") {
@@ -66,7 +65,7 @@ $(function() {
 
             postVolume (
                 {"value" : parseInt(value)},
-                function(data) { 
+                function(data) {
                     $("#video-volume input[name='range']").val(value);
                 });
         })
@@ -86,7 +85,6 @@ function get_volume() {
 }
 
 function postVolume(data, cb) {
-
     $.ajax({
         type : "POST",
         url : "/volume",
@@ -111,7 +109,7 @@ function volume_change(param) {
     }
     postVolume (
         {"value" : value},
-        function(data) { 
+        function(data) {
             $("#video-volume-output").html(value);
             $("#video-volume input[name='range']").val(value);
     });
