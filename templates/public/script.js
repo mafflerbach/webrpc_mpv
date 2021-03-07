@@ -228,7 +228,8 @@ function handlePlayerTrigger() {
         e.preventDefault();
         clearInterval(playerStatusInterval);
         postPlayerCommand("stop");
-
+        $("#pause_button").hide();
+        $("#play_button").show();
     })
 
     $("#pause_button").click(function(e) {
@@ -238,8 +239,6 @@ function handlePlayerTrigger() {
         $("#pause_button").hide();
         $("#play_button").show();
     })
-
-
 }
 
 function triggerStartVideo(){
