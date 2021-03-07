@@ -43,6 +43,7 @@ pub mod mpv {
             error : String::from("success"),
             data : result["event"].to_string()
         };
+        event_resume();
         return me;
     }
 
