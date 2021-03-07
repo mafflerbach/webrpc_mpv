@@ -10,8 +10,18 @@ pub mod mpv {
     use serde::{Serialize, Deserialize};
 
     fn send_command(command: serde_json::Value) -> serde_json::Value {
-        let json = json!({"command": command}).to_string();
-        return serde_json::from_str(write_to_socket(&(json + "\n")).unwrap().as_str()).unwrap();
+        let id = rand::random::<u32>();
+        let json = json!({"command": command, "request_id": id});
+        let bytes = &(json.to_string() + "\n");
+
+        for line in write_to_socket(bytes).unwrap().trim().split("\n") {
+            let object : serde_json::Value = serde_json::from_str(line).unwrap();
+            if object["request_id"] == id {
+                return object;
+            }
+        }
+
+        return serde_json::from_str("{}").unwrap();
     }
 
     pub fn event_resume() -> Property {
