@@ -103,6 +103,10 @@ dist/$(ARCH)/templates/public/img: templates/public/img/
 	$(MKDIR)
 	cp -r $< $@
 
+dist/$(ARCH)/templates/public/%.woff2: templates/public/%.woff2
+	$(MKDIR)
+	cp -r $< $@
+
 #############################################################################
 
 .PHONY: electron
