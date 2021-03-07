@@ -150,8 +150,10 @@
         <!-- Initialize Swiper -->
         <script>
             var swiper = new Swiper('.swiper-container', {
+                loop: false, // buggy!
                 pagination: {
                     el: '.swiper-pagination',
+                    clickable: true
                 },
             });
         </script>
