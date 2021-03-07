@@ -220,7 +220,7 @@ function handlePlayerTrigger() {
         $("#play_button").hide();
         $("#pause_button").show();
         clearInterval(playerStatusInterval);
-        playerStatusInterval = setInterval(get_video_status, 500);
+        playerStatusInterval = setInterval(get_video_status, 5000);
         postPlayerCommand("resume");
     })
 
@@ -255,7 +255,7 @@ function triggerStartVideo(){
             if (data.success == "success") {
                 valueElement.val("");
                 clearInterval(playerStatusInterval);
-                playerStatusInterval = setInterval(get_video_status, 500);
+                playerStatusInterval = setInterval(get_video_status, 5000);
             }
         });
     });
