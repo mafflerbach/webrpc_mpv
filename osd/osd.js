@@ -11,12 +11,13 @@ const createWindow = () => {
 	})
 
 	window.webContents.on("dom-ready", () => {
-		window.webContents.executeJavaScript('Locale.default = "' + app.getLocale() + '"; toggleTime()')
+		window.webContents.executeJavaScript('OSD.init("' + app.getLocale() + '"; ')
 	})
 
 	window.once("ready-to-show", () => {
-		window.setFullScreen(true) // this automatically shows window
-		//window.show()
+		setTimeout(() => {
+			window.setFullScreen(true) // this automatically shows window
+		}, 100);
 	})
 
 	window.loadFile('osd.html')

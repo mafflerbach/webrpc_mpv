@@ -46,11 +46,22 @@ Locale = {
 	default: "en"
 }
 
+OSD = {
+	init: (locale) => {
+		this.locale = locale || "en"
+	},
+
+	toggle: (component) => {
+
+	}
+}
+
 const time = document.getElementById("time")
 let timeLoop = null
 
 function updateTime() {
-    time.innerHTML = new Date().toLocaleDateString(Locale.default, {
+    time.innerHTML = new Date().toLocaleDateString(OSD.locale, {
+        weekday: 'long',
         day:    "numeric",
         month:  "long",
         year:   "numeric",
