@@ -22,6 +22,7 @@ pub fn get_favourites(query: serde_json::Value) -> MediathekViewWeb {
             url_video_low: obj.url_video_low,
             id: obj.id,
             human_duration: Some(human_duration(obj.duration)),
+            date: Some(format_date(obj.timestamp))
         };
         obj_vec.push(new_obj);
     }
@@ -44,7 +45,7 @@ fn send_request(target: String, query: serde_json::Value) -> String {
         headers
     }
     match client
-        .post("https://mediathekviewweb.de/api/query")
+        .post(&target)
         .body(query.to_string())
         .headers(construct_headers())
         .send()
@@ -55,11 +56,17 @@ fn send_request(target: String, query: serde_json::Value) -> String {
         Err(_) => return "".to_string(),
     }
 }
-use humantime::format_duration;
-use std::time::Duration;
+
 fn human_duration(duration: u64) -> String {
-    let val1 = Duration::new(duration, 0);
-    format_duration(val1).to_string()
+    let seconds = duration % 60;
+    let minutes = duration / 60 + (if seconds > 0 { 1 } else { 0 });
+    return format!("{} Minuten", minutes)
+}
+
+use chrono::{DateTime, Local, TimeZone};
+fn format_date(timestamp: i64) -> String {
+    let datetime: DateTime<Local> = Local.timestamp(timestamp, 0);
+    return datetime.format("%d.%m.%Y").to_string();
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -70,10 +77,11 @@ pub struct MediathekViewWeb {
 pub struct Object {
     pub title: String,
     pub description: String,
-    pub timestamp: i32,
+    pub timestamp: i64,
     pub duration: u64,
     pub channel: String,
     pub human_duration: Option<String>,
+    pub date: Option<String>,
     pub url_video_hd: String,
     pub url_video_low: String,
     pub url_video: String,

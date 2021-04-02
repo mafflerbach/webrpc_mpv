@@ -3,6 +3,7 @@
     <div class="cardContent">
         <div class="card-body">
             <h5 class="card-title"><span class="badge">{{result.channel}}</span> {{result.title}}</h5>
+            <p>{{result.date}} | {{result.human_duration}}</p>
             <p class="card-text">{{result.description}}</p>
             <button type="button" class="btn btn-primary play-video-link" data-file="{{result.url_video_low}}">
                 Low <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-play-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
