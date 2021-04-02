@@ -38,7 +38,7 @@
             <div class="card-body">
                 {% for result in favouriteList.favourite.result.results %}
 
-                <h5 class="card-title">{{result.title}}</h5>
+                <h5 class="card-title">{{result.topic}} – {{result.title}}</h5>
                 <p>{{result.date}} | {{result.human_duration}}</p>
                 <p class="card-text">{{result.description}}</p>
                 <button type="button" class="btn btn-primary play-video-link" data-file="{{result.url_video_low}}">

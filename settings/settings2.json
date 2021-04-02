@@ -113,17 +113,15 @@
                 "sortOrder": "desc"
             }
         },{
-            "image": "/public/img/shows/Dokumentationen.jpg",
-            "name": "Dokumentationen",
+            "image": "/public/img/shows/KiKA.jpg",
+            "name": "",
             "query": {
-                "queries": [{
-                    "fields": ["title", "topic"],
-                    "query": "Dokumentation"
-                }, {
+                "queries": [
+                  {
                     "fields": ["channel"],
-                    "query": "zdf"
-                }],
-                "duration_min": 1800,
+                    "query": "KiKA"
+                  }
+                ],
                 "sortBy": "timestamp",
                 "sortOrder": "desc"
             }

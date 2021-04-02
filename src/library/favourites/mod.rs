@@ -13,6 +13,7 @@ pub fn get_favourites(query: serde_json::Value) -> MediathekViewWeb {
     for obj in results.result.results {
         let new_obj = Object {
             title: obj.title,
+            topic: obj.topic,
             description: obj.description,
             timestamp: obj.timestamp,
             duration: obj.duration,
@@ -76,6 +77,7 @@ pub struct MediathekViewWeb {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Object {
     pub title: String,
+    pub topic: String,
     pub description: String,
     pub timestamp: i64,
     pub duration: u64,
