@@ -7,15 +7,23 @@ const createWindow = () => {
 	let window = new BrowserWindow({
 		title: process.env.TITLE || "MediaMate On Screen Display",
 		transparent: true,
-		show: false // Avoid flickering (Pt. 1)
+		show: false
 	})
 
-	// Avoid flickering (Pt. 2): loadFile before setFullScreen
+	window.webContents.on("dom-ready", () => {
+		window.webContents.executeJavaScript('Locale.default = "' + app.getLocale() + '"; toggleTime()')
+	})
+
+	window.once("ready-to-show", () => {
+		window.setFullScreen(true) // this automatically shows window
+		//window.show()
+	})
+
 	window.loadFile('osd.html')
-	window.setFullScreen(true)
+
 	window.on('closed', () => {
 		window = null
 	})
 }
 
-app.on('ready', () => setTimeout(createWindow, 100));
+app.on('ready', () => setTimeout(createWindow, 500));

@@ -12,6 +12,7 @@ wait_for_osd() {
 
 wait_for_osd &
 
-dir="$(dirname "$0")"/../osd
-#npm --prefix="$dir" start
-TITLE="$title" "$dir/node_modules/.bin/electron" "$dir/osd.js"
+dir=$(dirname $(readlink -f $0))
+
+export DISPLAY=:0
+TITLE="$title" "$dir/../osd/electron/electron" "$dir/../osd/osd.js"

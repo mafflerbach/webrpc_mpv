@@ -14,5 +14,10 @@ Cargo.lock
 **/*.rs.bk
 
 bin/mpv_webrpc
+osd/electron
 
 templates/public/img
+
+dist/
+sample/
+aarch64/.image
