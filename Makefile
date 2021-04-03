@@ -30,7 +30,7 @@ release: dist/$(ARCH)/bin/$(NAME) \
 run: stop build start
 
 start:
-	SETTINGS=settings/settings2.json DATABASE_URL=db/restmpv.db bin/$(NAME)
+	MEDIAMATE_SETTINGS=settings/settings2.json MEDIAMATE_DB=db/restmpv.db bin/$(NAME)
 
 stop:
 	- killall $(NAME)
