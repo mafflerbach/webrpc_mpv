@@ -25,7 +25,7 @@ prepare-relase:
 run: stop build start
 
 start:
-	SETTINGS=settings/settings2.json DATABASE_URL=db/restmpv.db $(BINARY)
+	MEDIAMATE_SETTINGS=settings/settings2.json MEDIAMATE_DB=db/restmpv.db $(BINARY)
 
 stop:
 	- killall $(NAME)

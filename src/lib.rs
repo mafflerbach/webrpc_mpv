@@ -13,21 +13,26 @@ use std::env;
 
 pub fn establish_connection() -> SqliteConnection {
     dotenv().ok();
-    
-    let mut database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
-    if is_dev() {
-        env::set_var("DATABASE_URL", "db/restmpv_test.db");
-        database_url="db/restmpv_test.db".to_string();
-    }
-
-    SqliteConnection::establish(&database_url)
-        .expect(&format!("Error connecting to {}", database_url))
+    let database_file = get_database_filename();
+    SqliteConnection::establish(&database_file)
+        .expect(&format!("Error connecting to database '{}'.", database_file))
 }
 
 fn is_dev() -> bool {
     match env::var("TEST") {
         Ok(_s) => true,
         _ => false,
+    }
+}
+
+fn get_database_filename() -> String {
+    let filename = env::var("MEDIAMATE_DB");
+
+    match filename {
+        Ok(filename) => { filename }
+        Err(_) => {
+            env::var("HOME").unwrap() + "/.local/mediamate/database.db"
+        }
     }
 }
