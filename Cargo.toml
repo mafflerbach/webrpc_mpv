@@ -15,9 +15,6 @@ homepage = "https://github.com/mafflerbach/webrpc_mpv"
 name = "websocket-server"
 path = "src/main.rs"
 
-[[bin]]
-name = "websocket-client"
-path = "src/client.rs"
 
 [dependencies]
 actix-files = "0.3"

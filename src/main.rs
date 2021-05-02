@@ -8,10 +8,8 @@ use actix_http::{body::Body, Response};
 use actix_web::dev::ServiceResponse;
 use actix_web::http::StatusCode;
 use actix_web::middleware::errhandlers::{ErrorHandlerResponse, ErrorHandlers};
-use actix_web::{get, error, Responder, HttpRequest, middleware, web, App, Error, HttpResponse, HttpServer, Result};
+use actix_web::{ error, middleware, web, App, Error, HttpResponse, HttpServer, Result};
 use tera::Tera;
-use actix_web_actors::ws;
-use serde::{Serialize, Deserialize};
 
 mod mpv;
 mod mounts;
