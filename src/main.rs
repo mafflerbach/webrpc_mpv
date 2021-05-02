@@ -8,8 +8,9 @@ use actix_http::{body::Body, Response};
 use actix_web::dev::ServiceResponse;
 use actix_web::http::StatusCode;
 use actix_web::middleware::errhandlers::{ErrorHandlerResponse, ErrorHandlers};
-use actix_web::{error, middleware, web, App, Error, HttpResponse, HttpServer, Result};
+use actix_web::{ error, middleware, web, App, Error, HttpResponse, HttpServer, Result};
 use tera::Tera;
+
 mod mpv;
 mod mounts;
 mod library;
@@ -31,6 +32,7 @@ async fn index(
     Ok(HttpResponse::Ok().content_type("text/html").body(output))
 }
 
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     mpv::mpv::init();
@@ -50,6 +52,7 @@ async fn main() -> std::io::Result<()> {
             .data(tera)
             .wrap(middleware::Logger::default()) // enable logger
             .service(web::resource("/").route(web::get().to(index)))
+            .service(web::resource("/ws/").route(web::get().to(mounts::socket::ws_index)))
             .service(web::resource("/heartbeat").route(web::get().to(mounts::misc::heartbeat)))
             .service(web::resource("/shutdown").route(web::get().to(mounts::misc::shutdown)))
             // provide volume get and set

@@ -27,7 +27,7 @@ release: dist/$(ARCH)/bin/$(NAME) \
 	dist/$(ARCH)/bin/osd.sh \
 	$(addprefix dist/$(ARCH)/,$(ASSETS))
 
-run: stop build start
+run: stop debug start
 
 start:
 	MEDIAMATE_SETTINGS=settings/settings2.json MEDIAMATE_DB=db/restmpv.db bin/$(NAME)

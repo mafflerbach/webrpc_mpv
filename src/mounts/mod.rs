@@ -6,3 +6,4 @@ pub mod series;
 pub mod volume;
 pub mod episodes;
 pub mod favourites;
+pub mod socket;

@@ -1,15 +1,31 @@
+use mpv::mpv::Property;
 use serde::{Serialize, Deserialize};
 use actix_web::{ HttpResponse, web};
 use crate::mpv;
 use crate::library;
+use crate::api_structs::PropertyComand;
 
 pub async fn request_property(body: web::Bytes) -> HttpResponse {
     let result : PropertyComand = serde_json::from_str(std::str::from_utf8(&body).unwrap()).unwrap();
-    let command = &result.property;
+    let mpv_response = property_handle(result);
+    let err_property :String = mpv_response.error.to_string();
+    if err_property != "success".to_string() {
+        let tjson = json!({ "error": "Something went wrong" });
+        return HttpResponse::InternalServerError().json(tjson)
+    }
+
+    HttpResponse::Ok().json(mpv_response) // <- send response
+}
+
+
+pub fn property_handle(property_command : PropertyComand) -> Property{
+
+    let command = &property_command.property;
     let mpv_response : mpv::mpv::Property;
+    println!("XXXXX {:?}", property_command);
     match command.as_ref() {
         "time-pos" => {
-            match result.value {
+            match property_command.value {
                 None => mpv_response = mpv::mpv::event_property("time-pos".to_string(), None),
                 Some(value) => {
                     mpv_response = mpv::mpv::event_property("time-pos".to_string(), Some(value))
@@ -20,18 +36,13 @@ pub async fn request_property(body: web::Bytes) -> HttpResponse {
             mpv_response = mpv::mpv::event_property("duration".to_string(), None)
         }
         _ => {
-            let tjson = json!({ "error": "property not allowed" });
-            return HttpResponse::MethodNotAllowed().json(tjson)
+            mpv_response = Property { 
+                error : "error".to_string(),
+                data : "property not allowed".to_string()
+            }
         },
     }
-
-    let err_property :String = mpv_response.error.to_string();
-    if err_property != "success".to_string() {
-        let tjson = json!({ "error": "Something went wrong" });
-        return HttpResponse::InternalServerError().json(tjson)
-    }
-
-    HttpResponse::Ok().json(mpv_response) // <- send response
+    return mpv_response;
 }
 
 
@@ -90,9 +101,4 @@ pub struct Info {
     pub target: String,
 }
 
-#[derive( Debug, Serialize, Deserialize)]
-pub struct PropertyComand {
-    pub property : String,
-    pub value : Option<String> 
-}
 

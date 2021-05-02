@@ -40,4 +40,8 @@ struct Response {
     request_id: i32,
 }
 
-
+#[derive( Debug, Serialize, Deserialize)]
+pub struct PropertyComand {
+    pub property : String,
+    pub value : Option<String> 
+}
