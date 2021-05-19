@@ -11,7 +11,7 @@ const createWindow = () => {
 	})
 
 	window.webContents.on("dom-ready", () => {
-		window.webContents.executeJavaScript('OSD.init("' + app.getLocale() + '"; ')
+		window.webContents.executeJavaScript('OSD.init("' + app.getLocale() + '");')
 	})
 
 	window.once("ready-to-show", () => {
