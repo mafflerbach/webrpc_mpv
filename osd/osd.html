@@ -49,6 +49,9 @@ Locale = {
 OSD = {
 	init: (locale) => {
 		this.locale = locale || "en"
+
+		document.body.classList.add("transparent")
+		updateTime()
 	},
 
 	toggle: (component) => {
@@ -80,9 +83,6 @@ function toggleTime() {
 
 	time.classList.toggle("visible")
 }
-
-// Start options
-document.body.classList.toggle("transparent")
 
 document.onkeypress = (event) => {
     switch (event.code) {

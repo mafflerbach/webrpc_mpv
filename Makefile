@@ -10,7 +10,7 @@ COPY  =	cp $< $@
 
 # x64, arm64
 ARCH      := x64
-ELECTRON_VERSION := 4.2.12
+ELECTRON_VERSION := 12.0.9
 ELECTRON_ARCHIVE := electron-v$(ELECTRON_VERSION)-linux-$(ARCH).zip
 ELECTRON_URL := https://github.com/electron/electron/releases/download/v$(ELECTRON_VERSION)/$(ELECTRON_ARCHIVE)
 CACHE_DIR := $(HOME)/.cache
