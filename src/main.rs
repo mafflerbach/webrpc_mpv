@@ -19,9 +19,7 @@ mod stubs;
 mod tmdb;
 
 // store tera template in application state
-async fn index(
-    tmpl: web::Data<tera::Tera>,
-) -> Result<HttpResponse, Error> {
+async fn index(tmpl: web::Data<tera::Tera>,) -> Result<HttpResponse, Error> {
         let links_context = settings::init();
         // submitted form
         let mut ctx = tera::Context::new();
@@ -34,9 +32,6 @@ async fn index(
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     mpv::mpv::init();
-    // FIXME wait until socket exists
-    std::thread::sleep(std::time::Duration::from_millis(3000));
-
     mpv::mpv::event_load("osd/black.png", "replace");
 
     std::env::set_var("RUST_LOG", "actix_web=info");
@@ -56,7 +51,7 @@ async fn main() -> std::io::Result<()> {
             .service(
                 web::resource("/volume")
                     .route(web::post().to(mounts::volume::request_change_volume))
-                    .route(web::get().to(mounts::volume::request_volumen)),
+                    .route(web::get().to(mounts::volume::request_volume)),
 
             )
             // append the favourites and search results

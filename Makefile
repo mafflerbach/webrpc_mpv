@@ -10,7 +10,7 @@ COPY  =	cp $< $@
 
 # x64, arm64
 ARCH      := x64
-ELECTRON_VERSION := 4.2.12
+ELECTRON_VERSION := 12.0.9
 ELECTRON_ARCHIVE := electron-v$(ELECTRON_VERSION)-linux-$(ARCH).zip
 ELECTRON_URL := https://github.com/electron/electron/releases/download/v$(ELECTRON_VERSION)/$(ELECTRON_ARCHIVE)
 CACHE_DIR := $(HOME)/.cache
@@ -100,6 +100,10 @@ dist/$(ARCH)/templates/public/%.js: templates/public/%.js
 	$(COPY)
 
 dist/$(ARCH)/templates/public/img: templates/public/img/
+	$(MKDIR)
+	cp -r $< $@
+
+dist/$(ARCH)/templates/public/%.woff2: templates/public/%.woff2
 	$(MKDIR)
 	cp -r $< $@
 

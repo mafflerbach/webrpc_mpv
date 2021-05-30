@@ -1,11 +1,11 @@
 use actix_web::{
-     HttpResponse, web
+    HttpResponse, web
 };
 use crate::mpv;
 use crate::api_structs::VolumeControl;
 
 // get
-pub async fn request_volumen() -> HttpResponse {
+pub async fn request_volume() -> HttpResponse {
     let volume_response = mpv::mpv::event_volume();
     HttpResponse::Ok().json(volume_response) // <- send response
 }

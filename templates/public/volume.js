@@ -8,13 +8,12 @@ $(function() {
         selectedClient = $("#clientSelection").val();
         let value = $("#video-volume input[name='range']").data("before");
         postVolume (
-            {"value" : value},
-            function(data) { 
-                let value = $("#video-volume input[name='range']").val();
+            {"value" : parseInt(value)},
+            function(data) {
                 $("#video-volume-output").html(value);
                 $("#video-volume input[name='range']").val(value);
             });
-	});
+    });
 
     // mute sound
     $("#volume-mute").click(function() {
@@ -23,16 +22,14 @@ $(function() {
         $("#volume-mute").hide();
 
         postVolume (
-            {"value" : "0"},
-            function(data) { 
+            {"value" : 0},
+            function(data) {
                 let value = $("#video-volume input[name='range']").val();
                 $("#video-volume input[name='range']").data("before", value);
                 $("#video-volume-output").html(value);
                 $("#video-volume input[name='range']").val(0);
             });
-	});
-
-    var myInterval = setInterval(function() { clearInterval(myInterval); }, 2000);
+    });
 
     document.addEventListener('keydown', (e) => {
         if (e.code == "VolumeDown") {
@@ -67,11 +64,11 @@ $(function() {
             $("#video-volume-output").html(value);
 
             postVolume (
-                {"value" : value},
-                function(data) { 
+                {"value" : parseInt(value)},
+                function(data) {
                     $("#video-volume input[name='range']").val(value);
                 });
-                })
+        })
 })
 
 function get_volume() {
@@ -88,7 +85,6 @@ function get_volume() {
 }
 
 function postVolume(data, cb) {
-
     $.ajax({
         type : "POST",
         url : "/volume",
@@ -106,10 +102,15 @@ function volume_change(param) {
     selectedClient = $("#clientSelection").val();
     let value = $("#video-volume input[name='range']").val();
     value = parseInt(value) + param;
+    if (value < 0) {
+        value = 0
+    } else if (value > 100) {
+        value = 100
+    }
     postVolume (
-		{"value" : value},
-        function(data) { 
+        {"value" : value},
+        function(data) {
             $("#video-volume-output").html(value);
             $("#video-volume input[name='range']").val(value);
-	});
+    });
 }

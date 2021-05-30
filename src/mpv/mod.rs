@@ -10,11 +10,22 @@ pub mod mpv {
     use serde::{Serialize, Deserialize};
 
     fn send_command(command: serde_json::Value) -> serde_json::Value {
-        return serde_json::from_str(write_to_socket(command.to_string() + "\n").unwrap().as_str()).unwrap();
+        let id = rand::random::<u32>();
+        let json = json!({"command": command, "request_id": id});
+        let bytes = &(json.to_string() + "\n");
+
+        for line in write_to_socket(bytes).unwrap().trim().split("\n") {
+            let object : serde_json::Value = serde_json::from_str(line).unwrap();
+            if object["request_id"] == id {
+                return object;
+            }
+        }
+
+        return serde_json::from_str("{}").unwrap();
     }
 
     pub fn event_resume() -> Property {
-        let command = json!({ "command": ["set_property", String::from("pause"), false] });
+        let command = json!(["set_property", "pause", false]);
 
         let result = send_command(command);
         let me = Property {
@@ -26,17 +37,18 @@ pub mod mpv {
     }
 
     pub fn event_load(target: &str, mode: &str) -> Property {
-        let command = json!({ "command": ["loadfile", format!("{}",target), mode] });
+        let command = json!(["loadfile", target, mode]);
         let result = send_command(command);
         let me = Property {
             error : String::from("success"),
             data : result["event"].to_string()
         };
+        event_resume();
         return me;
     }
 
     pub fn event_pause() -> Property {
-        let command = json!({ "command": ["set_property", String::from("pause"), true] });
+        let command = json!(["set_property", "pause", true]);
         let result = send_command(command);
 
         let me = Property {
@@ -49,11 +61,11 @@ pub mod mpv {
 
     fn update_video_status() {
         use mpv_webrpc::models::NewVideoStatus;
-        let path = event_property("path".to_string(), None);
+        let path = event_property("path", None);
 
         if path.error == String::from("success") {
-            let time_json:String = event_property("time-pos".to_string(), None).data;
-            let path_json:String = event_property("path".to_string(), None).data;
+            let time_json:String = event_property("time-pos", None).data;
+            let path_json:String = event_property("path", None).data;
 
             // serde json supports only f64 - diesel supports only f32 for fields - *sigh*
             let time : f64= time_json.parse().unwrap();
@@ -69,7 +81,7 @@ pub mod mpv {
     pub fn event_stop() -> Property {
         update_video_status();
         // Show the next playlist item (the backdrop image) instead of stopping
-        let command = json!({ "command": ["playlist-next"] });
+        let command = json!(["playlist-next"]);
         let result = send_command(command);
         let me = Property {
             error : String::from("success"),
@@ -79,20 +91,20 @@ pub mod mpv {
     }
 
     pub fn event_volume() -> Property {
-        event_property(String::from("volume"), None)
+        event_property("volume", None)
     }
 
     pub fn event_volume_change(volume_control: VolumeControl) -> Property {
-        event_property(String::from("volume"), Some(volume_control.value))
+        event_property("volume", Some(volume_control.value.to_string()))
     }
 
-    pub fn event_property(property: String, value:Option<String>) -> Property {
+    pub fn event_property(property: &str, value: Option<String>) -> Property {
         let command = match value {
             None => {
-                json!({ "command": ["get_property", property] })
+                json!(["get_property", property])
             }, 
             Some(value) => {
-                json!({ "command": ["set_property", property, value] })
+                json!(["set_property", property, value])
             },
         };
         let result = send_command(command);
@@ -105,7 +117,7 @@ pub mod mpv {
         return me;
     }
 
-    #[derive( Debug, Serialize, Deserialize)]
+    #[derive(Debug, Serialize, Deserialize)]
     pub struct Property {
         pub error : String,
         pub data : String
@@ -113,7 +125,7 @@ pub mod mpv {
 
     pub fn init() {
         let settings = settings::init();
-        let title = std::env::var("TITLE").unwrap_or("MediaMate Player".to_string());
+        let title = std::env::var("TITLE").unwrap_or("Media Mate Player".to_string());
 
         let mut mpv = Command::new("mpv");
         let ipc_param = format!("--input-ipc-server={}", settings.socket);
@@ -128,9 +140,17 @@ pub mod mpv {
             .arg("--image-display-duration=inf")
             .spawn()
             .expect("OK");
+
+        loop {
+            match UnixStream::connect(&settings.socket) {
+                Ok(_) => break,
+                Err(_) => {},
+            };
+            std::thread::sleep(std::time::Duration::from_millis(100));
+        }
     }
 
-    pub fn write_to_socket(content: String) -> std::io::Result<String> {
+    pub fn write_to_socket(content: &str) -> std::io::Result<String> {
         let settings = settings::init();
         let socket = settings.socket;
         let mut stream = match UnixStream::connect(&socket) {
@@ -138,7 +158,7 @@ pub mod mpv {
             Ok(stream) => stream,
         };
 
-        stream.write_all(&content.as_bytes())?;
+        stream.write_all(content.as_bytes())?;
         let mut buf = [0; 1024];
         let count = stream.read(&mut buf).unwrap();
         let response = String::from_utf8(buf[..count].to_vec()).unwrap();

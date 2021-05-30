@@ -1,8 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  src: url(Poppins.woff2) format('woff2');
+}
 
 .swiper-slide {
     background-color: #202a30;
-    padding: 1em 0em;
     overflow: scroll;
 }
 
@@ -22,7 +26,7 @@ body {
     background-color: #202a30 !important;
     margin: 0;
     color: white;
-    font-size: 14px;
+    font-size: 18px;
     height: 100%;
 }
 
@@ -35,10 +39,6 @@ body {
 
 .swiper-pagination-bullet-active {
     background: #fff
-}
-
-.fade {
-    margin: 1em;
 }
 
 .nav {
@@ -289,6 +289,10 @@ button.close {
     top: 0.7em;
 }
 
+.modal {
+    margin: 1em;
+}
+
 .modal-title {
     position: absolute;
     left: 1.3em;
@@ -313,7 +317,7 @@ button {
 }
 
 .card {
-    margin: 1em 0;
+    margin: 1.5em;
 }
 
 .modal-body,
@@ -355,11 +359,10 @@ select {
     background: #202a30;
     box-shadow: 7px 7px 10px #0c1013 inset, -5px -6px 10px #2e3b42 inset;
     font-family: 'Poppins', sans-serif;
-    padding: 0.5em;
+    padding: 1em;
     border: 0;
     color: white;
 }
-
 
 #searchResultCloneable {
     display: none;
@@ -371,7 +374,7 @@ select {
 
 .col {
     display: inline-block;
-    margin: 0.5em;
+    margin: 0.5em 0;
 }
 
 .tab-pane {
@@ -381,7 +384,6 @@ select {
 .tab-pane.active {
     display: block;
 }
-
 
 .player-bar {
     bottom: 0;
@@ -453,11 +455,6 @@ select {
     .col-sm-12 {
         width: 100%;
     }
-    .player-card {
-        display: inline-block;
-        margin: 0.5em;
-        box-shadow: 7px 7px 10px #0c1013, -5px -6px 10px #2e3b42;
-    }
 
     .card {
         width: 23%;
@@ -517,5 +514,29 @@ margin: 1em;
 
 }
 .range {
-margin:1em;
+    margin:1em;
+}
+
+#startVideo input[type=text] {
+    width: 80%
+}
+
+.button-panel {
+    text-align: center;
+    display: block
+}
+
+.button-panel button {
+    margin: 0.5em;
+    width: 60px;
+    height: 60px;
+}
+
+button.hidden {
+    display: none
+}
+
+button:active {
+    box-shadow: none;
+    border: 1px solid #ccc
 }

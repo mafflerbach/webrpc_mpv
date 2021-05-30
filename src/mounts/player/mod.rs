@@ -1,5 +1,5 @@
 use serde::{Serialize, Deserialize};
-use actix_web::{ HttpResponse, web};
+use actix_web::{HttpResponse, web};
 use crate::mpv;
 use crate::library;
 
@@ -10,14 +10,14 @@ pub async fn request_property(body: web::Bytes) -> HttpResponse {
     match command.as_ref() {
         "time-pos" => {
             match result.value {
-                None => mpv_response = mpv::mpv::event_property("time-pos".to_string(), None),
+                None => mpv_response = mpv::mpv::event_property("time-pos", None),
                 Some(value) => {
-                    mpv_response = mpv::mpv::event_property("time-pos".to_string(), Some(value))
+                    mpv_response = mpv::mpv::event_property("time-pos", Some(value))
                 },
             };
         },
         "duration" => {
-            mpv_response = mpv::mpv::event_property("duration".to_string(), None)
+            mpv_response = mpv::mpv::event_property("duration", None)
         }
         _ => {
             let tjson = json!({ "error": "property not allowed" });
@@ -36,11 +36,12 @@ pub async fn request_property(body: web::Bytes) -> HttpResponse {
 
 
 
-#[derive( Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct PlayerComand {
     pub command : String,
     pub value : Option<String> 
 }
+
 pub async fn request_player(body: web::Bytes) -> HttpResponse {
     let result : PlayerComand = serde_json::from_str(std::str::from_utf8(&body).unwrap()).unwrap();
     let command = &result.command;
@@ -49,7 +50,7 @@ pub async fn request_player(body: web::Bytes) -> HttpResponse {
         "pause" => mpv_response = mpv::mpv::event_pause(),
         "status" => {
             let target = match result.value {
-                Some(v) => v ,
+                Some(v) => v,
                 None => {
                     let tjson = json!({ "error": "target undefined" });
                     return HttpResponse::BadRequest().json(tjson)
@@ -61,7 +62,7 @@ pub async fn request_player(body: web::Bytes) -> HttpResponse {
         "stop" => mpv_response = mpv::mpv::event_stop(),
         "play" => {
             let target = match result.value {
-                Some(v) => v ,
+                Some(v) => v,
                 None => {
                     let tjson = json!({ "error": "target undefined" });
                     return HttpResponse::BadRequest().json(tjson)
@@ -90,9 +91,8 @@ pub struct Info {
     pub target: String,
 }
 
-#[derive( Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct PropertyComand {
     pub property : String,
     pub value : Option<String> 
 }
-

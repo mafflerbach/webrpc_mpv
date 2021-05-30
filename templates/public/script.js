@@ -199,7 +199,6 @@ function postPlayerCommand(command, value, cb){
             success : cb,
             dataType : 'json'
         })
-
     } else {
         $.ajax({
             type : "POST",
@@ -212,17 +211,16 @@ function postPlayerCommand(command, value, cb){
     }
 }
 
-
 function handlePlayerTrigger() {
-    $("#skip_forward_button").click(function() { skip_time_position(60); });
-    $("#skip_back_button").click(function() { skip_time_position(-60); });
+    $("#skip_forward_button").click(function() { skip_time_position(30); });
+    $("#skip_back_button").click(function() { skip_time_position(-30); });
 
     $("#play_button").click(function(e) {
         e.preventDefault();
         $("#play_button").hide();
         $("#pause_button").show();
         clearInterval(playerStatusInterval);
-        playerStatusInterval = setInterval(get_video_status, 500);
+        playerStatusInterval = setInterval(get_video_status, 5000);
         postPlayerCommand("resume");
     })
 
@@ -230,7 +228,8 @@ function handlePlayerTrigger() {
         e.preventDefault();
         clearInterval(playerStatusInterval);
         postPlayerCommand("stop");
-
+        $("#pause_button").hide();
+        $("#play_button").show();
     })
 
     $("#pause_button").click(function(e) {
@@ -240,8 +239,6 @@ function handlePlayerTrigger() {
         $("#pause_button").hide();
         $("#play_button").show();
     })
-
-
 }
 
 function triggerStartVideo(){
@@ -257,7 +254,7 @@ function triggerStartVideo(){
             if (data.success == "success") {
                 valueElement.val("");
                 clearInterval(playerStatusInterval);
-                playerStatusInterval = setInterval(get_video_status, 500);
+                playerStatusInterval = setInterval(get_video_status, 5000);
             }
         });
     });
@@ -297,13 +294,11 @@ function appendSeasonDetails() {
 }
 
 function skip_time_position(time_in_second) {
-
     propertyCall("time-pos", null,function (data) {
         $("#video-length input").attr("value", data.data);
         let value = parseInt(data.data) + time_in_second;
         propertyCall("time-pos", value.toString(),function (data) {})
     })
-
 }
 
 function get_video_status() {
